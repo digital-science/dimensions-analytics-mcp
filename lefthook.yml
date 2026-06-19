@@ -1,0 +1,37 @@
+min_version: "1.10.0"
+
+output:
+  - summary
+  - failure
+  - execution_out
+
+pre-commit:
+  parallel: true
+  jobs:
+    - name: biome-check
+      glob: "*.{js,ts,cjs,mjs,jsx,tsx,json,jsonc}"
+      run: pnpm exec biome check --write --no-errors-on-unmatched --files-ignore-unknown=true --colors=off {staged_files}
+      stage_fixed: true
+
+pre-push:
+  parallel: true
+  jobs:
+    - name: typecheck
+      glob: "*.{ts,tsx}"
+      skip:
+        - merge
+        - rebase
+      run: pnpm run typecheck
+
+    - name: test
+      glob: "*.{ts,tsx}"
+      skip:
+        - merge
+        - rebase
+      run: just test
+
+commit-msg:
+  jobs:
+    - name: conventional-commit
+      run: |
+        head -1 "{1}" | grep -qE "^(feat|fix|test|chore|docs|refactor|style|perf|ci|build|revert)(\(.+\))?!?:" || (echo "Error: commit message must follow conventional commits format (e.g., 'feat: add feature')" && exit 1)

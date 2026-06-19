@@ -1,0 +1,7 @@
+packages:
+  - apps/*
+
+catalog:
+  "@modelcontextprotocol/sdk": ^1.27.0
+  typescript: ^5.9.3
+  zod: 4.3.6

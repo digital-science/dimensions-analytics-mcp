@@ -1,0 +1,62 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 920 280" role="img" aria-labelledby="title desc">
+  <title id="title">Local deployment architecture</title>
+  <desc id="desc">MCP client connects via stdio to dimensions-analytics-mcp on the user machine, which authenticates with a Dimensions API key and calls the Dimensions DSL API over HTTPS.</desc>
+  <defs>
+    <linearGradient id="bg" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#f8fafc"/>
+      <stop offset="100%" stop-color="#eef2ff"/>
+    </linearGradient>
+    <filter id="shadow" x="-8%" y="-8%" width="116%" height="124%">
+      <feDropShadow dx="0" dy="4" stdDeviation="6" flood-color="#0f172a" flood-opacity="0.08"/>
+    </filter>
+    <marker id="arrow" markerWidth="10" markerHeight="10" refX="8" refY="5" orient="auto">
+      <path d="M0,0 L10,5 L0,10 Z" fill="#475569"/>
+    </marker>
+    <marker id="arrowAccent" markerWidth="10" markerHeight="10" refX="8" refY="5" orient="auto">
+      <path d="M0,0 L10,5 L0,10 Z" fill="#2563eb"/>
+    </marker>
+  </defs>
+
+  <rect width="920" height="280" rx="16" fill="url(#bg)"/>
+  <rect x="1" y="1" width="918" height="278" rx="15" fill="none" stroke="#e2e8f0"/>
+
+  <text x="460" y="36" text-anchor="middle" font-family="system-ui, -apple-system, Segoe UI, sans-serif" font-size="18" font-weight="700" fill="#0f172a">Local deployment</text>
+  <text x="460" y="58" text-anchor="middle" font-family="system-ui, -apple-system, Segoe UI, sans-serif" font-size="13" fill="#64748b">User machine · stdio transport · env API key</text>
+
+  <!-- User machine boundary -->
+  <rect x="40" y="78" width="520" height="170" rx="14" fill="#ffffff" stroke="#cbd5e1" stroke-dasharray="6 4" filter="url(#shadow)"/>
+  <text x="60" y="102" font-family="system-ui, -apple-system, Segoe UI, sans-serif" font-size="11" font-weight="600" letter-spacing="0.08em" fill="#94a3b8">USER MACHINE</text>
+
+  <!-- MCP client -->
+  <rect x="70" y="122" width="170" height="96" rx="12" fill="#f1f5f9" stroke="#94a3b8" filter="url(#shadow)"/>
+  <text x="155" y="152" text-anchor="middle" font-family="system-ui, -apple-system, Segoe UI, sans-serif" font-size="15" font-weight="700" fill="#0f172a">MCP client</text>
+  <text x="155" y="174" text-anchor="middle" font-family="system-ui, -apple-system, Segoe UI, sans-serif" font-size="12" fill="#64748b">Cursor · Claude · etc.</text>
+  <text x="155" y="196" text-anchor="middle" font-family="system-ui, -apple-system, Segoe UI, sans-serif" font-size="11" fill="#94a3b8">spawns local process</text>
+
+  <!-- dimensions-analytics-mcp -->
+  <rect x="310" y="122" width="220" height="96" rx="12" fill="#dbeafe" stroke="#3b82f6" filter="url(#shadow)"/>
+  <text x="420" y="152" text-anchor="middle" font-family="system-ui, -apple-system, Segoe UI, sans-serif" font-size="15" font-weight="700" fill="#1e3a8a">dimensions-analytics-mcp</text>
+  <text x="420" y="174" text-anchor="middle" font-family="ui-monospace, SFMono-Regular, Menlo, monospace" font-size="9" fill="#1d4ed8">@digital-science-dsl/dimensions-analytics-mcp</text>
+  <text x="420" y="196" text-anchor="middle" font-family="system-ui, -apple-system, Segoe UI, sans-serif" font-size="11" fill="#3b82f6">stdio transport</text>
+
+  <!-- Dimensions API -->
+  <rect x="620" y="122" width="250" height="96" rx="12" fill="#ecfdf5" stroke="#10b981" filter="url(#shadow)"/>
+  <text x="745" y="152" text-anchor="middle" font-family="system-ui, -apple-system, Segoe UI, sans-serif" font-size="15" font-weight="700" fill="#065f46">Dimensions DSL API</text>
+  <text x="745" y="174" text-anchor="middle" font-family="system-ui, -apple-system, Segoe UI, sans-serif" font-size="12" fill="#047857">app.dimensions.ai</text>
+  <text x="745" y="196" text-anchor="middle" font-family="system-ui, -apple-system, Segoe UI, sans-serif" font-size="11" fill="#10b981">HTTPS + JWT</text>
+
+  <!-- stdio arrow -->
+  <line x1="240" y1="170" x2="308" y2="170" stroke="#475569" stroke-width="2.5" marker-end="url(#arrow)"/>
+  <rect x="248" y="148" width="52" height="18" rx="9" fill="#ffffff" stroke="#cbd5e1"/>
+  <text x="274" y="161" text-anchor="middle" font-family="ui-monospace, SFMono-Regular, Menlo, monospace" font-size="10" fill="#334155">stdio</text>
+
+  <!-- HTTPS arrow -->
+  <line x1="530" y1="170" x2="618" y2="170" stroke="#2563eb" stroke-width="2.5" marker-end="url(#arrowAccent)"/>
+  <rect x="548" y="148" width="52" height="18" rx="9" fill="#ffffff" stroke="#bfdbfe"/>
+  <text x="574" y="161" text-anchor="middle" font-family="ui-monospace, SFMono-Regular, Menlo, monospace" font-size="10" fill="#1d4ed8">HTTPS</text>
+
+  <!-- API key -->
+  <path d="M420 218 L420 248 L155 248 L155 218" fill="none" stroke="#f59e0b" stroke-width="2" stroke-dasharray="5 4" marker-end="url(#arrow)"/>
+  <rect x="228" y="232" width="184" height="22" rx="11" fill="#fffbeb" stroke="#f59e0b"/>
+  <text x="320" y="247" text-anchor="middle" font-family="ui-monospace, SFMono-Regular, Menlo, monospace" font-size="10" fill="#b45309">DIMENSIONS_API_KEY (env)</text>
+</svg>

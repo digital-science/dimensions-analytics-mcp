@@ -1,0 +1,41 @@
+name: Integration
+
+# Live stdio MCP smoke — requires DIMENSIONS_API_KEY secret. Skips when unset.
+on:
+  schedule:
+    - cron: "0 6 * * *"
+  workflow_dispatch:
+
+jobs:
+  local-smoke:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+
+    steps:
+      - uses: actions/checkout@v6
+
+      - uses: pnpm/action-setup@v5
+
+      - uses: actions/setup-node@v6
+        with:
+          node-version: "22"
+          cache: pnpm
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Build
+        run: |
+          pnpm exec tsc -b --clean
+          pnpm exec tsc -b
+
+      - name: Local MCP integration smoke
+        env:
+          DIMENSIONS_API_KEY: ${{ secrets.DIMENSIONS_API_KEY }}
+          DIMENSIONS_BASE_URL: ${{ secrets.DIMENSIONS_BASE_URL }}
+        run: |
+          if [ -z "${DIMENSIONS_API_KEY}" ]; then
+            echo "Skipping local smoke: DIMENSIONS_API_KEY secret is not configured."
+            exit 0
+          fi
+          pnpm run integration:smoke

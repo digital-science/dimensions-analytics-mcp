@@ -1,0 +1,4000 @@
+{
+  "sources": {
+    "publications": {
+      "fields": {
+        "authors": {
+          "type": "json",
+          "description": "Ordered list of authors names and their affiliations, as they appear in the original publication. The list can include researcher and organization identifiers, when available (note: in order to search for disambiguated authors, use the `in researchers` syntax).",
+          "long_description": "Returned objects contain: ``first_name``, ``last_name``, ``corresponding``, ``orcid``, ``current_organization_id``, ``researcher_id``, ``affiliations`` and ``raw_affiliation``.\n\n        For example:\n        \n        .. code-block:: json\n        \n                {\n                    \"raw_affiliation\": [\n                        \"Centre for Operational Research, International Union Against Tuberculosis and Lung Disease (The Union), Paris, France.\",\n                        \"Centre for Operational Research, The Union South-East Asia Office, New Delhi, India.\"\n                    ],\n                    \"first_name\": \"Pruthu\",\n                    \"last_name\": \"Thekkur\",\n                    \"corresponding\": \"\",\n                    \"orcid\": \"['s']\",\n                    \"current_organization_id\": \"grid.435357.3\",\n                    \"researcher_id\": \"ur.0670077515.38\",\n                    \"affiliations\": [\n                        {\n                            \"raw_affiliation\": \"Centre for Operational Research, International Union Against Tuberculosis and Lung Disease (The Union), Paris, France.\",\n                            \"id\": \"grid.435357.3\",\n                            \"name\": \"International Union Against Tuberculosis and Lung Disease\",\n                            \"city\": \"Paris\",\n                            \"city_id\": 2988507,\n                            \"country\": \"France\",\n                            \"country_code\": \"FR\",\n                            \"state\": null,\n                            \"state_code\": null\n                        },\n                        {\n                            \"raw_affiliation\": \"Centre for Operational Research, The Union South-East Asia Office, New Delhi, India.\",\n                            \"id\": \"grid.8195.5\",\n                            \"name\": \"University of Delhi\",\n                            \"city\": \"New Delhi\",\n                            \"city_id\": 1261481,\n                            \"country\": \"India\",\n                            \"country_code\": \"IN\",\n                            \"state\": null,\n                            \"state_code\": null\n                        }\n                    ]\n                }",
+          "is_entity": false,
+          "is_filter": true,
+          "is_facet": false,
+          "is_multivalue": true,
+          "solr_fields": { "return": "affiliations", "filter": "author_list" }
+        },
+        "type": {
+          "type": "string",
+          "description": "Publication type (one of: article, chapter, proceeding, monograph, preprint or book).",
+          "long_description": null,
+          "is_entity": false,
+          "is_filter": true,
+          "is_facet": false,
+          "is_multivalue": false,
+          "solr_fields": { "return": "pub_class", "filter": "pub_class" }
+        },
+        "arxiv_id": {
+          "type": "string",
+          "description": "The publications arXiv identifier (e.g. \u2018arXiv:2102.02477\u2019).",
+          "long_description": null,
+          "is_entity": false,
+          "is_filter": true,
+          "is_facet": false,
+          "is_multivalue": false,
+          "solr_fields": { "return": "arxiv_id", "filter": "arxiv_id" }
+        },
+        "date_online": {
+          "type": "string",
+          "description": "The publication online date.",
+          "long_description": null,
+          "is_entity": false,
+          "is_filter": true,
+          "is_facet": false,
+          "is_multivalue": false,
+          "solr_fields": { "return": "online_pub_date", "filter": "online_pub_date" }
+        },
+        "funders": {
+          "type": "organizations",
+          "description": "The GRID organisation funding this publication.",
+          "long_description": null,
+          "is_entity": true,
+          "is_filter": true,
+          "is_facet": false,
+          "is_multivalue": true,
+          "solr_fields": { "return": "funder_grid_ids", "filter": "funder_grid_ids" }
+        },
+        "category_hrcs_hc": {
+          "type": "categories",
+          "description": "`HRCS - Health Categories <https://dimensions.freshdesk.com/support/solutions/articles/23000018820-what-are-fields-of-research-and-other-classification-systems-and-how-are-they-created->`_",
+          "long_description": null,
+          "is_entity": true,
+          "is_filter": true,
+          "is_facet": false,
+          "is_multivalue": true,
+          "solr_fields": { "return": "hrcs_hc_2020", "filter": "hrcs_hc_2020" }
+        },
+        "date_inserted": {
+          "type": "date",
+          "description": "Date when the record was inserted into Dimensions (note: this field does not support exact match on the data, only range filters e.g. `<=` or `>=').",
+          "long_description": null,
+          "is_entity": false,
+          "is_filter": true,
+          "is_facet": false,
+          "is_multivalue": false,
+          "solr_fields": { "return": "created_in_dimensions", "filter": "created_in_dimensions" }
+        },
+        "pages": {
+          "type": "string",
+          "description": "The pages of the publication, as they would appear in a citation record.",
+          "long_description": null,
+          "is_entity": false,
+          "is_filter": true,
+          "is_facet": false,
+          "is_multivalue": false,
+          "solr_fields": { "return": "pages", "filter": "pages" }
+        },
+        "resulting_publication_doi": {
+          "type": "string",
+          "description": "For preprints, the DOIs of the resulting full publications.",
+          "long_description": null,
+          "is_entity": false,
+          "is_filter": true,
+          "is_facet": false,
+          "is_multivalue": false,
+          "solr_fields": {
+            "return": "resulting_publication_doi",
+            "filter": "resulting_publication_doi"
+          }
+        },
+        "research_org_cities": {
+          "type": "cities",
+          "description": "City of the organisations authors are affiliated to, expressed as GeoNames ID and name.",
+          "long_description": null,
+          "is_entity": true,
+          "is_filter": true,
+          "is_facet": false,
+          "is_multivalue": true,
+          "solr_fields": { "return": "aff_city_geonames_ids", "filter": "aff_city_geonames_ids" }
+        },
+        "pmid": {
+          "type": "string",
+          "description": "PubMed ID.",
+          "long_description": null,
+          "is_entity": false,
+          "is_filter": true,
+          "is_facet": false,
+          "is_multivalue": false,
+          "solr_fields": { "return": "pmid", "filter": "pmid" }
+        },
+        "volume": {
+          "type": "string",
+          "description": "Publication volume.",
+          "long_description": null,
+          "is_entity": false,
+          "is_filter": true,
+          "is_facet": false,
+          "is_multivalue": false,
+          "solr_fields": { "return": "volume", "filter": "volume" }
+        },
+        "altmetric_id": {
+          "type": "integer",
+          "description": "Altmetric Publication ID",
+          "long_description": null,
+          "is_entity": false,
+          "is_filter": true,
+          "is_facet": false,
+          "is_multivalue": false,
+          "solr_fields": { "return": "altmetric_id", "filter": "altmetric_id" }
+        },
+        "journal_title_raw": {
+          "type": "string",
+          "description": "The journal title, as it appears in the original source (note: this field can be used to retrieve historical titles of journals whose official title was later updated).",
+          "long_description": null,
+          "is_entity": false,
+          "is_filter": true,
+          "is_facet": false,
+          "is_multivalue": false,
+          "solr_fields": { "return": "journal_title_original", "filter": "journal_title_original" }
+        },
+        "journal_lists": {
+          "type": "string",
+          "description": "Independent grouping of journals outside of Dimensions, e.g. 'ERA 2015' or 'Norwegian register level 1'.",
+          "long_description": null,
+          "is_entity": false,
+          "is_filter": true,
+          "is_facet": false,
+          "is_multivalue": true,
+          "solr_fields": { "return": "journallist_names", "filter": "journallist_names" }
+        },
+        "research_org_names": {
+          "type": "string",
+          "description": "Names of organizations authors are affiliated to. If the organization has a GRID ID, the canonical organization name is used. Otherwise the original affiliation string is used.",
+          "long_description": null,
+          "is_entity": false,
+          "is_filter": true,
+          "is_facet": false,
+          "is_multivalue": true,
+          "solr_fields": { "return": "aff_org_name", "filter": "aff_org_name" }
+        },
+        "category_icrp_cso": {
+          "type": "categories",
+          "description": "`ICRP Common Scientific Outline <https://dimensions.freshdesk.com/support/solutions/articles/23000018820-what-are-fields-of-research-and-other-classification-systems-and-how-are-they-created->`_",
+          "long_description": null,
+          "is_entity": true,
+          "is_filter": true,
+          "is_facet": false,
+          "is_multivalue": true,
+          "solr_fields": { "return": "icrp_cso_2020", "filter": "icrp_cso_2020" }
+        },
+        "research_org_countries": {
+          "type": "countries",
+          "description": "Country of the organisations authors are affiliated to, identified using GeoNames codes (note: this field supports :ref:`filter-functions`: ``count``).",
+          "long_description": null,
+          "is_entity": true,
+          "is_filter": true,
+          "is_facet": false,
+          "is_multivalue": true,
+          "solr_fields": { "return": "aff_country_codes", "filter": "aff_country_codes" }
+        },
+        "proceedings_title": {
+          "type": "string",
+          "description": "Title of the conference proceedings volume associated to a publication.",
+          "long_description": null,
+          "is_entity": false,
+          "is_filter": false,
+          "is_facet": false,
+          "is_multivalue": false,
+          "solr_fields": { "return": "proceedings_title", "filter": "proceedings_title" }
+        },
+        "clinical_trial_ids": {
+          "type": "string",
+          "description": "Clinical Trial IDs mentioned in publications full text.",
+          "long_description": null,
+          "is_entity": false,
+          "is_filter": true,
+          "is_facet": false,
+          "is_multivalue": true,
+          "solr_fields": { "return": "clinical_trial_ids", "filter": "clinical_trial_ids" }
+        },
+        "concepts_scores": {
+          "type": "json",
+          "description": "Relevancy scores for `concepts`.",
+          "long_description": "Returned objects contain: ``concept``, ``relevance``.\n                                            \n                                            For example:\n                                            \n    .. code-block:: json\n    \n        {\n            \"concepts_scores\": [\n                {\n                  \"concept\": \"professional relations\",\n                  \"relevance\": 0.088\n                },\n                {\n                  \"concept\": \"relation\",\n                  \"relevance\": 0.062\n                },\n                {\n                  \"concept\": \"representation\",\n                  \"relevance\": 0.025\n                },\n                {\n                  \"concept\": \"skald\",\n                  \"relevance\": 6.984\n                },\n                {\n                  \"concept\": \"Representations of Skalds\",\n                  \"relevance\": 0.0\n                },\n                {\n                  \"concept\": \"Sagas 1\",\n                  \"relevance\": 0.0\n                }\n            ]\n        }",
+          "is_entity": false,
+          "is_filter": true,
+          "is_facet": false,
+          "is_multivalue": false,
+          "solr_fields": { "return": "terms_v6", "filter": "phrases_search_v6" }
+        },
+        "mesh_terms": {
+          "type": "string",
+          "description": "Medical Subject Heading terms as used in PubMed.",
+          "long_description": null,
+          "is_entity": false,
+          "is_filter": true,
+          "is_facet": false,
+          "is_multivalue": true,
+          "solr_fields": { "return": "mesh_terms", "filter": "mesh_terms_search" }
+        },
+        "date": {
+          "type": "date",
+          "description": "The publication date for the version of record of a document (note: incomplete dates are always normalised as \u2018YYYY-MM-DD\u2019, so \"2018-01\" becomes \"2018-01-01\".).",
+          "long_description": null,
+          "is_entity": false,
+          "is_filter": true,
+          "is_facet": false,
+          "is_multivalue": false,
+          "solr_fields": { "return": "pub_date_normalized", "filter": "pub_date_normalized" }
+        },
+        "doi": {
+          "type": "string",
+          "description": "Digital object identifier.",
+          "long_description": null,
+          "is_entity": false,
+          "is_filter": true,
+          "is_facet": false,
+          "is_multivalue": false,
+          "solr_fields": { "return": "doi", "filter": "doi" }
+        },
+        "linkout": {
+          "type": "string",
+          "description": "Original URL for a publication full text.",
+          "long_description": null,
+          "is_entity": false,
+          "is_filter": false,
+          "is_facet": false,
+          "is_multivalue": false,
+          "solr_fields": { "return": "linkout_oa", "filter": "linkout_oa" }
+        },
+        "category_hra": {
+          "type": "categories",
+          "description": "`Health Research Areas <https://dimensions.freshdesk.com/support/solutions/articles/23000018820-what-are-fields-of-research-and-other-classification-systems-and-how-are-they-created->`_",
+          "long_description": null,
+          "is_entity": true,
+          "is_filter": true,
+          "is_facet": false,
+          "is_multivalue": true,
+          "solr_fields": { "return": "health_research_areas", "filter": "health_research_areas" }
+        },
+        "dimensions_url": {
+          "type": "string",
+          "description": "Link pointing to the Dimensions web application",
+          "long_description": null,
+          "is_entity": false,
+          "is_filter": false,
+          "is_facet": false,
+          "is_multivalue": false,
+          "solr_fields": { "return": "id", "filter": "id" }
+        },
+        "pmcid": {
+          "type": "string",
+          "description": "PubMed Central ID.",
+          "long_description": null,
+          "is_entity": false,
+          "is_filter": true,
+          "is_facet": false,
+          "is_multivalue": false,
+          "solr_fields": { "return": "pmc_id", "filter": "pmc_id" }
+        },
+        "date_print": {
+          "type": "string",
+          "description": "The publication print date.",
+          "long_description": null,
+          "is_entity": false,
+          "is_filter": true,
+          "is_facet": false,
+          "is_multivalue": false,
+          "solr_fields": { "return": "print_pub_date", "filter": "print_pub_date" }
+        },
+        "book_series_title": {
+          "type": "string",
+          "description": "The title of the book series book, belong to.",
+          "long_description": null,
+          "is_entity": false,
+          "is_filter": false,
+          "is_facet": false,
+          "is_multivalue": false,
+          "solr_fields": { "return": "book_series_title", "filter": "book_series_title" }
+        },
+        "category_for": {
+          "type": "categories",
+          "description": "`ANZSRC Fields of Research classification <https://dimensions.freshdesk.com/support/solutions/articles/23000018820-what-are-fields-of-research-and-other-classification-systems-and-how-are-they-created->`_ (alias for most recent version).",
+          "long_description": null,
+          "is_entity": true,
+          "is_filter": true,
+          "is_facet": false,
+          "is_multivalue": true,
+          "solr_fields": { "return": "for_2020_2022", "filter": "for_2020_2022" }
+        },
+        "research_org_country_names": {
+          "type": "string",
+          "description": "Country name of the organisations authors are affiliated to, as a string.",
+          "long_description": null,
+          "is_entity": false,
+          "is_filter": true,
+          "is_facet": false,
+          "is_multivalue": true,
+          "solr_fields": { "return": "aff_country_name", "filter": "aff_country_name" }
+        },
+        "abstract": {
+          "type": "string",
+          "description": "The publication abstract.",
+          "long_description": null,
+          "is_entity": false,
+          "is_filter": false,
+          "is_facet": false,
+          "is_multivalue": false,
+          "solr_fields": { "return": "abstract", "filter": "abstract" }
+        },
+        "title": {
+          "type": "string",
+          "description": "Title of a publication.",
+          "long_description": null,
+          "is_entity": false,
+          "is_filter": false,
+          "is_facet": false,
+          "is_multivalue": false,
+          "solr_fields": { "return": "title", "filter": "title" }
+        },
+        "relative_citation_ratio": {
+          "type": "float",
+          "description": "Relative citation performance of an article when compared to others in its area of research (note: does not support emptiness filters).",
+          "long_description": null,
+          "is_entity": false,
+          "is_filter": true,
+          "is_facet": false,
+          "is_multivalue": false,
+          "solr_fields": {
+            "return": "relative_citation_ratio",
+            "filter": "relative_citation_ratio"
+          }
+        },
+        "id": {
+          "type": "string",
+          "description": "Dimensions publication ID.",
+          "long_description": null,
+          "is_entity": false,
+          "is_filter": true,
+          "is_facet": false,
+          "is_multivalue": false,
+          "solr_fields": { "return": "id", "filter": "id" }
+        },
+        "category_sdg": {
+          "type": "categories",
+          "description": "SDG - Sustainable Development Goals",
+          "long_description": null,
+          "is_entity": true,
+          "is_filter": true,
+          "is_facet": false,
+          "is_multivalue": true,
+          "solr_fields": { "return": "sdg_2021", "filter": "sdg_2021" }
+        },
+        "field_citation_ratio": {
+          "type": "float",
+          "description": "Relative citation performance of article when compared to similarly aged articles in its area of research (note: does not support emptiness filters).",
+          "long_description": null,
+          "is_entity": false,
+          "is_filter": true,
+          "is_facet": false,
+          "is_multivalue": false,
+          "solr_fields": {
+            "return": "field_citation_ratio_2020",
+            "filter": "field_citation_ratio_2020"
+          }
+        },
+        "research_orgs": {
+          "type": "organizations",
+          "description": "GRID organisations associated to a publication. Identifiers are automatically extracted from author affiliations text, so they can be missing in some cases (note: this field supports :ref:`filter-functions`: ``count``).",
+          "long_description": null,
+          "is_entity": true,
+          "is_filter": true,
+          "is_facet": false,
+          "is_multivalue": true,
+          "solr_fields": { "return": "aff_org_id", "filter": "aff_org_id" }
+        },
+        "reference_ids": {
+          "type": "string",
+          "description": "Dimensions publication ID for publications in the references list, i.e. outgoing citations (see also: :ref:`publications_model` section).",
+          "long_description": null,
+          "is_entity": false,
+          "is_filter": true,
+          "is_facet": false,
+          "is_multivalue": true,
+          "solr_fields": { "return": "cited_dimensions_ids", "filter": "cited_dimensions_ids" }
+        },
+        "category_uoa": {
+          "type": "categories",
+          "description": "`Units of Assessment <https://dimensions.freshdesk.com/support/solutions/articles/23000018820-what-are-fields-of-research-and-other-classification-systems-and-how-are-they-created->`_",
+          "long_description": null,
+          "is_entity": true,
+          "is_filter": true,
+          "is_facet": false,
+          "is_multivalue": true,
+          "solr_fields": { "return": "uoa_2023", "filter": "uoa_2023" }
+        },
+        "journal": {
+          "type": "journals",
+          "description": "The journal a publication belongs to.",
+          "long_description": null,
+          "is_entity": true,
+          "is_filter": true,
+          "is_facet": false,
+          "is_multivalue": false,
+          "solr_fields": { "return": "source_title_id", "filter": "source_title_id" }
+        },
+        "referenced_pubs": {
+          "type": "publication_links",
+          "description": "Publication IDs of the publications in the references list, i.e. outgoing citations.",
+          "long_description": null,
+          "is_entity": true,
+          "is_filter": true,
+          "is_facet": false,
+          "is_multivalue": true,
+          "solr_fields": { "return": "cited_dimensions_ids", "filter": "cited_dimensions_ids" }
+        },
+        "category_icrp_ct": {
+          "type": "categories",
+          "description": "`ICRP Cancer Types <https://dimensions.freshdesk.com/support/solutions/articles/23000018820-what-are-fields-of-research-and-other-classification-systems-and-how-are-they-created->`_",
+          "long_description": null,
+          "is_entity": true,
+          "is_filter": true,
+          "is_facet": false,
+          "is_multivalue": true,
+          "solr_fields": { "return": "icrp_ct_2020", "filter": "icrp_ct_2020" }
+        },
+        "category_hrcs_rac": {
+          "type": "categories",
+          "description": "`HRCS \u2013 Research Activity Codes <https://dimensions.freshdesk.com/support/solutions/articles/23000018820-what-are-fields-of-research-and-other-classification-systems-and-how-are-they-created->`_",
+          "long_description": null,
+          "is_entity": true,
+          "is_filter": true,
+          "is_facet": false,
+          "is_multivalue": true,
+          "solr_fields": { "return": "hrcs_rac_2020", "filter": "hrcs_rac_2020" }
+        },
+        "supporting_grant_ids": {
+          "type": "string",
+          "description": "Grants supporting a publication, returned as a list of dimensions grants IDs  (see also: :ref:`publications_model` section).",
+          "long_description": null,
+          "is_entity": false,
+          "is_filter": true,
+          "is_facet": false,
+          "is_multivalue": true,
+          "solr_fields": { "return": "uber_grant_id", "filter": "uber_grant_id" }
+        },
+        "year": {
+          "type": "integer",
+          "description": "The year for the version of record of publication (note: when the `date` field is available, this is equal to the year part of the full date).",
+          "long_description": null,
+          "is_entity": false,
+          "is_filter": true,
+          "is_facet": false,
+          "is_multivalue": false,
+          "solr_fields": { "return": "pub_year", "filter": "pub_year" }
+        },
+        "times_cited": {
+          "type": "integer",
+          "description": "Number of citations (note: does not support emptiness filters).",
+          "long_description": null,
+          "is_entity": false,
+          "is_filter": true,
+          "is_facet": false,
+          "is_multivalue": false,
+          "solr_fields": { "return": "times_cited", "filter": "times_cited" }
+        },
+        "book_title": {
+          "type": "string",
+          "description": "The title of the book a chapter belongs to (note: this field is available only for chapters).",
+          "long_description": null,
+          "is_entity": false,
+          "is_filter": false,
+          "is_facet": false,
+          "is_multivalue": false,
+          "solr_fields": { "return": "book_title", "filter": "book_title" }
+        },
+        "recent_citations": {
+          "type": "integer",
+          "description": "Number of citations received in the last two years. Does not support emptiness filters",
+          "long_description": null,
+          "is_entity": false,
+          "is_filter": true,
+          "is_facet": false,
+          "is_multivalue": false,
+          "solr_fields": { "return": "recent_citations", "filter": "recent_citations" }
+        },
+        "research_org_state_names": {
+          "type": "string",
+          "description": "State name of the organisations authors are affiliated to, as a string.",
+          "long_description": null,
+          "is_entity": false,
+          "is_filter": false,
+          "is_facet": false,
+          "is_multivalue": true,
+          "solr_fields": { "return": "aff_state_name", "filter": "aff_state_name" }
+        },
+        "concepts": {
+          "type": "json",
+          "description": "Concepts describing the main topics of a publication (note: automatically derived from the publication text using machine learning).",
+          "long_description": null,
+          "is_entity": false,
+          "is_filter": true,
+          "is_facet": false,
+          "is_multivalue": false,
+          "solr_fields": { "return": "terms_v6", "filter": "phrases_search_v6" }
+        },
+        "issue": {
+          "type": "string",
+          "description": "The issue number of a publication.",
+          "long_description": null,
+          "is_entity": false,
+          "is_filter": true,
+          "is_facet": false,
+          "is_multivalue": false,
+          "solr_fields": { "return": "issue", "filter": "issue" }
+        },
+        "open_access": {
+          "type": "string",
+          "description": "Open Access categories for publications (`more info <https://dimensions.freshdesk.com/support/solutions/articles/23000018863-where-does-the-definition-of-open-access-come-from-in-dimensions-what-does-it-include->`_)",
+          "long_description": "Open Access category data for publications values:\n\n        * `oa_all`: Publication is either gold, hybrid, bronze or green OA.\n        * `hybrid`: Publication freely available under an open licence in a paid-access journal\n        * `bronze`: Document freely available on publisher page, but without an open licence and not in a full OA journal\n        * `gold`: Publication published in a full OA journal\n        * `green`: Free copy of the publication available in an OA repository\n        * `closed`: No freely available copy has been identified",
+          "is_entity": false,
+          "is_filter": true,
+          "is_facet": false,
+          "is_multivalue": true,
+          "solr_fields": {
+            "return": "open_access_status_analytics_v2",
+            "filter": "open_access_status_analytics_v2"
+          }
+        },
+        "funder_countries": {
+          "type": "countries",
+          "description": "The country of the organisations funding this publication.",
+          "long_description": null,
+          "is_entity": true,
+          "is_filter": true,
+          "is_facet": false,
+          "is_multivalue": true,
+          "solr_fields": { "return": "funder_country_codes", "filter": "funder_country_codes" }
+        },
+        "research_org_state_codes": {
+          "type": "states",
+          "description": "State of the organisations authors are affiliated to, expressed as GeoNames codes (ISO\u200c-3166-2).",
+          "long_description": null,
+          "is_entity": true,
+          "is_filter": true,
+          "is_facet": false,
+          "is_multivalue": true,
+          "solr_fields": { "return": "aff_state_codes", "filter": "aff_state_codes" }
+        },
+        "authors_count": {
+          "type": "integer",
+          "description": "Count of authors, as they appear in the original publication.",
+          "long_description": null,
+          "is_entity": false,
+          "is_filter": true,
+          "is_facet": false,
+          "is_multivalue": false,
+          "solr_fields": { "return": "authors_count", "filter": "authors_count" }
+        },
+        "category_rcdc": {
+          "type": "categories",
+          "description": "`Research, Condition, and Disease Categorization <https://dimensions.freshdesk.com/support/solutions/articles/23000018820-what-are-fields-of-research-and-other-classification-systems-and-how-are-they-created->`_",
+          "long_description": null,
+          "is_entity": true,
+          "is_filter": true,
+          "is_facet": false,
+          "is_multivalue": true,
+          "solr_fields": { "return": "rcdc_2023", "filter": "rcdc_2023" }
+        },
+        "category_bra": {
+          "type": "categories",
+          "description": "`Broad Research Areas <https://dimensions.freshdesk.com/support/solutions/articles/23000018820-what-are-fields-of-research-and-other-classification-systems-and-how-are-they-created->`_",
+          "long_description": null,
+          "is_entity": true,
+          "is_filter": true,
+          "is_facet": false,
+          "is_multivalue": true,
+          "solr_fields": { "return": "bra_2020", "filter": "bra_2020" }
+        },
+        "source_title": {
+          "type": "source_titles",
+          "description": "Source Title for the Publication.",
+          "long_description": null,
+          "is_entity": true,
+          "is_filter": true,
+          "is_facet": false,
+          "is_multivalue": false,
+          "solr_fields": { "return": "source_title_id", "filter": "source_title_id" }
+        },
+        "subtitles": {
+          "type": "string",
+          "description": "Subtitles of a publication (when available).",
+          "long_description": null,
+          "is_entity": false,
+          "is_filter": false,
+          "is_facet": false,
+          "is_multivalue": true,
+          "solr_fields": { "return": "sub_titles", "filter": "sub_titles" }
+        },
+        "category_for_2020": {
+          "type": "categories",
+          "description": "`ANZSRC Fields of Research classification <https://dimensions.freshdesk.com/support/solutions/articles/23000018820-what-are-fields-of-research-and-other-classification-systems-and-how-are-they-created->`_",
+          "long_description": null,
+          "is_entity": true,
+          "is_filter": true,
+          "is_facet": false,
+          "is_multivalue": true,
+          "solr_fields": { "return": "for_2020_2022", "filter": "for_2020_2022" }
+        },
+        "issn": {
+          "type": "string",
+          "description": "International Standard Serial Number",
+          "long_description": null,
+          "is_entity": false,
+          "is_filter": true,
+          "is_facet": false,
+          "is_multivalue": true,
+          "solr_fields": { "return": "issn", "filter": "issn" }
+        },
+        "researchers": {
+          "type": "researchers",
+          "description": "Researcher IDs matched to the publication's authors list. (note: this returns only the disambiguated authors of a publication; in order to get the full authors list, the field `authors` should be used). This field supports :ref:`filter-functions`: ``count``.",
+          "long_description": null,
+          "is_entity": true,
+          "is_filter": true,
+          "is_facet": false,
+          "is_multivalue": true,
+          "solr_fields": { "return": "researcher_dim_id", "filter": "researcher_dim_id" }
+        },
+        "altmetric": {
+          "type": "float",
+          "description": "Altmetric Attention Score.",
+          "long_description": null,
+          "is_entity": false,
+          "is_filter": true,
+          "is_facet": false,
+          "is_multivalue": false,
+          "solr_fields": { "return": "altmetric", "filter": "altmetric" }
+        },
+        "publisher": {
+          "type": "string",
+          "description": "Name of the publisher as a string.",
+          "long_description": null,
+          "is_entity": false,
+          "is_filter": true,
+          "is_facet": false,
+          "is_multivalue": false,
+          "solr_fields": { "return": "publisher", "filter": "publisher_search" }
+        },
+        "book_doi": {
+          "type": "string",
+          "description": "The DOI of the book a chapter belongs to (note: this field is available only for chapters).",
+          "long_description": null,
+          "is_entity": false,
+          "is_filter": true,
+          "is_facet": false,
+          "is_multivalue": false,
+          "solr_fields": { "return": "book_doi", "filter": "book_doi" }
+        },
+        "acknowledgements": {
+          "type": "string",
+          "description": "The acknowledgements section text as found in the source document.",
+          "long_description": null,
+          "is_entity": false,
+          "is_filter": false,
+          "is_facet": false,
+          "is_multivalue": false,
+          "solr_fields": { "return": "acknowledgements", "filter": "acknowledgements" }
+        }
+      },
+      "fieldsets": ["basics", "extras", "book", "categories"],
+      "metrics": {
+        "count": { "name": "count", "description": "Total count" },
+        "altmetric_median": {
+          "name": "altmetric_median",
+          "description": "Median Altmetric Attention Score"
+        },
+        "altmetric_avg": {
+          "name": "altmetric_avg",
+          "description": "Altmetric Attention Score mean"
+        },
+        "citations_total": {
+          "name": "citations_total",
+          "description": "Aggregated number of citations"
+        },
+        "citations_avg": { "name": "citations_avg", "description": "Arithmetic mean of citations" },
+        "citations_median": { "name": "citations_median", "description": "Median of citations" },
+        "recent_citations_total": {
+          "name": "recent_citations_total",
+          "description": "For a given article, in a given year, the number of citations accrued in the last two year period. Single value stored per document, year window rolls over in July."
+        },
+        "rcr_avg": {
+          "name": "rcr_avg",
+          "description": "Arithmetic mean of `relative_citation_ratio` field."
+        },
+        "fcr_gavg": {
+          "name": "fcr_gavg",
+          "description": "Geometric mean of `field_citation_ratio` field (note: This field cannot be used for sorting results)."
+        }
+      },
+      "search_fields": [
+        "title_only",
+        "terms",
+        "authors",
+        "title_abstract_only",
+        "full_data",
+        "full_data_exact",
+        "acknowledgements",
+        "concepts"
+      ]
+    },
+    "grants": {
+      "fields": {
+        "end_date": {
+          "type": "date",
+          "description": "Date when the grant ends.",
+          "long_description": null,
+          "is_entity": false,
+          "is_filter": true,
+          "is_facet": false,
+          "is_multivalue": false,
+          "solr_fields": { "return": "end_date", "filter": "end_date" }
+        },
+        "language": {
+          "type": "string",
+          "description": "Grant original language, as ISO 639-1 language codes.",
+          "long_description": null,
+          "is_entity": false,
+          "is_filter": true,
+          "is_facet": false,
+          "is_multivalue": false,
+          "solr_fields": { "return": "language", "filter": "language" }
+        },
+        "funding_currency": {
+          "type": "string",
+          "description": "Original funding currency.",
+          "long_description": null,
+          "is_entity": false,
+          "is_filter": true,
+          "is_facet": false,
+          "is_multivalue": false,
+          "solr_fields": { "return": "funding_currency", "filter": "funding_currency" }
+        },
+        "funders": {
+          "type": "organizations",
+          "description": "The organisation funding the grant. This is normally a GRID organisation, but in very few cases a Dimensions funder ID is used.",
+          "long_description": null,
+          "is_entity": true,
+          "is_filter": true,
+          "is_facet": false,
+          "is_multivalue": true,
+          "solr_fields": { "return": "funding_org_id", "filter": "funding_org_id" }
+        },
+        "funder_orgs": {
+          "type": "organizations",
+          "description": "GRID organisations funding the grant.",
+          "long_description": null,
+          "is_entity": true,
+          "is_filter": true,
+          "is_facet": false,
+          "is_multivalue": true,
+          "solr_fields": { "return": "funding_org_id", "filter": "funding_org_id" }
+        },
+        "funder_org_name": {
+          "type": "string",
+          "description": "Name of funding organisation.",
+          "long_description": null,
+          "is_entity": false,
+          "is_filter": true,
+          "is_facet": true,
+          "is_multivalue": false,
+          "solr_fields": { "return": "funding_org_name", "filter": "funding_org_name" }
+        },
+        "category_hrcs_hc": {
+          "type": "categories",
+          "description": "`HRCS - Health Categories <https://dimensions.freshdesk.com/support/solutions/articles/23000018820-what-are-fields-of-research-and-other-classification-systems-and-how-are-they-created->`_ .",
+          "long_description": null,
+          "is_entity": true,
+          "is_filter": true,
+          "is_facet": false,
+          "is_multivalue": true,
+          "solr_fields": { "return": "hrcs_hc_2020", "filter": "hrcs_hc_2020" }
+        },
+        "date_inserted": {
+          "type": "date",
+          "description": "Date when the record was inserted into Dimensions (note: this field does not support exact match on the data, only range filters e.g. `<=` or `>=`).",
+          "long_description": null,
+          "is_entity": false,
+          "is_filter": true,
+          "is_facet": false,
+          "is_multivalue": false,
+          "solr_fields": { "return": "created_in_dimensions", "filter": "created_in_dimensions" }
+        },
+        "research_org_cities": {
+          "type": "cities",
+          "description": "City of the research organisations receiving the grant, expressed as GeoNames id and name.",
+          "long_description": null,
+          "is_entity": true,
+          "is_filter": true,
+          "is_facet": false,
+          "is_multivalue": true,
+          "solr_fields": {
+            "return": "research_city_geonames_ids",
+            "filter": "research_city_geonames_ids"
+          }
+        },
+        "funding_org_city": {
+          "type": "string",
+          "description": "City name for funding organisation.",
+          "long_description": null,
+          "is_entity": false,
+          "is_filter": true,
+          "is_facet": false,
+          "is_multivalue": false,
+          "solr_fields": { "return": "funding_org_city", "filter": "funding_org_city" }
+        },
+        "funding_org_acronym": {
+          "type": "string",
+          "description": "Acronym for funding organisation.",
+          "long_description": null,
+          "is_entity": false,
+          "is_filter": true,
+          "is_facet": false,
+          "is_multivalue": false,
+          "solr_fields": { "return": "funding_org_acronym", "filter": "funding_org_acronym" }
+        },
+        "funding_eur": {
+          "type": "float",
+          "description": "Funding amount awarded in EUR.",
+          "long_description": null,
+          "is_entity": false,
+          "is_filter": true,
+          "is_facet": false,
+          "is_multivalue": false,
+          "solr_fields": { "return": "funding_amount_in_eur", "filter": "funding_amount_in_eur" }
+        },
+        "research_org_names": {
+          "type": "string",
+          "description": "Names of organizations investigators are affiliated to. If the organization has a GRID ID, the canonical organization name is used. Otherwise the original affiliation string is used.",
+          "long_description": null,
+          "is_entity": false,
+          "is_filter": true,
+          "is_facet": false,
+          "is_multivalue": true,
+          "solr_fields": { "return": "org_names", "filter": "org_names" }
+        },
+        "category_icrp_cso": {
+          "type": "categories",
+          "description": "`ICRP Common Scientific Outline <https://dimensions.freshdesk.com/support/solutions/articles/23000018820-what-are-fields-of-research-and-other-classification-systems-and-how-are-they-created->`_",
+          "long_description": null,
+          "is_entity": true,
+          "is_filter": true,
+          "is_facet": false,
+          "is_multivalue": true,
+          "solr_fields": { "return": "icrp_cso_2020", "filter": "icrp_cso_2020" }
+        },
+        "research_org_countries": {
+          "type": "countries",
+          "description": "Country of the research organisations receiving the grant, expressed as GeoNames code and name.",
+          "long_description": null,
+          "is_entity": true,
+          "is_filter": true,
+          "is_facet": false,
+          "is_multivalue": true,
+          "solr_fields": { "return": "research_country_codes", "filter": "research_country_codes" }
+        },
+        "investigators": {
+          "type": "json",
+          "description": "Additional details about investigators, including affiliations and roles e.g. 'PI' or 'Co-PI' (note: if the investigator has a Dimensions researcher ID, that is returned as well).",
+          "long_description": "Returned objects contain: ``id``, ``first_name``, ``middle_name``, ``last_name``, ``role``, ``affiliations``\n                                           \n                                           For example:\n\n    .. code-block:: json\n\n        {\n            \"investigator_details\":[\n                {\n                    \"id\":\"ur.012516501745.79\",\n                    \"first_name\":\"O.\",\n                    \"middle_name\":\"\",\n                    \"last_name\":\"Mitas\",\n                    \"role\":\"PI\",\n                    \"affiliations\":[\n                        {\n                            \"id\":\"grid.5477.1\",\n                            \"name\":\"Breda University of Applied Sciences\",\n                            \"city\":null,\n                            \"city_id\":\"2745912\",\n                            \"state\":null,\n                            \"state_code\":null,\n                            \"country\":null,\n                            \"country_code\":\"NL\"\n                        }\n                    ]\n                }\n            ]\n        }",
+          "is_entity": false,
+          "is_filter": true,
+          "is_facet": false,
+          "is_multivalue": false,
+          "solr_fields": { "return": "researcher_details", "filter": "researcher_list" }
+        },
+        "grant_number": {
+          "type": "string",
+          "description": "Grant identifier, as provided by the source (e.g., funder, aggregator) the grant was derived from.",
+          "long_description": null,
+          "is_entity": false,
+          "is_filter": true,
+          "is_facet": false,
+          "is_multivalue": false,
+          "solr_fields": { "return": "project_num", "filter": "project_num" }
+        },
+        "concepts_scores": {
+          "type": "json",
+          "description": "Relevancy scores for `concepts`.",
+          "long_description": "Returned objects contain: ``concept``, ``relevance``.\n                                            \n                                            For example:\n                                            \n    .. code-block:: json\n    \n        {\n            \"concepts_scores\": [\n                {\n                  \"concept\": \"professional relations\",\n                  \"relevance\": 0.08789352253426701\n                },\n                {\n                  \"concept\": \"relation\",\n                  \"relevance\": 0.062333122509877006\n                },\n                {\n                  \"concept\": \"representation\",\n                  \"relevance\": 0.025851134800039\n                },\n                {\n                  \"concept\": \"skald\",\n                  \"relevance\": 6.984149644517923e-05\n                },\n                {\n                  \"concept\": \"Representations of Skalds\",\n                  \"relevance\": 0.0\n                },\n                {\n                  \"concept\": \"Sagas 1\",\n                  \"relevance\": 0.0\n                }\n            ]\n        }",
+          "is_entity": false,
+          "is_filter": true,
+          "is_facet": false,
+          "is_multivalue": false,
+          "solr_fields": { "return": "terms_v6", "filter": "phrases_search_v6" }
+        },
+        "linkout": {
+          "type": "string",
+          "description": "Original URL for the grant.",
+          "long_description": null,
+          "is_entity": false,
+          "is_filter": false,
+          "is_facet": false,
+          "is_multivalue": false,
+          "solr_fields": { "return": "linkout", "filter": "linkout" }
+        },
+        "category_hra": {
+          "type": "categories",
+          "description": "`Health Research Areas <https://dimensions.freshdesk.com/support/solutions/articles/23000018820-what-are-fields-of-research-and-other-classification-systems-and-how-are-they-created->`_",
+          "long_description": null,
+          "is_entity": true,
+          "is_filter": true,
+          "is_facet": false,
+          "is_multivalue": true,
+          "solr_fields": { "return": "hra", "filter": "hra" }
+        },
+        "dimensions_url": {
+          "type": "string",
+          "description": "Link pointing to the Dimensions web application",
+          "long_description": null,
+          "is_entity": false,
+          "is_filter": false,
+          "is_facet": false,
+          "is_multivalue": false,
+          "solr_fields": { "return": "id", "filter": "id" }
+        },
+        "start_year": {
+          "type": "integer",
+          "description": "Year when the grant starts.",
+          "long_description": null,
+          "is_entity": false,
+          "is_filter": true,
+          "is_facet": false,
+          "is_multivalue": false,
+          "solr_fields": { "return": "start_year", "filter": "start_year" }
+        },
+        "funding_usd": {
+          "type": "float",
+          "description": "Funding amount awarded in USD.",
+          "long_description": null,
+          "is_entity": false,
+          "is_filter": true,
+          "is_facet": false,
+          "is_multivalue": false,
+          "solr_fields": { "return": "funding_amount_in_usd", "filter": "funding_amount_in_usd" }
+        },
+        "funding_org_name": {
+          "type": "string",
+          "description": "Name of funding organisation.",
+          "long_description": null,
+          "is_entity": false,
+          "is_filter": true,
+          "is_facet": false,
+          "is_multivalue": false,
+          "solr_fields": { "return": "funding_org_name", "filter": "funding_org_name" }
+        },
+        "category_for": {
+          "type": "categories",
+          "description": "ANZSRC Fields of Research classification (alias for most recent version).",
+          "long_description": null,
+          "is_entity": true,
+          "is_filter": true,
+          "is_facet": false,
+          "is_multivalue": true,
+          "solr_fields": { "return": "for_2020_2022", "filter": "for_2020_2022" }
+        },
+        "abstract": {
+          "type": "string",
+          "description": "Abstract or summary from a grant proposal.",
+          "long_description": null,
+          "is_entity": false,
+          "is_filter": false,
+          "is_facet": false,
+          "is_multivalue": false,
+          "solr_fields": { "return": "abstract", "filter": "abstract" }
+        },
+        "title": {
+          "type": "string",
+          "description": "Title of the grant in English (if the grant language is not English, this field contains a translation of the title).",
+          "long_description": null,
+          "is_entity": false,
+          "is_filter": false,
+          "is_facet": false,
+          "is_multivalue": false,
+          "solr_fields": { "return": "title", "filter": "title" }
+        },
+        "id": {
+          "type": "string",
+          "description": "Dimensions grant ID.",
+          "long_description": null,
+          "is_entity": false,
+          "is_filter": true,
+          "is_facet": false,
+          "is_multivalue": false,
+          "solr_fields": { "return": "id", "filter": "id" }
+        },
+        "category_sdg": {
+          "type": "categories",
+          "description": "SDG - Sustainable Development Goals",
+          "long_description": null,
+          "is_entity": true,
+          "is_filter": true,
+          "is_facet": false,
+          "is_multivalue": true,
+          "solr_fields": { "return": "sdg_2021", "filter": "sdg_2021" }
+        },
+        "research_orgs": {
+          "type": "organizations",
+          "description": "GRID organisations receiving the grant (note: identifiers are automatically extracted from the source text and can be missing in some cases).",
+          "long_description": null,
+          "is_entity": true,
+          "is_filter": true,
+          "is_facet": false,
+          "is_multivalue": true,
+          "solr_fields": { "return": "research_org_id", "filter": "research_org_id" }
+        },
+        "category_uoa": {
+          "type": "categories",
+          "description": "`Units of Assessment <https://dimensions.freshdesk.com/support/solutions/articles/23000018820-what-are-fields-of-research-and-other-classification-systems-and-how-are-they-created->`_",
+          "long_description": null,
+          "is_entity": true,
+          "is_filter": true,
+          "is_facet": false,
+          "is_multivalue": true,
+          "solr_fields": { "return": "uoa_2023", "filter": "uoa_2023" }
+        },
+        "funding_chf": {
+          "type": "float",
+          "description": "Funding amount awarded in CHF.",
+          "long_description": null,
+          "is_entity": false,
+          "is_filter": true,
+          "is_facet": false,
+          "is_multivalue": false,
+          "solr_fields": { "return": "funding_amount_in_chf", "filter": "funding_amount_in_chf" }
+        },
+        "funding_jpy": {
+          "type": "float",
+          "description": "Funding amount awarded in JPY.",
+          "long_description": null,
+          "is_entity": false,
+          "is_filter": true,
+          "is_facet": false,
+          "is_multivalue": false,
+          "solr_fields": { "return": "funding_amount_in_jpy", "filter": "funding_amount_in_jpy" }
+        },
+        "foa_number": {
+          "type": "string",
+          "description": "The funding opportunity announcement (FOA) number, where available e.g. for grants from the US National Institute of Health (NIH) or from the National Science Foundation (NSF).",
+          "long_description": null,
+          "is_entity": false,
+          "is_filter": true,
+          "is_facet": false,
+          "is_multivalue": false,
+          "solr_fields": { "return": "foa_number", "filter": "foa_number" }
+        },
+        "category_icrp_ct": {
+          "type": "categories",
+          "description": "`ICRP Cancer Types <https://dimensions.freshdesk.com/support/solutions/articles/23000018820-what-are-fields-of-research-and-other-classification-systems-and-how-are-they-created->`_",
+          "long_description": null,
+          "is_entity": true,
+          "is_filter": true,
+          "is_facet": false,
+          "is_multivalue": true,
+          "solr_fields": { "return": "icrp_ct_2020", "filter": "icrp_ct_2020" }
+        },
+        "category_hrcs_rac": {
+          "type": "categories",
+          "description": "`HRCS \u2013 Research Activity Codes <https://dimensions.freshdesk.com/support/solutions/articles/23000018820-what-are-fields-of-research-and-other-classification-systems-and-how-are-they-created->`_ .",
+          "long_description": null,
+          "is_entity": true,
+          "is_filter": true,
+          "is_facet": false,
+          "is_multivalue": true,
+          "solr_fields": { "return": "hrcs_rac_2020", "filter": "hrcs_rac_2020" }
+        },
+        "funding_cad": {
+          "type": "float",
+          "description": "Funding amount awarded in CAD.",
+          "long_description": null,
+          "is_entity": false,
+          "is_filter": true,
+          "is_facet": false,
+          "is_multivalue": false,
+          "solr_fields": { "return": "funding_amount_in_cad", "filter": "funding_amount_in_cad" }
+        },
+        "start_date": {
+          "type": "date",
+          "description": "Date when the grant starts, in the format 'YYYY-MM-DD'.",
+          "long_description": null,
+          "is_entity": false,
+          "is_filter": true,
+          "is_facet": false,
+          "is_multivalue": false,
+          "solr_fields": { "return": "start_date", "filter": "start_date" }
+        },
+        "concepts": {
+          "type": "json",
+          "description": "Concepts describing the main topics of a publication (note: automatically derived from the publication text using machine learning).",
+          "long_description": null,
+          "is_entity": false,
+          "is_filter": true,
+          "is_facet": false,
+          "is_multivalue": false,
+          "solr_fields": { "return": "terms_v6", "filter": "phrases_search_v6" }
+        },
+        "funder_countries": {
+          "type": "countries",
+          "description": "The country linked to the organisation funding the grant, expressed as GeoNames codes.",
+          "long_description": null,
+          "is_entity": true,
+          "is_filter": true,
+          "is_facet": false,
+          "is_multivalue": true,
+          "solr_fields": { "return": "funding_country_codes", "filter": "funding_country_codes" }
+        },
+        "funding_nzd": {
+          "type": "float",
+          "description": "Funding amount awarded in NZD.",
+          "long_description": null,
+          "is_entity": false,
+          "is_filter": true,
+          "is_facet": false,
+          "is_multivalue": false,
+          "solr_fields": { "return": "funding_amount_in_nzd", "filter": "funding_amount_in_nzd" }
+        },
+        "research_org_state_codes": {
+          "type": "states",
+          "description": "State of the organisations receiving the grant, expressed as GeoNames codes (ISO\u200c-3166-2).",
+          "long_description": null,
+          "is_entity": true,
+          "is_filter": true,
+          "is_facet": false,
+          "is_multivalue": true,
+          "solr_fields": { "return": "research_state_codes", "filter": "research_state_codes" }
+        },
+        "language_title": {
+          "type": "string",
+          "description": "ISO 639-1 language code for the original grant title.",
+          "long_description": null,
+          "is_entity": false,
+          "is_filter": true,
+          "is_facet": false,
+          "is_multivalue": false,
+          "solr_fields": { "return": "language_title", "filter": "language_title" }
+        },
+        "active_year": {
+          "type": "integer",
+          "description": "List of active years for a grant.",
+          "long_description": null,
+          "is_entity": false,
+          "is_filter": true,
+          "is_facet": false,
+          "is_multivalue": true,
+          "solr_fields": { "return": "active_year", "filter": "active_year" }
+        },
+        "category_rcdc": {
+          "type": "categories",
+          "description": "`Research, Condition, and Disease Categorization <https://dimensions.freshdesk.com/support/solutions/articles/23000018820-what-are-fields-of-research-and-other-classification-systems-and-how-are-they-created->`_ .",
+          "long_description": null,
+          "is_entity": true,
+          "is_filter": true,
+          "is_facet": false,
+          "is_multivalue": true,
+          "solr_fields": { "return": "rcdc_2023", "filter": "rcdc_2023" }
+        },
+        "category_bra": {
+          "type": "categories",
+          "description": "`Broad Research Areas <https://dimensions.freshdesk.com/support/solutions/articles/23000018820-what-are-fields-of-research-and-other-classification-systems-and-how-are-they-created->`_",
+          "long_description": null,
+          "is_entity": true,
+          "is_filter": true,
+          "is_facet": false,
+          "is_multivalue": true,
+          "solr_fields": { "return": "bra_2020", "filter": "bra_2020" }
+        },
+        "category_for_2020": {
+          "type": "categories",
+          "description": "`ANZSRC Fields of Research classification <https://dimensions.freshdesk.com/support/solutions/articles/23000018820-what-are-fields-of-research-and-other-classification-systems-and-how-are-they-created->`_",
+          "long_description": null,
+          "is_entity": true,
+          "is_filter": true,
+          "is_facet": false,
+          "is_multivalue": true,
+          "solr_fields": { "return": "for_2020_2022", "filter": "for_2020_2022" }
+        },
+        "funding_aud": {
+          "type": "float",
+          "description": "Funding amount awarded in AUD.",
+          "long_description": null,
+          "is_entity": false,
+          "is_filter": true,
+          "is_facet": false,
+          "is_multivalue": false,
+          "solr_fields": { "return": "funding_amount_in_aud", "filter": "funding_amount_in_aud" }
+        },
+        "researchers": {
+          "type": "researchers",
+          "description": "Dimensions researchers IDs associated to the grant.",
+          "long_description": null,
+          "is_entity": true,
+          "is_filter": true,
+          "is_facet": false,
+          "is_multivalue": true,
+          "solr_fields": { "return": "researcher_dim_id", "filter": "researcher_dim_id" }
+        },
+        "original_title": {
+          "type": "string",
+          "description": "Title of the grant in its original language.",
+          "long_description": null,
+          "is_entity": false,
+          "is_filter": false,
+          "is_facet": false,
+          "is_multivalue": false,
+          "solr_fields": { "return": "title_original", "filter": "title_original" }
+        },
+        "funding_gbp": {
+          "type": "float",
+          "description": "Funding amount awarded in GBP.",
+          "long_description": null,
+          "is_entity": false,
+          "is_filter": true,
+          "is_facet": false,
+          "is_multivalue": false,
+          "solr_fields": { "return": "funding_amount_in_gbp", "filter": "funding_amount_in_gbp" }
+        }
+      },
+      "fieldsets": ["basics", "extras", "categories"],
+      "metrics": {
+        "count": { "name": "count", "description": "Total count" },
+        "funding": { "name": "funding", "description": "Total funding amount, in USD." }
+      },
+      "search_fields": [
+        "title_only",
+        "investigators",
+        "title_abstract_only",
+        "full_data",
+        "concepts"
+      ]
+    },
+    "patents": {
+      "fields": {
+        "granted_date": {
+          "type": "date",
+          "description": "The date on which the official body grants the patent.",
+          "long_description": null,
+          "is_entity": false,
+          "is_filter": true,
+          "is_facet": false,
+          "is_multivalue": false,
+          "solr_fields": { "return": "granted_date", "filter": "granted_date" }
+        },
+        "funders": {
+          "type": "organizations",
+          "description": "GRID organisations funding the patent.",
+          "long_description": null,
+          "is_entity": true,
+          "is_filter": true,
+          "is_facet": false,
+          "is_multivalue": true,
+          "solr_fields": { "return": "funder_grid_ids", "filter": "funder_grid_ids" }
+        },
+        "category_hrcs_hc": {
+          "type": "categories",
+          "description": "`HRCS - Health Categories <https://dimensions.freshdesk.com/support/solutions/articles/23000018820-what-are-fields-of-research-and-other-classification-systems-and-how-are-they-created->`_",
+          "long_description": null,
+          "is_entity": true,
+          "is_filter": true,
+          "is_facet": false,
+          "is_multivalue": true,
+          "solr_fields": { "return": "hrcs_hc_2020", "filter": "hrcs_hc_2020" }
+        },
+        "assignees": {
+          "type": "organizations",
+          "description": "Disambiguated GRID organisations who own or have owned the rights of a patent (note: this is a combination of `current_assignees` and `original_assignees` fields).",
+          "long_description": null,
+          "is_entity": true,
+          "is_filter": true,
+          "is_facet": false,
+          "is_multivalue": true,
+          "solr_fields": { "return": "assignee_grid_ids", "filter": "assignee_grid_ids" }
+        },
+        "date_inserted": {
+          "type": "date",
+          "description": "Date when the record was inserted into Dimensions (note: this field does not support exact match on the data, only range filters e.g. `<=` or `>=`).",
+          "long_description": null,
+          "is_entity": false,
+          "is_filter": true,
+          "is_facet": false,
+          "is_multivalue": false,
+          "solr_fields": { "return": "created_in_dimensions", "filter": "created_in_dimensions" }
+        },
+        "inventors": {
+          "type": "json",
+          "description": "Details of the people who invented the patent.",
+          "long_description": null,
+          "is_entity": false,
+          "is_filter": true,
+          "is_facet": false,
+          "is_multivalue": false,
+          "solr_fields": { "return": "inventors_details", "filter": "inventor_list" }
+        },
+        "additional_filters": {
+          "type": "string",
+          "description": "Additional filters describing the patents, e.g. whether it's about a 'Research Organisation', or it is part of the 'Orange Book'.",
+          "long_description": null,
+          "is_entity": false,
+          "is_filter": true,
+          "is_facet": false,
+          "is_multivalue": true,
+          "solr_fields": { "return": "additional_filters", "filter": "additional_filters" }
+        },
+        "category_icrp_cso": {
+          "type": "categories",
+          "description": "`ICRP Common Scientific Outline <https://dimensions.freshdesk.com/support/solutions/articles/23000018820-what-are-fields-of-research-and-other-classification-systems-and-how-are-they-created->`_",
+          "long_description": null,
+          "is_entity": true,
+          "is_filter": true,
+          "is_facet": false,
+          "is_multivalue": true,
+          "solr_fields": { "return": "icrp_cso_2020", "filter": "icrp_cso_2020" }
+        },
+        "date": {
+          "type": "date",
+          "description": "Date when the patent was filed.",
+          "long_description": null,
+          "is_entity": false,
+          "is_filter": true,
+          "is_facet": false,
+          "is_multivalue": false,
+          "solr_fields": { "return": "filed_date", "filter": "filed_date" }
+        },
+        "associated_grant_ids": {
+          "type": "string",
+          "description": "Dimensions IDs of the grants associated to the patent (see also: :ref:`patents_model` section).",
+          "long_description": null,
+          "is_entity": false,
+          "is_filter": true,
+          "is_facet": false,
+          "is_multivalue": true,
+          "solr_fields": { "return": "grant_ids", "filter": "grant_ids" }
+        },
+        "assignee_names": {
+          "type": "string",
+          "description": "Name of assignees of the patent, as they appear in the original document.",
+          "long_description": null,
+          "is_entity": false,
+          "is_filter": true,
+          "is_facet": false,
+          "is_multivalue": true,
+          "solr_fields": { "return": "assignee_names", "filter": "assignee_names_search" }
+        },
+        "publication_ids": {
+          "type": "string",
+          "description": "Dimensions IDs of the publications related to this patent (see also: :ref:`patents_model` section).",
+          "long_description": null,
+          "is_entity": false,
+          "is_filter": true,
+          "is_facet": false,
+          "is_multivalue": true,
+          "solr_fields": { "return": "publication_ids", "filter": "publication_ids" }
+        },
+        "inventor_names": {
+          "type": "string",
+          "description": "Names of the people who invented the patent.",
+          "long_description": null,
+          "is_entity": false,
+          "is_filter": true,
+          "is_facet": false,
+          "is_multivalue": false,
+          "solr_fields": { "return": "inventor_names", "filter": "inventor_list" }
+        },
+        "assignee_state_codes": {
+          "type": "states",
+          "description": "State of the assignee, expressed using GeoNames (ISO\u200c-3166-2) codes (note: this value is extracted independently from GRID).",
+          "long_description": null,
+          "is_entity": true,
+          "is_filter": true,
+          "is_facet": false,
+          "is_multivalue": true,
+          "solr_fields": { "return": "assignee_state_codes", "filter": "assignee_state_codes" }
+        },
+        "category_hra": {
+          "type": "categories",
+          "description": "`Health Research Areas <https://dimensions.freshdesk.com/support/solutions/articles/23000018820-what-are-fields-of-research-and-other-classification-systems-and-how-are-they-created->`_",
+          "long_description": null,
+          "is_entity": true,
+          "is_filter": true,
+          "is_facet": false,
+          "is_multivalue": true,
+          "solr_fields": { "return": "health_research_areas", "filter": "health_research_areas" }
+        },
+        "publication_date": {
+          "type": "date",
+          "description": "Date of publication of a patent.",
+          "long_description": null,
+          "is_entity": false,
+          "is_filter": true,
+          "is_facet": false,
+          "is_multivalue": false,
+          "solr_fields": { "return": "publication_date", "filter": "publication_date" }
+        },
+        "filing_status": {
+          "type": "string",
+          "description": "Filing Status of the patent e.g. 'Application' or 'Grant'.",
+          "long_description": null,
+          "is_entity": false,
+          "is_filter": true,
+          "is_facet": false,
+          "is_multivalue": false,
+          "solr_fields": { "return": "filing_status", "filter": "filing_status" }
+        },
+        "dimensions_url": {
+          "type": "string",
+          "description": "Link pointing to the Dimensions web application",
+          "long_description": null,
+          "is_entity": false,
+          "is_filter": false,
+          "is_facet": false,
+          "is_multivalue": false,
+          "solr_fields": { "return": "id", "filter": "id" }
+        },
+        "expiration_date": {
+          "type": "date",
+          "description": "Date when the patent expires.",
+          "long_description": null,
+          "is_entity": false,
+          "is_filter": true,
+          "is_facet": false,
+          "is_multivalue": false,
+          "solr_fields": { "return": "expiration_date", "filter": "expiration_date" }
+        },
+        "priority_date": {
+          "type": "date",
+          "description": "The earliest filing date in a family of patent applications.",
+          "long_description": null,
+          "is_entity": false,
+          "is_filter": true,
+          "is_facet": false,
+          "is_multivalue": false,
+          "solr_fields": { "return": "priority_date", "filter": "priority_date" }
+        },
+        "original_assignee_names": {
+          "type": "string",
+          "description": "Name of the organisations that first owned the patent, as they appear in the original document.",
+          "long_description": null,
+          "is_entity": false,
+          "is_filter": true,
+          "is_facet": false,
+          "is_multivalue": true,
+          "solr_fields": {
+            "return": "original_assignee_names",
+            "filter": "original_assignee_names"
+          }
+        },
+        "granted_year": {
+          "type": "integer",
+          "description": "The year on which the official body grants the patent.",
+          "long_description": null,
+          "is_entity": false,
+          "is_filter": true,
+          "is_facet": false,
+          "is_multivalue": false,
+          "solr_fields": { "return": "granted_year", "filter": "granted_year" }
+        },
+        "abstract": {
+          "type": "string",
+          "description": "Abstract or description of the patent.",
+          "long_description": null,
+          "is_entity": false,
+          "is_filter": false,
+          "is_facet": false,
+          "is_multivalue": false,
+          "solr_fields": { "return": "abstract", "filter": "abstract" }
+        },
+        "category_for": {
+          "type": "categories",
+          "description": "`ANZSRC Fields of Research classification <https://dimensions.freshdesk.com/support/solutions/articles/23000018820-what-are-fields-of-research-and-other-classification-systems-and-how-are-they-created->`_ (alias for most recent version).",
+          "long_description": null,
+          "is_entity": true,
+          "is_filter": true,
+          "is_facet": false,
+          "is_multivalue": true,
+          "solr_fields": { "return": "for_2020_2022", "filter": "for_2020_2022" }
+        },
+        "title": {
+          "type": "string",
+          "description": "The title of the patent.",
+          "long_description": null,
+          "is_entity": false,
+          "is_filter": false,
+          "is_facet": false,
+          "is_multivalue": false,
+          "solr_fields": { "return": "title", "filter": "title" }
+        },
+        "publications": {
+          "type": "publication_links",
+          "description": "Publication IDs of the publications related to this patent (see also: :ref:`patents_model` section).",
+          "long_description": null,
+          "is_entity": true,
+          "is_filter": true,
+          "is_facet": false,
+          "is_multivalue": true,
+          "solr_fields": { "return": "publication_ids", "filter": "publication_ids" }
+        },
+        "id": {
+          "type": "string",
+          "description": "Dimensions patent ID",
+          "long_description": null,
+          "is_entity": false,
+          "is_filter": true,
+          "is_facet": false,
+          "is_multivalue": false,
+          "solr_fields": { "return": "id", "filter": "id" }
+        },
+        "current_assignee_names": {
+          "type": "string",
+          "description": "Names of the organisations currently holding the patent, as they appear in the original document.",
+          "long_description": null,
+          "is_entity": false,
+          "is_filter": true,
+          "is_facet": false,
+          "is_multivalue": true,
+          "solr_fields": { "return": "current_assignee_names", "filter": "current_assignee_names" }
+        },
+        "reference_ids": {
+          "type": "string",
+          "description": "Dimensions IDs of the patents which are cited by this patent (see also: :ref:`patents_model` section).",
+          "long_description": null,
+          "is_entity": false,
+          "is_filter": true,
+          "is_facet": false,
+          "is_multivalue": true,
+          "solr_fields": { "return": "citations_ucids", "filter": "citations_ucids" }
+        },
+        "ipcr": {
+          "type": "string",
+          "description": "`International Patent Classification Reform Categorization <https://www.wipo.int/classifications/ipc/en/faq/>`_.",
+          "long_description": null,
+          "is_entity": false,
+          "is_filter": true,
+          "is_facet": false,
+          "is_multivalue": true,
+          "solr_fields": { "return": "ipcr", "filter": "ipcr" }
+        },
+        "current_assignees": {
+          "type": "organizations",
+          "description": "Disambiguated GRID organisations currenlty owning the patent.",
+          "long_description": null,
+          "is_entity": true,
+          "is_filter": true,
+          "is_facet": false,
+          "is_multivalue": true,
+          "solr_fields": {
+            "return": "current_assignee_grid_ids",
+            "filter": "current_assignee_grid_ids"
+          }
+        },
+        "jurisdiction": {
+          "type": "string",
+          "description": "The jurisdiction where the patent was granted, e.g. 'US', 'DE', 'EP'...",
+          "long_description": null,
+          "is_entity": false,
+          "is_filter": true,
+          "is_facet": false,
+          "is_multivalue": false,
+          "solr_fields": { "return": "jurisdiction", "filter": "jurisdiction" }
+        },
+        "category_icrp_ct": {
+          "type": "categories",
+          "description": "`ICRP Cancer Types <https://dimensions.freshdesk.com/support/solutions/articles/23000018820-what-are-fields-of-research-and-other-classification-systems-and-how-are-they-created->`_",
+          "long_description": null,
+          "is_entity": true,
+          "is_filter": true,
+          "is_facet": false,
+          "is_multivalue": true,
+          "solr_fields": { "return": "icrp_ct_2020", "filter": "icrp_ct_2020" }
+        },
+        "category_hrcs_rac": {
+          "type": "categories",
+          "description": "`HRCS \u2013 Research Activity Codes <https://dimensions.freshdesk.com/support/solutions/articles/23000018820-what-are-fields-of-research-and-other-classification-systems-and-how-are-they-created->`_",
+          "long_description": null,
+          "is_entity": true,
+          "is_filter": true,
+          "is_facet": false,
+          "is_multivalue": true,
+          "solr_fields": { "return": "hrcs_rac_2020", "filter": "hrcs_rac_2020" }
+        },
+        "assignee_countries": {
+          "type": "countries",
+          "description": "Country of the assignees of the patent, expressed as GeoNames code and name (note: this value is extracted independently from GRID).",
+          "long_description": null,
+          "is_entity": true,
+          "is_filter": true,
+          "is_facet": false,
+          "is_multivalue": true,
+          "solr_fields": { "return": "assignee_country_codes", "filter": "assignee_country_codes" }
+        },
+        "year": {
+          "type": "integer",
+          "description": "The year the patent was filed.",
+          "long_description": null,
+          "is_entity": false,
+          "is_filter": true,
+          "is_facet": false,
+          "is_multivalue": false,
+          "solr_fields": { "return": "filed_year", "filter": "filed_year" }
+        },
+        "times_cited": {
+          "type": "integer",
+          "description": "The number of times the patent has been cited by other patents.",
+          "long_description": null,
+          "is_entity": false,
+          "is_filter": true,
+          "is_facet": false,
+          "is_multivalue": false,
+          "solr_fields": { "return": "times_cited", "filter": "times_cited" }
+        },
+        "assignee_cities": {
+          "type": "cities",
+          "description": "City of the assignees of the patent, expressed as GeoNames ID and name (note: this value is extracted independently from GRID).",
+          "long_description": null,
+          "is_entity": true,
+          "is_filter": true,
+          "is_facet": false,
+          "is_multivalue": true,
+          "solr_fields": {
+            "return": "assignee_city_geonames_ids",
+            "filter": "assignee_city_geonames_ids"
+          }
+        },
+        "original_assignees": {
+          "type": "organizations",
+          "description": "Disambiguated GRID organisations that first owned the patent.",
+          "long_description": null,
+          "is_entity": true,
+          "is_filter": true,
+          "is_facet": false,
+          "is_multivalue": true,
+          "solr_fields": {
+            "return": "original_assignee_grid_ids",
+            "filter": "original_assignee_grid_ids"
+          }
+        },
+        "publication_year": {
+          "type": "integer",
+          "description": "Year of publication of a patent.",
+          "long_description": null,
+          "is_entity": false,
+          "is_filter": true,
+          "is_facet": false,
+          "is_multivalue": false,
+          "solr_fields": { "return": "pub_year", "filter": "pub_year" }
+        },
+        "priority_year": {
+          "type": "integer",
+          "description": "The filing year of the earliest application of which priority is claimed.",
+          "long_description": null,
+          "is_entity": false,
+          "is_filter": true,
+          "is_facet": false,
+          "is_multivalue": false,
+          "solr_fields": { "return": "priority_year", "filter": "priority_year" }
+        },
+        "funder_countries": {
+          "type": "countries",
+          "description": "The country of the funding organisation (note: currently this information is available only for US patents).",
+          "long_description": null,
+          "is_entity": true,
+          "is_filter": true,
+          "is_facet": false,
+          "is_multivalue": true,
+          "solr_fields": { "return": "funder_country_codes", "filter": "funder_country_codes" }
+        },
+        "legal_status": {
+          "type": "string",
+          "description": "The legal status of the patent, e.g. 'Granted', 'Active', 'Abandoned' etc..",
+          "long_description": null,
+          "is_entity": false,
+          "is_filter": true,
+          "is_facet": false,
+          "is_multivalue": false,
+          "solr_fields": { "return": "status", "filter": "status" }
+        },
+        "cpc": {
+          "type": "string",
+          "description": "`Cooperative Patent Classification Categorization <https://www.epo.org/searching-for-patents/helpful-resources/first-time-here/classification/cpc.html>`_.",
+          "long_description": null,
+          "is_entity": false,
+          "is_filter": true,
+          "is_facet": false,
+          "is_multivalue": true,
+          "solr_fields": { "return": "cpc", "filter": "cpc" }
+        },
+        "category_rcdc": {
+          "type": "categories",
+          "description": "`Research, Condition, and Disease Categorization <https://dimensions.freshdesk.com/support/solutions/articles/23000018820-what-are-fields-of-research-and-other-classification-systems-and-how-are-they-created->`_",
+          "long_description": null,
+          "is_entity": true,
+          "is_filter": true,
+          "is_facet": false,
+          "is_multivalue": true,
+          "solr_fields": { "return": "rcdc_2023", "filter": "rcdc_2023" }
+        },
+        "category_bra": {
+          "type": "categories",
+          "description": "`Broad Research Areas <https://dimensions.freshdesk.com/support/solutions/articles/23000018820-what-are-fields-of-research-and-other-classification-systems-and-how-are-they-created->`_",
+          "long_description": null,
+          "is_entity": true,
+          "is_filter": true,
+          "is_facet": false,
+          "is_multivalue": true,
+          "solr_fields": { "return": "bra_2020", "filter": "bra_2020" }
+        },
+        "category_for_2020": {
+          "type": "categories",
+          "description": "`ANZSRC Fields of Research classification <https://dimensions.freshdesk.com/support/solutions/articles/23000018820-what-are-fields-of-research-and-other-classification-systems-and-how-are-they-created->`_",
+          "long_description": null,
+          "is_entity": true,
+          "is_filter": true,
+          "is_facet": false,
+          "is_multivalue": true,
+          "solr_fields": { "return": "for_2020_2022", "filter": "for_2020_2022" }
+        },
+        "family_id": {
+          "type": "integer",
+          "description": "Identifier of the corresponding `EPO patent family <https://www.epo.org/searching-for-patents/helpful-resources/first-time-here/patent-families/docdb.html>`_.",
+          "long_description": null,
+          "is_entity": false,
+          "is_filter": true,
+          "is_facet": false,
+          "is_multivalue": false,
+          "solr_fields": { "return": "family_id", "filter": "family_id" }
+        },
+        "researchers": {
+          "type": "researchers",
+          "description": "Researcher IDs matched to the patent's inventors list. (note: this returns only the disambiguated inventors of a patent; in order to get the full list of inventors, the field `inventors` should be used).",
+          "long_description": null,
+          "is_entity": true,
+          "is_filter": true,
+          "is_facet": false,
+          "is_multivalue": true,
+          "solr_fields": { "return": "researcher_ids", "filter": "researcher_ids" }
+        }
+      },
+      "fieldsets": ["basics", "extras", "categories"],
+      "metrics": { "count": { "name": "count", "description": "Total count" } },
+      "search_fields": ["title_only", "full_data", "title_abstract_only", "inventors"]
+    },
+    "clinical_trials": {
+      "fields": {
+        "phase": {
+          "type": "string",
+          "description": "Phase of the clinical trial, as a string.",
+          "long_description": null,
+          "is_entity": false,
+          "is_filter": true,
+          "is_facet": false,
+          "is_multivalue": false,
+          "solr_fields": { "return": "phase", "filter": "phase" }
+        },
+        "funders": {
+          "type": "organizations",
+          "description": "GRID funding organisations that are involved with the clinical trial.",
+          "long_description": null,
+          "is_entity": true,
+          "is_filter": true,
+          "is_facet": false,
+          "is_multivalue": true,
+          "solr_fields": { "return": "funder_grid_ids", "filter": "funder_grid_ids" }
+        },
+        "category_hrcs_hc": {
+          "type": "categories",
+          "description": "`HRCS - Health Categories <https://dimensions.freshdesk.com/support/solutions/articles/23000018820-what-are-fields-of-research-and-other-classification-systems-and-how-are-they-created->`_",
+          "long_description": null,
+          "is_entity": true,
+          "is_filter": true,
+          "is_facet": false,
+          "is_multivalue": true,
+          "solr_fields": { "return": "hrcs_hc_2020", "filter": "hrcs_hc_2020" }
+        },
+        "date_inserted": {
+          "type": "date",
+          "description": "Date when the record was inserted into Dimensions (note: this field does not support exact match on the data, only range filters e.g. `<=` or `>=').",
+          "long_description": null,
+          "is_entity": false,
+          "is_filter": true,
+          "is_facet": false,
+          "is_multivalue": false,
+          "solr_fields": { "return": "created_in_dimensions", "filter": "created_in_dimensions" }
+        },
+        "investigators": {
+          "type": "json",
+          "description": "Additional details about investigators, including affiliations and roles.",
+          "long_description": null,
+          "is_entity": false,
+          "is_filter": true,
+          "is_facet": false,
+          "is_multivalue": true,
+          "solr_fields": { "return": "investigators", "filter": "investigator_list" }
+        },
+        "category_icrp_cso": {
+          "type": "categories",
+          "description": "`ICRP Common Scientific Outline <https://dimensions.freshdesk.com/support/solutions/articles/23000018820-what-are-fields-of-research-and-other-classification-systems-and-how-are-they-created->`_",
+          "long_description": null,
+          "is_entity": true,
+          "is_filter": true,
+          "is_facet": false,
+          "is_multivalue": true,
+          "solr_fields": { "return": "icrp_cso_2020", "filter": "icrp_cso_2020" }
+        },
+        "registry": {
+          "type": "string",
+          "description": "The platform where the clinical trial has been registered, e.g. 'ClinicalTrials.gov' or 'EU-CTR'.",
+          "long_description": null,
+          "is_entity": false,
+          "is_filter": true,
+          "is_facet": false,
+          "is_multivalue": false,
+          "solr_fields": { "return": "registry", "filter": "registry" }
+        },
+        "mesh_terms": {
+          "type": "string",
+          "description": "Medical Subject Heading terms as used in PubMed.",
+          "long_description": null,
+          "is_entity": false,
+          "is_filter": true,
+          "is_facet": false,
+          "is_multivalue": true,
+          "solr_fields": { "return": "mesh_terms", "filter": "mesh_terms_search" }
+        },
+        "associated_grant_ids": {
+          "type": "string",
+          "description": "Dimensions IDs of the grants associated to the clinical trial (see also: :ref:`clinical_trials_model` section).",
+          "long_description": null,
+          "is_entity": false,
+          "is_filter": true,
+          "is_facet": false,
+          "is_multivalue": true,
+          "solr_fields": { "return": "grant_ids", "filter": "grant_ids" }
+        },
+        "date": {
+          "type": "date",
+          "description": "Start date of a clinical trial.",
+          "long_description": null,
+          "is_entity": false,
+          "is_filter": true,
+          "is_facet": false,
+          "is_multivalue": false,
+          "solr_fields": { "return": "start_date", "filter": "start_date" }
+        },
+        "linkout": {
+          "type": "string",
+          "description": "Original URL for the clinical trial.",
+          "long_description": null,
+          "is_entity": false,
+          "is_filter": false,
+          "is_facet": false,
+          "is_multivalue": false,
+          "solr_fields": { "return": "linkout", "filter": "linkout" }
+        },
+        "publication_ids": {
+          "type": "string",
+          "description": "Publications mentioned in clinical trials (excluding resulting publications), as a list of Dimensions identifiers.",
+          "long_description": null,
+          "is_entity": false,
+          "is_filter": true,
+          "is_facet": false,
+          "is_multivalue": true,
+          "solr_fields": { "return": "cited_publication_ids", "filter": "cited_publication_ids" }
+        },
+        "category_hra": {
+          "type": "categories",
+          "description": "`Health Research Areas <https://dimensions.freshdesk.com/support/solutions/articles/23000018820-what-are-fields-of-research-and-other-classification-systems-and-how-are-they-created->`_",
+          "long_description": null,
+          "is_entity": true,
+          "is_filter": true,
+          "is_facet": false,
+          "is_multivalue": true,
+          "solr_fields": { "return": "health_research_areas", "filter": "health_research_areas" }
+        },
+        "dimensions_url": {
+          "type": "string",
+          "description": "Link pointing to the Dimensions web application",
+          "long_description": null,
+          "is_entity": false,
+          "is_filter": false,
+          "is_facet": false,
+          "is_multivalue": false,
+          "solr_fields": { "return": "id", "filter": "id" }
+        },
+        "acronym": {
+          "type": "string",
+          "description": "Acronym of the clinical trial.",
+          "long_description": null,
+          "is_entity": false,
+          "is_filter": true,
+          "is_facet": false,
+          "is_multivalue": false,
+          "solr_fields": { "return": "acronym", "filter": "acronym" }
+        },
+        "gender": {
+          "type": "string",
+          "description": "The gender of the clinical trial subjects e.g. 'Male', 'Female' or 'All'.",
+          "long_description": null,
+          "is_entity": false,
+          "is_filter": true,
+          "is_facet": false,
+          "is_multivalue": false,
+          "solr_fields": { "return": "gender", "filter": "gender" }
+        },
+        "category_for": {
+          "type": "categories",
+          "description": "`ANZSRC Fields of Research classification <https://dimensions.freshdesk.com/support/solutions/articles/23000018820-what-are-fields-of-research-and-other-classification-systems-and-how-are-they-created->`_ (alias for most recent version).",
+          "long_description": null,
+          "is_entity": true,
+          "is_filter": true,
+          "is_facet": false,
+          "is_multivalue": true,
+          "solr_fields": { "return": "for_2020_2022", "filter": "for_2020_2022" }
+        },
+        "abstract": {
+          "type": "string",
+          "description": "Abstract or description of the clinical trial.",
+          "long_description": null,
+          "is_entity": false,
+          "is_filter": false,
+          "is_facet": false,
+          "is_multivalue": false,
+          "solr_fields": { "return": "summary", "filter": "summary" }
+        },
+        "interventions": {
+          "type": "json",
+          "description": "Structured JSON object containing information about the clinical trial's interventions according to the research plan or protocol created by the investigators.",
+          "long_description": "Returned objects contain: ``type``, ``name``, ``description``, ``arm_group_labels``, ``other_names``.\n                                            \n                                            For example:\n                                            \n    .. code-block:: json\n                                     \n        {\n            \"interventions\":[\n                {\n                    \"type\":\"Drug\",\n                    \"name\":\"INCB024360\",\n                    \"description\":\"INCB024360: Oral daily dosing\",\n                    \"arm_group_labels\":\"MEDI4736 + INCB024360\",\n                    \"other_names\":\"\"\n                },\n                {\n                    \"type\":\"Drug\",\n                    \"name\":\"MEDI4736\",\n                    \"description\":\"MEDI4736 administered intravenously (IV) every two weeks (q2w)\",\n                    \"arm_group_labels\":\"MEDI4736 + INCB024360\",\n                    \"other_names\":\"\"\n                }\n            ]\n        }",
+          "is_entity": false,
+          "is_filter": true,
+          "is_facet": false,
+          "is_multivalue": true,
+          "solr_fields": { "return": "interventions", "filter": "interventions" }
+        },
+        "title": {
+          "type": "string",
+          "description": "The title of the clinical trial.",
+          "long_description": null,
+          "is_entity": false,
+          "is_filter": false,
+          "is_facet": false,
+          "is_multivalue": false,
+          "solr_fields": { "return": "title", "filter": "title" }
+        },
+        "publications": {
+          "type": "publication_links",
+          "description": "Publications mentioned in clinical trials (excluding resulting publications), as a structured entity.",
+          "long_description": null,
+          "is_entity": true,
+          "is_filter": true,
+          "is_facet": false,
+          "is_multivalue": true,
+          "solr_fields": { "return": "cited_publication_ids", "filter": "cited_publication_ids" }
+        },
+        "id": {
+          "type": "string",
+          "description": "Dimensions clinical trial ID",
+          "long_description": null,
+          "is_entity": false,
+          "is_filter": true,
+          "is_facet": false,
+          "is_multivalue": false,
+          "solr_fields": { "return": "id", "filter": "id" }
+        },
+        "research_orgs": {
+          "type": "organizations",
+          "description": "GRID organizations involved, e.g. as sponsors or collaborators.",
+          "long_description": null,
+          "is_entity": true,
+          "is_filter": true,
+          "is_facet": false,
+          "is_multivalue": true,
+          "solr_fields": {
+            "return": "sponsor_collaborator_grid_ids",
+            "filter": "sponsor_collaborator_grid_ids"
+          }
+        },
+        "category_icrp_ct": {
+          "type": "categories",
+          "description": "`ICRP Cancer Types <https://dimensions.freshdesk.com/support/solutions/articles/23000018820-what-are-fields-of-research-and-other-classification-systems-and-how-are-they-created->`_",
+          "long_description": null,
+          "is_entity": true,
+          "is_filter": true,
+          "is_facet": false,
+          "is_multivalue": true,
+          "solr_fields": { "return": "icrp_ct_2020", "filter": "icrp_ct_2020" }
+        },
+        "category_hrcs_rac": {
+          "type": "categories",
+          "description": "`HRCS \u2013 Research Activity Codes <https://dimensions.freshdesk.com/support/solutions/articles/23000018820-what-are-fields-of-research-and-other-classification-systems-and-how-are-they-created->`_",
+          "long_description": null,
+          "is_entity": true,
+          "is_filter": true,
+          "is_facet": false,
+          "is_multivalue": true,
+          "solr_fields": { "return": "hrcs_rac_2020", "filter": "hrcs_rac_2020" }
+        },
+        "active_years": {
+          "type": "integer",
+          "description": "List of active years for a clinical trial.",
+          "long_description": null,
+          "is_entity": false,
+          "is_filter": true,
+          "is_facet": false,
+          "is_multivalue": true,
+          "solr_fields": { "return": "active_year", "filter": "active_year" }
+        },
+        "conditions": {
+          "type": "string",
+          "description": "List of medical conditions names, e.g. 'Breast cancer' or 'Obesity'.",
+          "long_description": null,
+          "is_entity": false,
+          "is_filter": true,
+          "is_facet": false,
+          "is_multivalue": true,
+          "solr_fields": { "return": "conditions", "filter": "conditions" }
+        },
+        "brief_title": {
+          "type": "string",
+          "description": "Brief title of the clinical trial.",
+          "long_description": null,
+          "is_entity": false,
+          "is_filter": true,
+          "is_facet": false,
+          "is_multivalue": false,
+          "solr_fields": { "return": "brief_title", "filter": "brief_title" }
+        },
+        "funder_countries": {
+          "type": "countries",
+          "description": "The country group the funding organisations.",
+          "long_description": null,
+          "is_entity": true,
+          "is_filter": true,
+          "is_facet": false,
+          "is_multivalue": true,
+          "solr_fields": { "return": "funder_country_codes", "filter": "funder_country_codes" }
+        },
+        "category_rcdc": {
+          "type": "categories",
+          "description": "`Research, Condition, and Disease Categorization <https://dimensions.freshdesk.com/support/solutions/articles/23000018820-what-are-fields-of-research-and-other-classification-systems-and-how-are-they-created->`_",
+          "long_description": null,
+          "is_entity": true,
+          "is_filter": true,
+          "is_facet": false,
+          "is_multivalue": true,
+          "solr_fields": { "return": "rcdc_2023", "filter": "rcdc_2023" }
+        },
+        "category_bra": {
+          "type": "categories",
+          "description": "`Broad Research Areas <https://app.dimensions.ai/browse/publication/broad_research_areas?redirect_path=/discover/publication>`_",
+          "long_description": null,
+          "is_entity": true,
+          "is_filter": true,
+          "is_facet": false,
+          "is_multivalue": true,
+          "solr_fields": { "return": "bra_2020", "filter": "bra_2020" }
+        },
+        "category_for_2020": {
+          "type": "categories",
+          "description": "`ANZSRC Fields of Research classification <https://dimensions.freshdesk.com/support/solutions/articles/23000018820-what-are-fields-of-research-and-other-classification-systems-and-how-are-they-created->`_",
+          "long_description": null,
+          "is_entity": true,
+          "is_filter": true,
+          "is_facet": false,
+          "is_multivalue": true,
+          "solr_fields": { "return": "for_2020_2022", "filter": "for_2020_2022" }
+        },
+        "researchers": {
+          "type": "researchers",
+          "description": "Dimensions researchers IDs associated to the clinical trial.",
+          "long_description": null,
+          "is_entity": true,
+          "is_filter": true,
+          "is_facet": false,
+          "is_multivalue": true,
+          "solr_fields": { "return": "researcher_ids", "filter": "researcher_ids" }
+        },
+        "altmetric": {
+          "type": "float",
+          "description": "Altmetric Attention Score.",
+          "long_description": null,
+          "is_entity": false,
+          "is_filter": true,
+          "is_facet": false,
+          "is_multivalue": false,
+          "solr_fields": { "return": "altmetric", "filter": "altmetric" }
+        }
+      },
+      "fieldsets": ["basics", "extras", "categories"],
+      "metrics": { "count": { "name": "count", "description": "Total count" } },
+      "search_fields": ["title_only", "full_data", "investigators", "title_abstract_only"]
+    },
+    "policy_documents": {
+      "fields": {
+        "category_hrcs_hc": {
+          "type": "categories",
+          "description": "`HRCS - Health Categories <https://dimensions.freshdesk.com/support/solutions/articles/23000018820-what-are-fields-of-research-and-other-classification-systems-and-how-are-they-created->`_",
+          "long_description": null,
+          "is_entity": true,
+          "is_filter": true,
+          "is_facet": false,
+          "is_multivalue": true,
+          "solr_fields": { "return": "hrcs_hc_2020", "filter": "hrcs_hc_2020" }
+        },
+        "date_inserted": {
+          "type": "date",
+          "description": "Date when the record was inserted into Dimensions (note: this field does not support exact match on the data, only range filters e.g. `<=` or `>=`).",
+          "long_description": null,
+          "is_entity": false,
+          "is_filter": true,
+          "is_facet": false,
+          "is_multivalue": false,
+          "solr_fields": { "return": "created_in_dimensions", "filter": "created_in_dimensions" }
+        },
+        "category_icrp_cso": {
+          "type": "categories",
+          "description": "`ICRP Common Scientific Outline <https://dimensions.freshdesk.com/support/solutions/articles/23000018820-what-are-fields-of-research-and-other-classification-systems-and-how-are-they-created->`_",
+          "long_description": null,
+          "is_entity": true,
+          "is_filter": true,
+          "is_facet": false,
+          "is_multivalue": true,
+          "solr_fields": { "return": "icrp_cso_2020", "filter": "icrp_cso_2020" }
+        },
+        "publisher_org_country": {
+          "type": "countries",
+          "description": "Country of the organization publishing the policy document.",
+          "long_description": null,
+          "is_entity": true,
+          "is_filter": true,
+          "is_facet": false,
+          "is_multivalue": false,
+          "solr_fields": { "return": "country_id", "filter": "country_id" }
+        },
+        "linkout": {
+          "type": "string",
+          "description": "Original URL for the policy document.",
+          "long_description": null,
+          "is_entity": false,
+          "is_filter": false,
+          "is_facet": false,
+          "is_multivalue": false,
+          "solr_fields": { "return": "page_url", "filter": "page_url" }
+        },
+        "publisher_org_state": {
+          "type": "states",
+          "description": "State of the organization publishing the policy document.",
+          "long_description": null,
+          "is_entity": true,
+          "is_filter": true,
+          "is_facet": false,
+          "is_multivalue": false,
+          "solr_fields": { "return": "state_id", "filter": "state_id" }
+        },
+        "publication_ids": {
+          "type": "string",
+          "description": "Dimensions IDs of the publications related to this policy document (see also: :ref:`policy_documents_model` section).",
+          "long_description": null,
+          "is_entity": false,
+          "is_filter": true,
+          "is_facet": false,
+          "is_multivalue": true,
+          "solr_fields": { "return": "publication_ids", "filter": "publication_ids" }
+        },
+        "category_hra": {
+          "type": "categories",
+          "description": "`Health Research Areas <https://dimensions.freshdesk.com/support/solutions/articles/23000018820-what-are-fields-of-research-and-other-classification-systems-and-how-are-they-created->`_",
+          "long_description": null,
+          "is_entity": true,
+          "is_filter": true,
+          "is_facet": false,
+          "is_multivalue": true,
+          "solr_fields": { "return": "health_research_areas", "filter": "health_research_areas" }
+        },
+        "dimensions_url": {
+          "type": "string",
+          "description": "Link pointing to the Dimensions web application",
+          "long_description": null,
+          "is_entity": false,
+          "is_filter": false,
+          "is_facet": false,
+          "is_multivalue": false,
+          "solr_fields": { "return": "id", "filter": "id" }
+        },
+        "category_for": {
+          "type": "categories",
+          "description": "`ANZSRC Fields of Research classification <https://dimensions.freshdesk.com/support/solutions/articles/23000018820-what-are-fields-of-research-and-other-classification-systems-and-how-are-they-created->`_ (alias for most recent version).",
+          "long_description": null,
+          "is_entity": true,
+          "is_filter": true,
+          "is_facet": false,
+          "is_multivalue": true,
+          "solr_fields": { "return": "for_2020_2022", "filter": "for_2020_2022" }
+        },
+        "title": {
+          "type": "string",
+          "description": "Title of the policy document.",
+          "long_description": null,
+          "is_entity": false,
+          "is_filter": true,
+          "is_facet": false,
+          "is_multivalue": false,
+          "solr_fields": { "return": "title", "filter": "title" }
+        },
+        "publications": {
+          "type": "publication_links",
+          "description": "Publication IDs of the publications related to this policy document (see also: :ref:`policy_documents_model` section).",
+          "long_description": null,
+          "is_entity": true,
+          "is_filter": true,
+          "is_facet": false,
+          "is_multivalue": true,
+          "solr_fields": { "return": "publication_ids", "filter": "publication_ids" }
+        },
+        "id": {
+          "type": "string",
+          "description": "Dimensions policy document ID",
+          "long_description": null,
+          "is_entity": false,
+          "is_filter": true,
+          "is_facet": false,
+          "is_multivalue": false,
+          "solr_fields": { "return": "id", "filter": "id" }
+        },
+        "publisher_org": {
+          "type": "organizations",
+          "description": "GRID organization publishing the policy document.",
+          "long_description": null,
+          "is_entity": true,
+          "is_filter": true,
+          "is_facet": false,
+          "is_multivalue": false,
+          "solr_fields": { "return": "grid_id", "filter": "grid_id" }
+        },
+        "category_icrp_ct": {
+          "type": "categories",
+          "description": "`ICRP Cancer Types <https://dimensions.freshdesk.com/support/solutions/articles/23000018820-what-are-fields-of-research-and-other-classification-systems-and-how-are-they-created->`_",
+          "long_description": null,
+          "is_entity": true,
+          "is_filter": true,
+          "is_facet": false,
+          "is_multivalue": true,
+          "solr_fields": { "return": "icrp_ct_2020", "filter": "icrp_ct_2020" }
+        },
+        "category_hrcs_rac": {
+          "type": "categories",
+          "description": "`HRCS \u2013 Research Activity Codes <https://dimensions.freshdesk.com/support/solutions/articles/23000018820-what-are-fields-of-research-and-other-classification-systems-and-how-are-they-created->`_",
+          "long_description": null,
+          "is_entity": true,
+          "is_filter": true,
+          "is_facet": false,
+          "is_multivalue": true,
+          "solr_fields": { "return": "hrcs_rac_2020", "filter": "hrcs_rac_2020" }
+        },
+        "year": {
+          "type": "integer",
+          "description": "Year of publication of the policy document.",
+          "long_description": null,
+          "is_entity": false,
+          "is_filter": true,
+          "is_facet": false,
+          "is_multivalue": false,
+          "solr_fields": { "return": "posted_on_year", "filter": "posted_on_year" }
+        },
+        "publisher_org_city": {
+          "type": "cities",
+          "description": "City of the organization publishing the policy document.",
+          "long_description": null,
+          "is_entity": true,
+          "is_filter": true,
+          "is_facet": false,
+          "is_multivalue": false,
+          "solr_fields": { "return": "city_id", "filter": "city_id" }
+        },
+        "category_rcdc": {
+          "type": "categories",
+          "description": "`Research, Condition, and Disease Categorization <https://dimensions.freshdesk.com/support/solutions/articles/23000018820-what-are-fields-of-research-and-other-classification-systems-and-how-are-they-created->`_",
+          "long_description": null,
+          "is_entity": true,
+          "is_filter": true,
+          "is_facet": false,
+          "is_multivalue": true,
+          "solr_fields": { "return": "rcdc_2023", "filter": "rcdc_2023" }
+        },
+        "category_bra": {
+          "type": "categories",
+          "description": "`Broad Research Areas <https://dimensions.freshdesk.com/support/solutions/articles/23000018820-what-are-fields-of-research-and-other-classification-systems-and-how-are-they-created->`_",
+          "long_description": null,
+          "is_entity": true,
+          "is_filter": true,
+          "is_facet": false,
+          "is_multivalue": true,
+          "solr_fields": { "return": "bra_2020", "filter": "bra_2020" }
+        },
+        "category_for_2020": {
+          "type": "categories",
+          "description": "`ANZSRC Fields of Research classification <https://dimensions.freshdesk.com/support/solutions/articles/23000018820-what-are-fields-of-research-and-other-classification-systems-and-how-are-they-created->`_",
+          "long_description": null,
+          "is_entity": true,
+          "is_filter": true,
+          "is_facet": false,
+          "is_multivalue": true,
+          "solr_fields": { "return": "for_2020_2022", "filter": "for_2020_2022" }
+        }
+      },
+      "fieldsets": ["basics", "categories"],
+      "metrics": { "count": { "name": "count", "description": "Total count" } },
+      "search_fields": ["title_only", "full_data"]
+    },
+    "researchers": {
+      "fields": {
+        "current_research_org": {
+          "type": "organizations",
+          "description": "The most recent research organization linked to the researcher.",
+          "long_description": null,
+          "is_entity": true,
+          "is_filter": true,
+          "is_facet": false,
+          "is_multivalue": false,
+          "solr_fields": {
+            "return": "dim_current_research_org_id",
+            "filter": "dim_current_research_org_id"
+          }
+        },
+        "total_publications": {
+          "type": "integer",
+          "description": "Total publications count.",
+          "long_description": null,
+          "is_entity": false,
+          "is_filter": true,
+          "is_facet": false,
+          "is_multivalue": false,
+          "solr_fields": { "return": "dim_pub_count", "filter": "dim_pub_count" }
+        },
+        "research_orgs": {
+          "type": "organizations",
+          "description": "All research organizations linked to the researcher.",
+          "long_description": null,
+          "is_entity": true,
+          "is_filter": true,
+          "is_facet": false,
+          "is_multivalue": true,
+          "solr_fields": { "return": "dim_research_org_id", "filter": "dim_research_org_id" }
+        },
+        "dimensions_url": {
+          "type": "string",
+          "description": "Link pointing to the Dimensions web application",
+          "long_description": null,
+          "is_entity": false,
+          "is_filter": false,
+          "is_facet": false,
+          "is_multivalue": false,
+          "solr_fields": { "return": "researcher_id", "filter": "researcher_id" }
+        },
+        "last_name": {
+          "type": "string",
+          "description": "Last Name.",
+          "long_description": null,
+          "is_entity": false,
+          "is_filter": true,
+          "is_facet": false,
+          "is_multivalue": false,
+          "solr_fields": { "return": "last_name", "filter": "last_name" }
+        },
+        "orcid_id": {
+          "type": "string",
+          "description": "`ORCID <https://orcid.org/>`_ ID.",
+          "long_description": null,
+          "is_entity": false,
+          "is_filter": true,
+          "is_facet": false,
+          "is_multivalue": true,
+          "solr_fields": { "return": "orcid", "filter": "orcid" }
+        },
+        "total_grants": {
+          "type": "integer",
+          "description": "Total grants count.",
+          "long_description": null,
+          "is_entity": false,
+          "is_filter": true,
+          "is_facet": false,
+          "is_multivalue": false,
+          "solr_fields": { "return": "proj_count", "filter": "proj_count" }
+        },
+        "first_grant_year": {
+          "type": "integer",
+          "description": "First year the researcher was awarded a grant.",
+          "long_description": null,
+          "is_entity": false,
+          "is_filter": true,
+          "is_facet": false,
+          "is_multivalue": false,
+          "solr_fields": { "return": "proj_min_active_year", "filter": "proj_min_active_year" }
+        },
+        "obsolete": {
+          "type": "integer",
+          "description": "Indicates researcher ID status. 0 means that the researcher ID is still active, 1 means that the researcher ID is no longer valid. See the `redirect` field for further information on invalid researcher IDs.",
+          "long_description": null,
+          "is_entity": false,
+          "is_filter": true,
+          "is_facet": false,
+          "is_multivalue": false,
+          "solr_fields": { "return": "obsolete", "filter": "obsolete" }
+        },
+        "redirect": {
+          "type": "string",
+          "description": "Indicates status of a researcher ID marked as obsolete. Empty means that the researcher ID was deleted. Otherwise ID provided means that is the new ID into which the obsolete one was redirected. If multiple values are available, it means that the original researcher ID was split into multiple IDs.",
+          "long_description": null,
+          "is_entity": false,
+          "is_filter": true,
+          "is_facet": false,
+          "is_multivalue": true,
+          "solr_fields": { "return": "redirect", "filter": "redirect" }
+        },
+        "last_publication_year": {
+          "type": "integer",
+          "description": null,
+          "long_description": null,
+          "is_entity": false,
+          "is_filter": true,
+          "is_facet": false,
+          "is_multivalue": false,
+          "solr_fields": {
+            "return": "dim_pub_max_active_year",
+            "filter": "dim_pub_max_active_year"
+          }
+        },
+        "first_publication_year": {
+          "type": "integer",
+          "description": null,
+          "long_description": null,
+          "is_entity": false,
+          "is_filter": true,
+          "is_facet": false,
+          "is_multivalue": false,
+          "solr_fields": {
+            "return": "dim_pub_min_active_year",
+            "filter": "dim_pub_min_active_year"
+          }
+        },
+        "first_name": {
+          "type": "string",
+          "description": "First Name.",
+          "long_description": null,
+          "is_entity": false,
+          "is_filter": true,
+          "is_facet": false,
+          "is_multivalue": false,
+          "solr_fields": { "return": "first_name", "filter": "first_name" }
+        },
+        "last_grant_year": {
+          "type": "integer",
+          "description": "Last year the researcher was awarded a grant.",
+          "long_description": null,
+          "is_entity": false,
+          "is_filter": true,
+          "is_facet": false,
+          "is_multivalue": false,
+          "solr_fields": { "return": "proj_max_active_year", "filter": "proj_max_active_year" }
+        },
+        "id": {
+          "type": "string",
+          "description": "Dimensions researcher ID.",
+          "long_description": null,
+          "is_entity": false,
+          "is_filter": true,
+          "is_facet": false,
+          "is_multivalue": false,
+          "solr_fields": { "return": "researcher_id", "filter": "researcher_id" }
+        },
+        "nih_ppid": {
+          "type": "string",
+          "description": "The PI Profile ID (i.e., ppid) is a Researcher ID from the US National Institute of Health (NIH).",
+          "long_description": null,
+          "is_entity": false,
+          "is_filter": true,
+          "is_facet": false,
+          "is_multivalue": false,
+          "solr_fields": { "return": "nih_external_id", "filter": "nih_external_id" }
+        }
+      },
+      "fieldsets": ["basics", "extras"],
+      "metrics": { "count": { "name": "count", "description": "Total count" } },
+      "search_fields": []
+    },
+    "organizations": {
+      "fields": {
+        "ucas_ids": {
+          "type": "string",
+          "description": "UCAS IDs for this organization",
+          "long_description": null,
+          "is_entity": false,
+          "is_filter": true,
+          "is_facet": false,
+          "is_multivalue": true,
+          "solr_fields": { "return": "external_ids_ucas", "filter": "external_ids_ucas" }
+        },
+        "established": {
+          "type": "integer",
+          "description": "Year when the organization was estabilished",
+          "long_description": null,
+          "is_entity": false,
+          "is_filter": true,
+          "is_facet": false,
+          "is_multivalue": false,
+          "solr_fields": { "return": "established", "filter": "established" }
+        },
+        "external_ids_fundref": {
+          "type": "string",
+          "description": "Fundref IDs for this organization",
+          "long_description": null,
+          "is_entity": false,
+          "is_filter": true,
+          "is_facet": false,
+          "is_multivalue": true,
+          "solr_fields": { "return": "external_ids_fundref", "filter": "external_ids_fundref" }
+        },
+        "nuts_level3_code": {
+          "type": "string",
+          "description": "Level 3 code for this organization, based on `Nomenclature of Territorial Units for Statistics <https://en.wikipedia.org/wiki/Nomenclature_of_Territorial_Units_for_Statistics>`_ (NUTS) codes of the European Union.",
+          "long_description": null,
+          "is_entity": false,
+          "is_filter": true,
+          "is_facet": false,
+          "is_multivalue": false,
+          "solr_fields": { "return": "nuts_level3_code", "filter": "nuts_level3_code" }
+        },
+        "isni_ids": {
+          "type": "string",
+          "description": "ISNI IDs for this organization",
+          "long_description": null,
+          "is_entity": false,
+          "is_filter": true,
+          "is_facet": false,
+          "is_multivalue": true,
+          "solr_fields": { "return": "external_ids_isni", "filter": "external_ids_isni" }
+        },
+        "organization_related_ids": {
+          "type": "string",
+          "description": "Related organization IDs",
+          "long_description": null,
+          "is_entity": false,
+          "is_filter": true,
+          "is_facet": false,
+          "is_multivalue": true,
+          "solr_fields": { "return": "relationships_related", "filter": "relationships_related" }
+        },
+        "linkout": {
+          "type": "string",
+          "description": null,
+          "long_description": null,
+          "is_entity": false,
+          "is_filter": false,
+          "is_facet": false,
+          "is_multivalue": true,
+          "solr_fields": { "return": "links", "filter": "links" }
+        },
+        "types": {
+          "type": "string",
+          "description": "Type of an organization. Available types include: ``Company``, ``Education``, ``Healthcare``, ``Nonprofit``, ``Facility``, ``Other``, ``Government``, ``Archive``, ``Education,Company``, ``Education,Facility``, ``Education,Healthcare``, ``Education,Other``, ``Archive,Nonprofit``. Furhter explanation is on the `GRID <https://www.grid.ac/pages/policies>`_ website.",
+          "long_description": null,
+          "is_entity": false,
+          "is_filter": true,
+          "is_facet": false,
+          "is_multivalue": true,
+          "solr_fields": { "return": "types", "filter": "types" }
+        },
+        "dimensions_url": {
+          "type": "string",
+          "description": "Link pointing to the Dimensions web application",
+          "long_description": null,
+          "is_entity": false,
+          "is_filter": false,
+          "is_facet": false,
+          "is_multivalue": false,
+          "solr_fields": { "return": "id", "filter": "id" }
+        },
+        "acronym": {
+          "type": "string",
+          "description": "GRID acronym of the organization. E.g., \"UT\" for `grid.26999.3d <https://grid.ac/institutes/grid.26999.3d>`_",
+          "long_description": null,
+          "is_entity": false,
+          "is_filter": true,
+          "is_facet": false,
+          "is_multivalue": false,
+          "solr_fields": { "return": "acronym", "filter": "acronym" }
+        },
+        "state_name": {
+          "type": "string",
+          "description": "GRID name of the organization country. E.g., \"Maryland\" for `grid.419635.c <https://grid.ac/institutes/grid.419635.c>`_",
+          "long_description": null,
+          "is_entity": false,
+          "is_filter": true,
+          "is_facet": false,
+          "is_multivalue": false,
+          "solr_fields": { "return": "state_name", "filter": "state_name" }
+        },
+        "name": {
+          "type": "string",
+          "description": "GRID name of the organization. E.g., \"University of Tokyo\" for `grid.26999.3d <https://grid.ac/institutes/grid.26999.3d>`_",
+          "long_description": null,
+          "is_entity": false,
+          "is_filter": true,
+          "is_facet": false,
+          "is_multivalue": false,
+          "solr_fields": { "return": "name", "filter": "name_search" }
+        },
+        "ukprn_ids": {
+          "type": "string",
+          "description": "UKPRN IDs for this organization",
+          "long_description": null,
+          "is_entity": false,
+          "is_filter": true,
+          "is_facet": false,
+          "is_multivalue": true,
+          "solr_fields": { "return": "external_ids_ukprn", "filter": "external_ids_ukprn" }
+        },
+        "nuts_level2_code": {
+          "type": "string",
+          "description": "Level 2 code for this organization, based on `Nomenclature of Territorial Units for Statistics <https://en.wikipedia.org/wiki/Nomenclature_of_Territorial_Units_for_Statistics>`_ (NUTS) codes of the European Union.",
+          "long_description": null,
+          "is_entity": false,
+          "is_filter": true,
+          "is_facet": false,
+          "is_multivalue": false,
+          "solr_fields": { "return": "nuts_level2_code", "filter": "nuts_level2_code" }
+        },
+        "organization_parent_ids": {
+          "type": "string",
+          "description": "Parent organization IDs",
+          "long_description": null,
+          "is_entity": false,
+          "is_filter": true,
+          "is_facet": false,
+          "is_multivalue": true,
+          "solr_fields": { "return": "relationships_parent", "filter": "relationships_parent" }
+        },
+        "organization_child_ids": {
+          "type": "string",
+          "description": "Child organization IDs",
+          "long_description": null,
+          "is_entity": false,
+          "is_filter": true,
+          "is_facet": false,
+          "is_multivalue": true,
+          "solr_fields": { "return": "relationships_children", "filter": "relationships_children" }
+        },
+        "country_name": {
+          "type": "string",
+          "description": "GRID name of the organization country. E.g., \"Japan\" for `grid.26999.3d <https://grid.ac/institutes/grid.26999.3d>`_",
+          "long_description": null,
+          "is_entity": false,
+          "is_filter": true,
+          "is_facet": false,
+          "is_multivalue": false,
+          "solr_fields": { "return": "country_name", "filter": "country_name" }
+        },
+        "id": {
+          "type": "string",
+          "description": "GRID ID of the organization. E.g., \"grid.26999.3d\".",
+          "long_description": null,
+          "is_entity": false,
+          "is_filter": true,
+          "is_facet": false,
+          "is_multivalue": false,
+          "solr_fields": { "return": "id", "filter": "id" }
+        },
+        "ror_ids": {
+          "type": "string",
+          "description": "ROR IDs for this organization",
+          "long_description": null,
+          "is_entity": false,
+          "is_filter": true,
+          "is_facet": false,
+          "is_multivalue": true,
+          "solr_fields": { "return": "external_ids_ror", "filter": "external_ids_ror" }
+        },
+        "nuts_level1_name": {
+          "type": "string",
+          "description": "Level 1 name for this organization, based on `Nomenclature of Territorial Units for Statistics <https://en.wikipedia.org/wiki/Nomenclature_of_Territorial_Units_for_Statistics>`_ (NUTS) codes of the European Union.",
+          "long_description": null,
+          "is_entity": false,
+          "is_filter": true,
+          "is_facet": false,
+          "is_multivalue": false,
+          "solr_fields": { "return": "nuts_level1_name", "filter": "nuts_level1_name" }
+        },
+        "redirect": {
+          "type": "string",
+          "description": "GRID ID of an organization this one was redirected to",
+          "long_description": null,
+          "is_entity": false,
+          "is_filter": true,
+          "is_facet": false,
+          "is_multivalue": false,
+          "solr_fields": { "return": "redirect", "filter": "redirect" }
+        },
+        "orgref_ids": {
+          "type": "string",
+          "description": "OrgRef IDs for this organization",
+          "long_description": null,
+          "is_entity": false,
+          "is_filter": true,
+          "is_facet": false,
+          "is_multivalue": true,
+          "solr_fields": { "return": "external_ids_orgref", "filter": "external_ids_orgref" }
+        },
+        "hesa_ids": {
+          "type": "string",
+          "description": "HESA IDs for this organization",
+          "long_description": null,
+          "is_entity": false,
+          "is_filter": true,
+          "is_facet": false,
+          "is_multivalue": true,
+          "solr_fields": { "return": "external_ids_hesa", "filter": "external_ids_hesa" }
+        },
+        "city_name": {
+          "type": "string",
+          "description": "GRID name of the organization country. E.g., \"Bethesda\" for `grid.419635.c <https://grid.ac/institutes/grid.419635.c>`_",
+          "long_description": null,
+          "is_entity": false,
+          "is_filter": true,
+          "is_facet": false,
+          "is_multivalue": false,
+          "solr_fields": { "return": "city_name", "filter": "city_name" }
+        },
+        "nuts_level2_name": {
+          "type": "string",
+          "description": "Level 2 name for this organization, based on `Nomenclature of Territorial Units for Statistics <https://en.wikipedia.org/wiki/Nomenclature_of_Territorial_Units_for_Statistics>`_ (NUTS) codes of the European Union.",
+          "long_description": null,
+          "is_entity": false,
+          "is_filter": true,
+          "is_facet": false,
+          "is_multivalue": false,
+          "solr_fields": { "return": "nuts_level2_name", "filter": "nuts_level2_name" }
+        },
+        "status": {
+          "type": "string",
+          "description": "Status of an organization. May be be one of:\n        \n        * `a`: active organization\n        * `o`: obsolete organization\n        * `r`: redirected organization, see field `redirect` to obtain the GRID ID of an organization this one was redirected to",
+          "long_description": null,
+          "is_entity": false,
+          "is_filter": true,
+          "is_facet": false,
+          "is_multivalue": false,
+          "solr_fields": { "return": "status", "filter": "status" }
+        },
+        "longitude": {
+          "type": "float",
+          "description": null,
+          "long_description": null,
+          "is_entity": false,
+          "is_filter": false,
+          "is_facet": false,
+          "is_multivalue": false,
+          "solr_fields": { "return": "longitude", "filter": "longitude" }
+        },
+        "cnrs_ids": {
+          "type": "string",
+          "description": "CNRS IDs for this organization",
+          "long_description": null,
+          "is_entity": false,
+          "is_filter": true,
+          "is_facet": false,
+          "is_multivalue": true,
+          "solr_fields": { "return": "external_ids_cnrs", "filter": "external_ids_cnrs" }
+        },
+        "wikipedia_url": {
+          "type": "string",
+          "description": "Wikipedia URL",
+          "long_description": null,
+          "is_entity": false,
+          "is_filter": false,
+          "is_facet": false,
+          "is_multivalue": false,
+          "solr_fields": { "return": "wikipedia_url", "filter": "wikipedia_url" }
+        },
+        "latitude": {
+          "type": "float",
+          "description": null,
+          "long_description": null,
+          "is_entity": false,
+          "is_filter": false,
+          "is_facet": false,
+          "is_multivalue": false,
+          "solr_fields": { "return": "latitude", "filter": "latitude" }
+        },
+        "wikidata_ids": {
+          "type": "string",
+          "description": "WikiData IDs for this organization",
+          "long_description": null,
+          "is_entity": false,
+          "is_filter": true,
+          "is_facet": false,
+          "is_multivalue": true,
+          "solr_fields": { "return": "external_ids_wikidata", "filter": "external_ids_wikidata" }
+        },
+        "nuts_level1_code": {
+          "type": "string",
+          "description": "Level 1 code for this organization, based on `Nomenclature of Territorial Units for Statistics <https://en.wikipedia.org/wiki/Nomenclature_of_Territorial_Units_for_Statistics>`_ (NUTS) codes of the European Union.",
+          "long_description": null,
+          "is_entity": false,
+          "is_filter": true,
+          "is_facet": false,
+          "is_multivalue": false,
+          "solr_fields": { "return": "nuts_level1_code", "filter": "nuts_level1_code" }
+        },
+        "nuts_level3_name": {
+          "type": "string",
+          "description": "Level 3 name for this organization, based on `Nomenclature of Territorial Units for Statistics <https://en.wikipedia.org/wiki/Nomenclature_of_Territorial_Units_for_Statistics>`_ (NUTS) codes of the European Union.",
+          "long_description": null,
+          "is_entity": false,
+          "is_filter": true,
+          "is_facet": false,
+          "is_multivalue": false,
+          "solr_fields": { "return": "nuts_level3_name", "filter": "nuts_level3_name" }
+        }
+      },
+      "fieldsets": ["basics", "nuts"],
+      "metrics": { "count": { "name": "count", "description": "Total count" } },
+      "search_fields": ["full_data"]
+    },
+    "datasets": {
+      "fields": {
+        "authors": {
+          "type": "json",
+          "description": "Ordered list of the dataset authors. ORCIDs are included if available.",
+          "long_description": "Returned objects contain: `name`, `orcid`\n                                            \n                                           For example:\n\n    .. code-block:: json\n    \n        {\n            \"name\": \"Steffen Vogt\",\n            \"orcid\": \"\"\n        }",
+          "is_entity": false,
+          "is_filter": true,
+          "is_facet": false,
+          "is_multivalue": true,
+          "solr_fields": { "return": "authors", "filter": "authors" }
+        },
+        "keywords": {
+          "type": "string",
+          "description": "Keywords used to describe the dataset (from authors).",
+          "long_description": null,
+          "is_entity": false,
+          "is_filter": true,
+          "is_facet": false,
+          "is_multivalue": true,
+          "solr_fields": { "return": "figshare_tags", "filter": "figshare_tags" }
+        },
+        "funders": {
+          "type": "organizations",
+          "description": "The GRID organisations funding the dataset.",
+          "long_description": null,
+          "is_entity": true,
+          "is_filter": true,
+          "is_facet": false,
+          "is_multivalue": true,
+          "solr_fields": { "return": "funding_grid_ids", "filter": "funding_grid_ids" }
+        },
+        "category_hrcs_hc": {
+          "type": "categories",
+          "description": "`HRCS - Health Categories <https://dimensions.freshdesk.com/support/solutions/articles/23000018820-what-are-fields-of-research-and-other-classification-systems-and-how-are-they-created->`_",
+          "long_description": null,
+          "is_entity": true,
+          "is_filter": true,
+          "is_facet": false,
+          "is_multivalue": true,
+          "solr_fields": { "return": "hrcs_hc_2020", "filter": "hrcs_hc_2020" }
+        },
+        "language_desc": {
+          "type": "string",
+          "description": "Dataset title language, as ISO 639-1 language codes.",
+          "long_description": null,
+          "is_entity": false,
+          "is_filter": true,
+          "is_facet": false,
+          "is_multivalue": false,
+          "solr_fields": { "return": "description_language", "filter": "description_language" }
+        },
+        "date_inserted": {
+          "type": "date",
+          "description": "Date when the record was inserted into Dimensions (note: this field does not support exact match on the data, only range filters e.g. `<=` or `>=').",
+          "long_description": null,
+          "is_entity": false,
+          "is_filter": true,
+          "is_facet": false,
+          "is_multivalue": false,
+          "solr_fields": { "return": "created_in_dimensions", "filter": "created_in_dimensions" }
+        },
+        "research_org_cities": {
+          "type": "cities",
+          "description": "City of the organisations the publication authors are affiliated to, expressed as GeoNames ID and name.",
+          "long_description": null,
+          "is_entity": true,
+          "is_filter": true,
+          "is_facet": false,
+          "is_multivalue": true,
+          "solr_fields": { "return": "city_geonames_ids", "filter": "city_geonames_ids" }
+        },
+        "category_icrp_cso": {
+          "type": "categories",
+          "description": "`ICRP Common Scientific Outline <https://dimensions.freshdesk.com/support/solutions/articles/23000018820-what-are-fields-of-research-and-other-classification-systems-and-how-are-they-created->`_",
+          "long_description": null,
+          "is_entity": true,
+          "is_filter": true,
+          "is_facet": false,
+          "is_multivalue": true,
+          "solr_fields": { "return": "icrp_cso_2020", "filter": "icrp_cso_2020" }
+        },
+        "research_org_countries": {
+          "type": "countries",
+          "description": "Country of the organisations the publication authors are affiliated to, identified using GeoNames codes (note: this field supports count: count)..",
+          "long_description": null,
+          "is_entity": true,
+          "is_filter": true,
+          "is_facet": false,
+          "is_multivalue": true,
+          "solr_fields": { "return": "country_codes", "filter": "country_codes" }
+        },
+        "date_embargo": {
+          "type": "date",
+          "description": "The embargo date of the dataset.",
+          "long_description": null,
+          "is_entity": false,
+          "is_filter": true,
+          "is_facet": false,
+          "is_multivalue": false,
+          "solr_fields": { "return": "embargo_date", "filter": "embargo_date" }
+        },
+        "description": {
+          "type": "string",
+          "description": "Description of the dataset.",
+          "long_description": null,
+          "is_entity": false,
+          "is_filter": false,
+          "is_facet": false,
+          "is_multivalue": false,
+          "solr_fields": {
+            "return": "html_escaped_description",
+            "filter": "html_escaped_description"
+          }
+        },
+        "doi": {
+          "type": "string",
+          "description": "Dataset DOI.",
+          "long_description": null,
+          "is_entity": false,
+          "is_filter": true,
+          "is_facet": false,
+          "is_multivalue": false,
+          "solr_fields": { "return": "doi", "filter": "doi" }
+        },
+        "associated_grant_ids": {
+          "type": "string",
+          "description": "The Dimensions IDs of the grants linked to the publication the dataset is associated with.",
+          "long_description": null,
+          "is_entity": false,
+          "is_filter": true,
+          "is_facet": false,
+          "is_multivalue": true,
+          "solr_fields": { "return": "funding_grant_ids", "filter": "funding_grant_ids" }
+        },
+        "date": {
+          "type": "date",
+          "description": "The publication date of the dataset, eg \"2018-01-01\".",
+          "long_description": null,
+          "is_entity": false,
+          "is_filter": true,
+          "is_facet": false,
+          "is_multivalue": false,
+          "solr_fields": { "return": "pub_date", "filter": "pub_date" }
+        },
+        "category_hra": {
+          "type": "categories",
+          "description": "`Health Research Areas <https://dimensions.freshdesk.com/support/solutions/articles/23000018820-what-are-fields-of-research-and-other-classification-systems-and-how-are-they-created->`_",
+          "long_description": null,
+          "is_entity": true,
+          "is_filter": true,
+          "is_facet": false,
+          "is_multivalue": true,
+          "solr_fields": { "return": "health_research_areas", "filter": "health_research_areas" }
+        },
+        "dimensions_url": {
+          "type": "string",
+          "description": "Link pointing to the Dimensions web application",
+          "long_description": null,
+          "is_entity": false,
+          "is_filter": false,
+          "is_facet": false,
+          "is_multivalue": false,
+          "solr_fields": { "return": "id", "filter": "id" }
+        },
+        "license_url": {
+          "type": "string",
+          "description": "The dataset licence URL, e.g. 'https://creativecommons.org/licenses/by/4.0/'.",
+          "long_description": null,
+          "is_entity": false,
+          "is_filter": false,
+          "is_facet": false,
+          "is_multivalue": false,
+          "solr_fields": { "return": "license_url", "filter": "license_url" }
+        },
+        "category_for": {
+          "type": "categories",
+          "description": "`ANZSRC Fields of Research classification <https://dimensions.freshdesk.com/support/solutions/articles/23000018820-what-are-fields-of-research-and-other-classification-systems-and-how-are-they-created->`_ (alias for most recent version).",
+          "long_description": null,
+          "is_entity": true,
+          "is_filter": true,
+          "is_facet": false,
+          "is_multivalue": true,
+          "solr_fields": { "return": "for_2020_2022", "filter": "for_2020_2022" }
+        },
+        "title": {
+          "type": "string",
+          "description": "Title of the dataset.",
+          "long_description": null,
+          "is_entity": false,
+          "is_filter": false,
+          "is_facet": false,
+          "is_multivalue": false,
+          "solr_fields": { "return": "html_escaped_title", "filter": "html_escaped_title" }
+        },
+        "id": {
+          "type": "string",
+          "description": "Dimensions dataset ID.",
+          "long_description": null,
+          "is_entity": false,
+          "is_filter": true,
+          "is_facet": false,
+          "is_multivalue": false,
+          "solr_fields": { "return": "id", "filter": "id" }
+        },
+        "associated_publication_id": {
+          "type": "string",
+          "description": "The Dimensions ID of the publication linked to the dataset (single value).",
+          "long_description": null,
+          "is_entity": false,
+          "is_filter": true,
+          "is_facet": false,
+          "is_multivalue": false,
+          "solr_fields": { "return": "resource_dim_id", "filter": "resource_dim_id" }
+        },
+        "date_modified": {
+          "type": "date",
+          "description": "The last modification date of the dataset.",
+          "long_description": null,
+          "is_entity": false,
+          "is_filter": true,
+          "is_facet": false,
+          "is_multivalue": false,
+          "solr_fields": { "return": "modified_date", "filter": "modified_date" }
+        },
+        "category_sdg": {
+          "type": "categories",
+          "description": "SDG - Sustainable Development Goals",
+          "long_description": null,
+          "is_entity": true,
+          "is_filter": true,
+          "is_facet": false,
+          "is_multivalue": true,
+          "solr_fields": { "return": "sdg_2021", "filter": "sdg_2021" }
+        },
+        "research_orgs": {
+          "type": "organizations",
+          "description": "GRID organisations linked to the publication associated to the dataset (note: this field supports count: count).",
+          "long_description": null,
+          "is_entity": true,
+          "is_filter": true,
+          "is_facet": false,
+          "is_multivalue": true,
+          "solr_fields": { "return": "grid_id", "filter": "grid_id" }
+        },
+        "journal": {
+          "type": "journals",
+          "description": "The journal a data set belongs to.",
+          "long_description": null,
+          "is_entity": true,
+          "is_filter": true,
+          "is_facet": false,
+          "is_multivalue": false,
+          "solr_fields": { "return": "journal_id", "filter": "journal_id" }
+        },
+        "associated_publication": {
+          "type": "publication_links",
+          "description": "Publication linked to the dataset (single value).",
+          "long_description": null,
+          "is_entity": true,
+          "is_filter": true,
+          "is_facet": false,
+          "is_multivalue": false,
+          "solr_fields": { "return": "resource_dim_id", "filter": "resource_dim_id" }
+        },
+        "repository": {
+          "type": "repositories",
+          "description": "Repository associtated with the dataset.",
+          "long_description": null,
+          "is_entity": true,
+          "is_filter": true,
+          "is_facet": false,
+          "is_multivalue": false,
+          "solr_fields": { "return": "repository_id", "filter": "repository_id" }
+        },
+        "category_hrcs_rac": {
+          "type": "categories",
+          "description": "`HRCS \u2013 Research Activity Codes <https://dimensions.freshdesk.com/support/solutions/articles/23000018820-what-are-fields-of-research-and-other-classification-systems-and-how-are-they-created->`_",
+          "long_description": null,
+          "is_entity": true,
+          "is_filter": true,
+          "is_facet": false,
+          "is_multivalue": true,
+          "solr_fields": { "return": "hrcs_rac_2020", "filter": "hrcs_rac_2020" }
+        },
+        "category_icrp_ct": {
+          "type": "categories",
+          "description": "`ICRP Cancer Types <https://dimensions.freshdesk.com/support/solutions/articles/23000018820-what-are-fields-of-research-and-other-classification-systems-and-how-are-they-created->`_",
+          "long_description": null,
+          "is_entity": true,
+          "is_filter": true,
+          "is_facet": false,
+          "is_multivalue": true,
+          "solr_fields": { "return": "icrp_ct_2020", "filter": "icrp_ct_2020" }
+        },
+        "year": {
+          "type": "integer",
+          "description": "Year of publication of the dataset.",
+          "long_description": null,
+          "is_entity": false,
+          "is_filter": true,
+          "is_facet": false,
+          "is_multivalue": false,
+          "solr_fields": { "return": "pub_year", "filter": "pub_year" }
+        },
+        "figshare_url": {
+          "type": "string",
+          "description": "Figshare URL for the dataset.",
+          "long_description": null,
+          "is_entity": false,
+          "is_filter": false,
+          "is_facet": false,
+          "is_multivalue": false,
+          "solr_fields": { "return": "linkout", "filter": "linkout" }
+        },
+        "date_created": {
+          "type": "date",
+          "description": "The creation date of the dataset.",
+          "long_description": null,
+          "is_entity": false,
+          "is_filter": true,
+          "is_facet": false,
+          "is_multivalue": false,
+          "solr_fields": { "return": "created_date", "filter": "created_date" }
+        },
+        "license_name": {
+          "type": "string",
+          "description": "The dataset licence name, e.g. 'CC BY 4.0'.",
+          "long_description": null,
+          "is_entity": false,
+          "is_filter": true,
+          "is_facet": false,
+          "is_multivalue": false,
+          "solr_fields": { "return": "license_name", "filter": "license_name" }
+        },
+        "funder_countries": {
+          "type": "countries",
+          "description": "The country linked to the organisation funding the grant, expressed as GeoNames codes.",
+          "long_description": null,
+          "is_entity": true,
+          "is_filter": true,
+          "is_facet": false,
+          "is_multivalue": true,
+          "solr_fields": { "return": "funding_country_codes", "filter": "funding_country_codes" }
+        },
+        "language_title": {
+          "type": "string",
+          "description": "Dataset title language, as ISO 639-1 language codes.",
+          "long_description": null,
+          "is_entity": false,
+          "is_filter": true,
+          "is_facet": false,
+          "is_multivalue": false,
+          "solr_fields": { "return": "title_language", "filter": "title_language" }
+        },
+        "category_rcdc": {
+          "type": "categories",
+          "description": "`Research, Condition, and Disease Categorization <https://dimensions.freshdesk.com/support/solutions/articles/23000018820-what-are-fields-of-research-and-other-classification-systems-and-how-are-they-created->`_",
+          "long_description": null,
+          "is_entity": true,
+          "is_filter": true,
+          "is_facet": false,
+          "is_multivalue": true,
+          "solr_fields": { "return": "rcdc_2023", "filter": "rcdc_2023" }
+        },
+        "category_bra": {
+          "type": "categories",
+          "description": "`Broad Research Areas <https://dimensions.freshdesk.com/support/solutions/articles/23000018820-what-are-fields-of-research-and-other-classification-systems-and-how-are-they-created->`_",
+          "long_description": null,
+          "is_entity": true,
+          "is_filter": true,
+          "is_facet": false,
+          "is_multivalue": true,
+          "solr_fields": { "return": "bra_2020", "filter": "bra_2020" }
+        },
+        "category_for_2020": {
+          "type": "categories",
+          "description": "`ANZSRC Fields of Research classification <https://dimensions.freshdesk.com/support/solutions/articles/23000018820-what-are-fields-of-research-and-other-classification-systems-and-how-are-they-created->`_",
+          "long_description": null,
+          "is_entity": true,
+          "is_filter": true,
+          "is_facet": false,
+          "is_multivalue": true,
+          "solr_fields": { "return": "for_2020_2022", "filter": "for_2020_2022" }
+        },
+        "researchers": {
+          "type": "researchers",
+          "description": "Dimensions researchers IDs associated to the dataset's associated publication. Note: in most cases, these would be the same as the dataset authors.",
+          "long_description": null,
+          "is_entity": true,
+          "is_filter": true,
+          "is_facet": false,
+          "is_multivalue": true,
+          "solr_fields": { "return": "researcher_ids", "filter": "researcher_ids" }
+        },
+        "research_org_states": {
+          "type": "states",
+          "description": "State of the organisations the publication authors are affiliated to, expressed as GeoNames codes (ISO\u200c-3166-2).",
+          "long_description": null,
+          "is_entity": true,
+          "is_filter": true,
+          "is_facet": false,
+          "is_multivalue": true,
+          "solr_fields": { "return": "state_codes", "filter": "state_codes" }
+        }
+      },
+      "fieldsets": ["basics", "categories"],
+      "metrics": { "count": { "name": "count", "description": "Total count" } },
+      "search_fields": ["title_only", "full_data", "title_abstract_only"]
+    },
+    "source_titles": {
+      "fields": {
+        "sjr": {
+          "type": "float",
+          "description": "SJR indicator (SCImago Journal Rank). This indicator measures both the number of citations received by a journal and the importance or prestige of the journals where the citations come from.",
+          "long_description": null,
+          "is_entity": false,
+          "is_filter": true,
+          "is_facet": false,
+          "is_multivalue": false,
+          "solr_fields": { "return": "sjr", "filter": "sjr" }
+        },
+        "type": {
+          "type": "string",
+          "description": "The source type: one of `book_series`, `proceeding`, `journal`, `preprint_platform` (4 in total).",
+          "long_description": null,
+          "is_entity": false,
+          "is_filter": true,
+          "is_facet": false,
+          "is_multivalue": false,
+          "solr_fields": { "return": "source_title_type", "filter": "source_title_type" }
+        },
+        "start_year": {
+          "type": "integer",
+          "description": "Year when the source started publishing.",
+          "long_description": null,
+          "is_entity": false,
+          "is_filter": true,
+          "is_facet": false,
+          "is_multivalue": false,
+          "solr_fields": { "return": "start_year", "filter": "start_year" }
+        },
+        "issn_print": {
+          "type": "string",
+          "description": "Print ISSN for the source.",
+          "long_description": null,
+          "is_entity": false,
+          "is_filter": true,
+          "is_facet": false,
+          "is_multivalue": false,
+          "solr_fields": { "return": "issn_print", "filter": "issn_print" }
+        },
+        "issn_electronic": {
+          "type": "string",
+          "description": "Electronic ISSN for the source.",
+          "long_description": null,
+          "is_entity": false,
+          "is_filter": true,
+          "is_facet": false,
+          "is_multivalue": false,
+          "solr_fields": { "return": "issn_electronic", "filter": "issn_electronic" }
+        },
+        "publisher": {
+          "type": "string",
+          "description": "The name of the source publisher entity.",
+          "long_description": null,
+          "is_entity": false,
+          "is_filter": true,
+          "is_facet": false,
+          "is_multivalue": false,
+          "solr_fields": { "return": "publisher", "filter": "publisher" }
+        },
+        "snip": {
+          "type": "float",
+          "description": "SNIP indicator (source normalized impact per paper). This indicator measures the average citation impact of the publications of a journal.",
+          "long_description": null,
+          "is_entity": false,
+          "is_filter": true,
+          "is_facet": false,
+          "is_multivalue": false,
+          "solr_fields": { "return": "snip", "filter": "snip" }
+        },
+        "issn": {
+          "type": "string",
+          "description": "List of known ISSNs for the source, including both print and electronic.",
+          "long_description": null,
+          "is_entity": false,
+          "is_filter": true,
+          "is_facet": false,
+          "is_multivalue": true,
+          "solr_fields": { "return": "issn", "filter": "issn" }
+        },
+        "title": {
+          "type": "string",
+          "description": "The title of the source.",
+          "long_description": null,
+          "is_entity": false,
+          "is_filter": false,
+          "is_facet": false,
+          "is_multivalue": false,
+          "solr_fields": { "return": "title", "filter": "title" }
+        },
+        "id": {
+          "type": "string",
+          "description": "The Dimensions ID of the source.",
+          "long_description": null,
+          "is_entity": false,
+          "is_filter": true,
+          "is_facet": false,
+          "is_multivalue": false,
+          "solr_fields": { "return": "id", "filter": "id" }
+        },
+        "linkout": {
+          "type": "string",
+          "description": "The source web URL, if known.",
+          "long_description": null,
+          "is_entity": false,
+          "is_filter": false,
+          "is_facet": false,
+          "is_multivalue": false,
+          "solr_fields": { "return": "linkout", "filter": "linkout" }
+        }
+      },
+      "fieldsets": ["basics"],
+      "metrics": { "count": { "name": "count", "description": "Total count" } },
+      "search_fields": ["title_only"]
+    },
+    "reports": {
+      "fields": {
+        "authors": {
+          "type": "json",
+          "description": "Ordered list of authors names and their affiliations, as they appear in the source. The list can include researcher and organization identifiers, when available.",
+          "long_description": null,
+          "is_entity": false,
+          "is_filter": true,
+          "is_facet": false,
+          "is_multivalue": false,
+          "solr_fields": { "return": "affiliations", "filter": "affiliations" }
+        },
+        "keywords": {
+          "type": "string",
+          "description": "Keywords, as provided by the source.",
+          "long_description": null,
+          "is_entity": false,
+          "is_filter": true,
+          "is_facet": false,
+          "is_multivalue": false,
+          "solr_fields": { "return": "keywords", "filter": "keywords" }
+        },
+        "category_hrcs_hc": {
+          "type": "categories",
+          "description": "`HRCS - Health Categories <https://dimensions.freshdesk.com/support/solutions/articles/23000018820-what-are-fields-of-research-and-other-classification-systems-and-how-are-they-created->`_",
+          "long_description": null,
+          "is_entity": true,
+          "is_filter": true,
+          "is_facet": false,
+          "is_multivalue": true,
+          "solr_fields": { "return": "hrcs_hc_2020", "filter": "hrcs_hc_2020" }
+        },
+        "date_inserted": {
+          "type": "date",
+          "description": "Date when the record was inserted into Dimensions (note: this field does not support exact match on the data, only range filters e.g. `<=` or `>=').",
+          "long_description": null,
+          "is_entity": false,
+          "is_filter": true,
+          "is_facet": false,
+          "is_multivalue": false,
+          "solr_fields": { "return": "created_in_dimensions", "filter": "created_in_dimensions" }
+        },
+        "publisher_orgs": {
+          "type": "organizations",
+          "description": "GRID organizations publishing the report (only disambiguated).",
+          "long_description": null,
+          "is_entity": true,
+          "is_filter": true,
+          "is_facet": false,
+          "is_multivalue": true,
+          "solr_fields": { "return": "publishing_org_ids", "filter": "publishing_org_ids" }
+        },
+        "research_org_cities": {
+          "type": "cities",
+          "description": "Cities of the organisations associated with the report, expressed as GeoNames ID and name.",
+          "long_description": null,
+          "is_entity": true,
+          "is_filter": true,
+          "is_facet": false,
+          "is_multivalue": true,
+          "solr_fields": {
+            "return": "all_research_org_city_geonames_ids",
+            "filter": "all_research_org_city_geonames_ids"
+          }
+        },
+        "category_icrp_cso": {
+          "type": "categories",
+          "description": "`ICRP Common Scientific Outline <https://dimensions.freshdesk.com/support/solutions/articles/23000018820-what-are-fields-of-research-and-other-classification-systems-and-how-are-they-created->`_",
+          "long_description": null,
+          "is_entity": true,
+          "is_filter": true,
+          "is_facet": false,
+          "is_multivalue": true,
+          "solr_fields": { "return": "icrp_cso_2020", "filter": "icrp_cso_2020" }
+        },
+        "research_org_countries": {
+          "type": "countries",
+          "description": "Countries of the organisations associated with the report, expressed as GeoNames code and name.",
+          "long_description": null,
+          "is_entity": true,
+          "is_filter": true,
+          "is_facet": false,
+          "is_multivalue": true,
+          "solr_fields": {
+            "return": "all_research_org_country_codes",
+            "filter": "all_research_org_country_codes"
+          }
+        },
+        "publisher_details": {
+          "type": "json",
+          "description": "Organizations publishing the report, as they appear in the source.",
+          "long_description": null,
+          "is_entity": false,
+          "is_filter": true,
+          "is_facet": false,
+          "is_multivalue": false,
+          "solr_fields": { "return": "publishing_orgs", "filter": "publishing_orgs" }
+        },
+        "concepts_scores": {
+          "type": "json",
+          "description": "Relevancy scores for `concepts`.",
+          "long_description": "Returned objects contain: ``concept``, ``relevance``.\n                                            \n                                            For example:\n                                            \n    .. code-block:: json\n    \n        {\n            \"concepts_scores\": [\n                {\n                  \"concept\": \"professional relations\",\n                  \"relevance\": 0.088\n                },\n                {\n                  \"concept\": \"relation\",\n                  \"relevance\": 0.062\n                },\n                {\n                  \"concept\": \"representation\",\n                  \"relevance\": 0.025\n                },\n                {\n                  \"concept\": \"skald\",\n                  \"relevance\": 6.984\n                },\n                {\n                  \"concept\": \"Representations of Skalds\",\n                  \"relevance\": 0.0\n                },\n                {\n                  \"concept\": \"Sagas 1\",\n                  \"relevance\": 0.0\n                }\n            ]\n        }",
+          "is_entity": false,
+          "is_filter": true,
+          "is_facet": false,
+          "is_multivalue": false,
+          "solr_fields": { "return": "terms_v6", "filter": "phrases_search_v6" }
+        },
+        "date": {
+          "type": "date",
+          "description": "Date when the report was published, in the format 'YYYY-MM-DD'.",
+          "long_description": null,
+          "is_entity": false,
+          "is_filter": true,
+          "is_facet": false,
+          "is_multivalue": false,
+          "solr_fields": { "return": "pub_date", "filter": "pub_date" }
+        },
+        "linkout": {
+          "type": "string",
+          "description": "Original URL for the report.",
+          "long_description": null,
+          "is_entity": false,
+          "is_filter": false,
+          "is_facet": false,
+          "is_multivalue": false,
+          "solr_fields": { "return": "linkout", "filter": "linkout" }
+        },
+        "doi": {
+          "type": "string",
+          "description": "Digital object identifier.",
+          "long_description": null,
+          "is_entity": false,
+          "is_filter": true,
+          "is_facet": false,
+          "is_multivalue": false,
+          "solr_fields": { "return": "doi", "filter": "doi" }
+        },
+        "category_hra": {
+          "type": "categories",
+          "description": "`Health Research Areas <https://dimensions.freshdesk.com/support/solutions/articles/23000018820-what-are-fields-of-research-and-other-classification-systems-and-how-are-they-created->`_",
+          "long_description": null,
+          "is_entity": true,
+          "is_filter": true,
+          "is_facet": false,
+          "is_multivalue": true,
+          "solr_fields": { "return": "hra", "filter": "hra" }
+        },
+        "responsible_orgs_details": {
+          "type": "json",
+          "description": "Organizations responsible for the report, as they appear in the source. Note: this can be different from the author affiliations.",
+          "long_description": null,
+          "is_entity": false,
+          "is_filter": true,
+          "is_facet": false,
+          "is_multivalue": false,
+          "solr_fields": { "return": "research_orgs", "filter": "research_orgs" }
+        },
+        "category_for": {
+          "type": "categories",
+          "description": "`ANZSRC Fields of Research classification <https://dimensions.freshdesk.com/support/solutions/articles/23000018820-what-are-fields-of-research-and-other-classification-systems-and-how-are-they-created->`_ (alias for most recent version).",
+          "long_description": null,
+          "is_entity": true,
+          "is_filter": true,
+          "is_facet": false,
+          "is_multivalue": true,
+          "solr_fields": { "return": "for_2020_2022", "filter": "for_2020_2022" }
+        },
+        "abstract": {
+          "type": "string",
+          "description": "The abstract of the report.",
+          "long_description": null,
+          "is_entity": false,
+          "is_filter": false,
+          "is_facet": false,
+          "is_multivalue": false,
+          "solr_fields": { "return": "abstract", "filter": "abstract" }
+        },
+        "title": {
+          "type": "string",
+          "description": "Title of a report.",
+          "long_description": null,
+          "is_entity": false,
+          "is_filter": false,
+          "is_facet": false,
+          "is_multivalue": false,
+          "solr_fields": { "return": "title", "filter": "title" }
+        },
+        "id": {
+          "type": "string",
+          "description": "Dimensions report ID.",
+          "long_description": null,
+          "is_entity": false,
+          "is_filter": true,
+          "is_facet": false,
+          "is_multivalue": false,
+          "solr_fields": { "return": "id", "filter": "id" }
+        },
+        "responsible_orgs": {
+          "type": "organizations",
+          "description": "GRID organizations responsible for the report. Note: this can be different from the author affiliations.",
+          "long_description": null,
+          "is_entity": true,
+          "is_filter": true,
+          "is_facet": false,
+          "is_multivalue": true,
+          "solr_fields": { "return": "research_org_ids", "filter": "research_org_ids" }
+        },
+        "category_sdg": {
+          "type": "categories",
+          "description": "SDG - Sustainable Development Goals",
+          "long_description": null,
+          "is_entity": true,
+          "is_filter": true,
+          "is_facet": false,
+          "is_multivalue": true,
+          "solr_fields": { "return": "sdg_2021", "filter": "sdg_2021" }
+        },
+        "research_orgs": {
+          "type": "organizations",
+          "description": "Combined list of GRID organisations associated with the report, because the source marks them as responsible for it, or because they appear as authors affiliations.",
+          "long_description": null,
+          "is_entity": true,
+          "is_filter": true,
+          "is_facet": false,
+          "is_multivalue": true,
+          "solr_fields": { "return": "all_research_org_ids", "filter": "all_research_org_ids" }
+        },
+        "category_uoa": {
+          "type": "categories",
+          "description": "`Units of Assessment <https://dimensions.freshdesk.com/support/solutions/articles/23000018820-what-are-fields-of-research-and-other-classification-systems-and-how-are-they-created->`_",
+          "long_description": null,
+          "is_entity": true,
+          "is_filter": true,
+          "is_facet": false,
+          "is_multivalue": true,
+          "solr_fields": { "return": "uoa_2023", "filter": "uoa_2023" }
+        },
+        "external_ids": {
+          "type": "json",
+          "description": "External identifiers available from the report publisher (e.g. OSTI ID).",
+          "long_description": null,
+          "is_entity": false,
+          "is_filter": true,
+          "is_facet": false,
+          "is_multivalue": false,
+          "solr_fields": { "return": "document_numbers", "filter": "document_numbers" }
+        },
+        "responsible_orgs_states": {
+          "type": "states",
+          "description": "States of the organisations responsible for the report, expressed as GeoNames codes (ISO-3166-2).",
+          "long_description": null,
+          "is_entity": true,
+          "is_filter": true,
+          "is_facet": false,
+          "is_multivalue": true,
+          "solr_fields": {
+            "return": "research_org_state_codes",
+            "filter": "research_org_state_codes"
+          }
+        },
+        "category_icrp_ct": {
+          "type": "categories",
+          "description": "`ICRP Cancer Types <https://dimensions.freshdesk.com/support/solutions/articles/23000018820-what-are-fields-of-research-and-other-classification-systems-and-how-are-they-created->`_",
+          "long_description": null,
+          "is_entity": true,
+          "is_filter": true,
+          "is_facet": false,
+          "is_multivalue": true,
+          "solr_fields": { "return": "icrp_ct_2020", "filter": "icrp_ct_2020" }
+        },
+        "category_hrcs_rac": {
+          "type": "categories",
+          "description": "`HRCS \u2013 Research Activity Codes <https://dimensions.freshdesk.com/support/solutions/articles/23000018820-what-are-fields-of-research-and-other-classification-systems-and-how-are-they-created->`_",
+          "long_description": null,
+          "is_entity": true,
+          "is_filter": true,
+          "is_facet": false,
+          "is_multivalue": true,
+          "solr_fields": { "return": "hrcs_rac_2020", "filter": "hrcs_rac_2020" }
+        },
+        "year": {
+          "type": "integer",
+          "description": "Year when the report was published (note: when the `date` field is available, this is equal to the year part of the full date).",
+          "long_description": null,
+          "is_entity": false,
+          "is_filter": true,
+          "is_facet": false,
+          "is_multivalue": false,
+          "solr_fields": { "return": "pub_year", "filter": "pub_year" }
+        },
+        "concepts": {
+          "type": "json",
+          "description": "Concepts describing the main topics of the report (note: automatically derived from the text using machine learning).",
+          "long_description": null,
+          "is_entity": false,
+          "is_filter": true,
+          "is_facet": false,
+          "is_multivalue": false,
+          "solr_fields": { "return": "terms_v6", "filter": "phrases_search_v6" }
+        },
+        "responsible_orgs_cities": {
+          "type": "cities",
+          "description": "Cities of the organisations responsible for the report, expressed as GeoNames ID and name.",
+          "long_description": null,
+          "is_entity": true,
+          "is_filter": true,
+          "is_facet": false,
+          "is_multivalue": true,
+          "solr_fields": {
+            "return": "research_org_city_geonames_ids",
+            "filter": "research_org_city_geonames_ids"
+          }
+        },
+        "publisher_orgs_countries": {
+          "type": "countries",
+          "description": "Countries of the organizations publishing the report.",
+          "long_description": null,
+          "is_entity": true,
+          "is_filter": true,
+          "is_facet": false,
+          "is_multivalue": true,
+          "solr_fields": {
+            "return": "publishing_org_country_codes",
+            "filter": "publishing_org_country_codes"
+          }
+        },
+        "category_rcdc": {
+          "type": "categories",
+          "description": "`Research, Condition, and Disease Categorization <https://dimensions.freshdesk.com/support/solutions/articles/23000018820-what-are-fields-of-research-and-other-classification-systems-and-how-are-they-created->`_",
+          "long_description": null,
+          "is_entity": true,
+          "is_filter": true,
+          "is_facet": false,
+          "is_multivalue": true,
+          "solr_fields": { "return": "rcdc_2023", "filter": "rcdc_2023" }
+        },
+        "category_bra": {
+          "type": "categories",
+          "description": "`Broad Research Areas <https://dimensions.freshdesk.com/support/solutions/articles/23000018820-what-are-fields-of-research-and-other-classification-systems-and-how-are-they-created->`_",
+          "long_description": null,
+          "is_entity": true,
+          "is_filter": true,
+          "is_facet": false,
+          "is_multivalue": true,
+          "solr_fields": { "return": "bra_2020", "filter": "bra_2020" }
+        },
+        "responsible_orgs_countries": {
+          "type": "countries",
+          "description": "Countries of the organisations responsible for the report, expressed as GeoNames code and name.",
+          "long_description": null,
+          "is_entity": true,
+          "is_filter": true,
+          "is_facet": false,
+          "is_multivalue": true,
+          "solr_fields": {
+            "return": "research_org_country_codes",
+            "filter": "research_org_country_codes"
+          }
+        },
+        "category_for_2020": {
+          "type": "categories",
+          "description": "`ANZSRC Fields of Research classification <https://dimensions.freshdesk.com/support/solutions/articles/23000018820-what-are-fields-of-research-and-other-classification-systems-and-how-are-they-created->`_",
+          "long_description": null,
+          "is_entity": true,
+          "is_filter": true,
+          "is_facet": false,
+          "is_multivalue": true,
+          "solr_fields": { "return": "for_2020_2022", "filter": "for_2020_2022" }
+        },
+        "funder_details": {
+          "type": "json",
+          "description": "Sponsors/funders of the research/report, as they appear in the source.",
+          "long_description": null,
+          "is_entity": false,
+          "is_filter": true,
+          "is_facet": false,
+          "is_multivalue": false,
+          "solr_fields": { "return": "sponsor_orgs", "filter": "sponsor_orgs" }
+        },
+        "research_org_states": {
+          "type": "states",
+          "description": "States of the organisations associated with the report, expressed as GeoNames codes (ISO-3166-2).",
+          "long_description": null,
+          "is_entity": true,
+          "is_filter": true,
+          "is_facet": false,
+          "is_multivalue": true,
+          "solr_fields": {
+            "return": "all_research_org_state_codes",
+            "filter": "all_research_org_state_codes"
+          }
+        },
+        "funder_orgs": {
+          "type": "organizations",
+          "description": "GRID organizations funding the report (only disambiguated).",
+          "long_description": null,
+          "is_entity": true,
+          "is_filter": true,
+          "is_facet": false,
+          "is_multivalue": true,
+          "solr_fields": { "return": "sponsor_org_ids", "filter": "sponsor_org_ids" }
+        },
+        "funder_orgs_countries": {
+          "type": "countries",
+          "description": "Countries of the organizations funding the report.",
+          "long_description": null,
+          "is_entity": true,
+          "is_filter": true,
+          "is_facet": false,
+          "is_multivalue": true,
+          "solr_fields": {
+            "return": "sponsor_org_country_codes",
+            "filter": "sponsor_org_country_codes"
+          }
+        }
+      },
+      "fieldsets": ["basics", "categories"],
+      "metrics": { "count": { "name": "count", "description": "Total count" } },
+      "search_fields": ["full_data", "title_abstract_only", "concepts"]
+    }
+  },
+  "entities": {
+    "categories": {
+      "fields": {
+        "id": {
+          "name": "string",
+          "type": "string",
+          "description": "Dimensions ID of the category.",
+          "long_description": null,
+          "is_filter": true,
+          "solr_fields": { "return": "uber_cat_id", "filter": "uber_cat_id" }
+        },
+        "name": {
+          "name": "string",
+          "type": "string",
+          "description": "Name of the category. Note: this may include an identifier from the original source. E.g., '2.1 Biological and endogenous factors' (HRCS_RAC codes) or '1103 Clinical Sciences' (FOR codes).",
+          "long_description": null,
+          "is_filter": true,
+          "solr_fields": { "return": "name", "filter": "name" }
+        }
+      },
+      "fieldsets": ["basics"]
+    },
+    "cities": {
+      "fields": {
+        "id": {
+          "name": "string",
+          "type": "string",
+          "description": "GeoNames city ID (eg '5391811' for `geonames:5391811 <http://www.geonames.org/5391811>`_ )",
+          "long_description": null,
+          "is_filter": true,
+          "solr_fields": { "return": "geonames_id", "filter": "geonames_id" }
+        },
+        "name": {
+          "name": "string",
+          "type": "string",
+          "description": "GeoNames city name.",
+          "long_description": null,
+          "is_filter": true,
+          "solr_fields": { "return": "name", "filter": "name" }
+        }
+      },
+      "fieldsets": ["basics"]
+    },
+    "countries": {
+      "fields": {
+        "id": {
+          "name": "string",
+          "type": "string",
+          "description": "GeoNames country code (eg 'US' for `geonames:6252001 <http://www.geonames.org/6252001>`_ )",
+          "long_description": null,
+          "is_filter": true,
+          "solr_fields": { "return": "code", "filter": "code" }
+        },
+        "name": {
+          "name": "string",
+          "type": "string",
+          "description": "GeoNames country name.",
+          "long_description": null,
+          "is_filter": true,
+          "solr_fields": { "return": "name", "filter": "name" }
+        }
+      },
+      "fieldsets": ["basics"]
+    },
+    "journals": {
+      "fields": {
+        "id": {
+          "name": "string",
+          "type": "string",
+          "description": "Dimensions ID of a journal. E.g., `jour.1016355 <https://app.dimensions.ai/discover/publication?and_facet_source_title=jour.1016355>`_ or `jour.1077219 <https://app.dimensions.ai/discover/publication?and_facet_source_title=jour.1077219>`_ .",
+          "long_description": null,
+          "is_filter": true,
+          "solr_fields": { "return": "id", "filter": "id" }
+        },
+        "title": {
+          "name": "string",
+          "type": "string",
+          "description": "Title of a journal publication. E.g. 'Nature' or 'The Lancet'",
+          "long_description": null,
+          "is_filter": true,
+          "solr_fields": { "return": "title", "filter": "title" }
+        }
+      },
+      "fieldsets": ["basics"]
+    },
+    "states": {
+      "fields": {
+        "id": {
+          "name": "string",
+          "type": "string",
+          "description": "GeoNames state code (ISO\u200c-3166-2). E.g., 'US.CA' for `geonames:5332921 <http://www.geonames.org/5332921>`_ .",
+          "long_description": null,
+          "is_filter": true,
+          "solr_fields": { "return": "code", "filter": "code" }
+        },
+        "name": {
+          "name": "string",
+          "type": "string",
+          "description": "GeoNames state name (ISO\u200c-3166-2).",
+          "long_description": null,
+          "is_filter": true,
+          "solr_fields": { "return": "name", "filter": "name" }
+        }
+      },
+      "fieldsets": ["basics"]
+    },
+    "publication_links": {
+      "fields": {
+        "id": {
+          "name": "string",
+          "type": "string",
+          "description": "Dimensions publication id",
+          "long_description": null,
+          "is_filter": true,
+          "solr_fields": { "return": "id", "filter": "id" }
+        },
+        "doi": {
+          "name": "string",
+          "type": "string",
+          "description": "Digital object identifier",
+          "long_description": null,
+          "is_filter": true,
+          "solr_fields": { "return": "doi", "filter": "doi" }
+        },
+        "pmid": {
+          "name": "string",
+          "type": "string",
+          "description": "PubMed ID",
+          "long_description": null,
+          "is_filter": true,
+          "solr_fields": { "return": "pmid", "filter": "pmid" }
+        },
+        "pmcid": {
+          "name": "string",
+          "type": "string",
+          "description": "PubMed Central ID",
+          "long_description": null,
+          "is_filter": true,
+          "solr_fields": { "return": "pmc_id", "filter": "pmc_id" }
+        }
+      },
+      "fieldsets": ["basics"]
+    },
+    "open_access": {
+      "fields": {
+        "id": {
+          "name": "string",
+          "type": "string",
+          "description": "Dimensions ID of the open access category. E.g., one of 'closed', 'oa_all', 'gold_bronze', 'gold_pure', 'green_sub', 'gold_hybrid', 'green_pub', 'green_acc'. (see also the :ref:`publications` field ``open_access``).",
+          "long_description": null,
+          "is_filter": true,
+          "solr_fields": { "return": "open_access_id", "filter": "open_access_id" }
+        },
+        "name": {
+          "name": "string",
+          "type": "string",
+          "description": "Name of the open access category. E.g., 'Closed' or 'Pure Gold'.",
+          "long_description": null,
+          "is_filter": true,
+          "solr_fields": { "return": "name", "filter": "name_search" }
+        },
+        "description": {
+          "name": "string",
+          "type": "string",
+          "description": "Description of the open access category.",
+          "long_description": null,
+          "is_filter": false,
+          "solr_fields": { "return": "description", "filter": "description" }
+        }
+      },
+      "fieldsets": ["basics"]
+    },
+    "repositories": {
+      "fields": {
+        "id": {
+          "name": "string",
+          "type": "string",
+          "description": "Dimensions ID of the repository.",
+          "long_description": null,
+          "is_filter": true,
+          "solr_fields": { "return": "id", "filter": "id" }
+        },
+        "name": {
+          "name": "string",
+          "type": "string",
+          "description": "The name of the repository of the dataset.",
+          "long_description": null,
+          "is_filter": true,
+          "solr_fields": { "return": "name", "filter": "name" }
+        }
+      },
+      "fieldsets": ["basics"]
+    }
+  }
+}

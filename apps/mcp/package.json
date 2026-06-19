@@ -1,0 +1,41 @@
+{
+  "name": "@digital-science-dsl/dimensions-analytics-mcp",
+  "version": "1.0.3",
+  "description": "Dimensions Analytics MCP server for Dimensions DSL querying",
+  "type": "module",
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "bin": {
+    "dimensions-analytics-mcp": "bin/dimensions-analytics-mcp.js",
+    "dimensions-analytics-mcp-http": "bin/dimensions-analytics-mcp-http.js"
+  },
+  "exports": {
+    ".": {
+      "import": "./dist/index.js",
+      "types": "./dist/index.d.ts"
+    }
+  },
+  "scripts": {
+    "build": "tsc && node -e \"const fs=require('fs');for (const f of ['dist/main.js','dist/http-main.js','bin/dimensions-analytics-mcp.js','bin/dimensions-analytics-mcp-http.js']) { if (!fs.existsSync(f)) continue; const c=fs.readFileSync(f,'utf8'); if (!c.startsWith('#!')) fs.writeFileSync(f,'#!/usr/bin/env node\\n'+c); }\" && chmod +x dist/main.js dist/http-main.js bin/dimensions-analytics-mcp.js bin/dimensions-analytics-mcp-http.js",
+    "typecheck": "tsc --noEmit"
+  },
+  "dependencies": {
+    "@modelcontextprotocol/sdk": "catalog:",
+    "zod": "catalog:"
+  },
+  "devDependencies": {
+    "@types/express": "^5.0.0",
+    "fast-check": "^4.6.0",
+    "typescript": "catalog:"
+  },
+  "publishConfig": {
+    "registry": "https://registry.npmjs.org",
+    "access": "public"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/digital-science/dimensions-analytics-mcp.git",
+    "directory": "apps/mcp"
+  },
+  "license": "MIT"
+}
