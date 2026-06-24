@@ -3,7 +3,10 @@
 # Run from the repo, or: curl -fsSL https://raw.githubusercontent.com/digital-science/dimensions-analytics-mcp/main/scripts/install.sh | bash
 set -euo pipefail
 
-SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" 2>/dev/null && pwd || true)"
+SCRIPT_DIR=""
+if [[ -n "${BASH_SOURCE[0]:-}" ]]; then
+  SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" 2>/dev/null && pwd || true)"
+fi
 REPO="digital-science/dimensions-analytics-mcp"
 REF="${DIMENSIONS_MCP_INSTALL_REF:-main}"
 RAW="https://raw.githubusercontent.com/${REPO}/${REF}"
