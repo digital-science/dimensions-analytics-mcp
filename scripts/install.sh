@@ -36,7 +36,7 @@ offer_node_install() {
   case "$(uname -s 2>/dev/null || echo unknown)" in
     Darwin)
       if command -v brew >/dev/null 2>&1; then
-        read -r -p "Install Node.js with Homebrew now? [y/N] " ans
+        read -r -p "Install Node.js with Homebrew now? [y/N] " ans </dev/tty
         if [[ "${ans:-}" =~ ^[Yy]$ ]]; then
           brew install node
           return 0
@@ -84,7 +84,14 @@ main() {
   fi
   local mjs
   mjs="$(resolve_install_mjs)"
-  exec node "${mjs}" "$@"
+  if [[ -t 0 ]]; then
+    exec node "${mjs}" "$@"
+  elif [[ -r /dev/tty ]]; then
+    exec node "${mjs}" "$@" </dev/tty
+  else
+    warn "No interactive terminal. Pass --yes --api-key and --clients, or run ./scripts/install.sh from a clone."
+    exec node "${mjs}" "$@"
+  fi
 }
 
 main "$@"

@@ -4,7 +4,15 @@
  * Installs @digital-science-dsl/dimensions-analytics-mcp from npm and configures MCP clients.
  */
 import { spawnSync } from "node:child_process";
-import { copyFileSync, existsSync, mkdirSync, readFileSync, writeFileSync } from "node:fs";
+import {
+  copyFileSync,
+  createReadStream,
+  existsSync,
+  mkdirSync,
+  openSync,
+  readFileSync,
+  writeFileSync,
+} from "node:fs";
 import { homedir, platform } from "node:os";
 import { dirname, join } from "node:path";
 import { createInterface } from "node:readline";
@@ -122,17 +130,52 @@ function assertNodeVersion() {
   }
 }
 
+let interactiveInput = null;
+
+function getInteractiveInput() {
+  if (interactiveInput) {
+    return interactiveInput;
+  }
+  if (process.stdin.isTTY) {
+    interactiveInput = process.stdin;
+    return interactiveInput;
+  }
+  if (platform() === "win32") {
+    try {
+      interactiveInput = createReadStream("CONIN$");
+      return interactiveInput;
+    } catch {
+      return null;
+    }
+  }
+  try {
+    const fd = openSync("/dev/tty", "r");
+    interactiveInput = createReadStream(null, { fd });
+    return interactiveInput;
+  } catch {
+    return null;
+  }
+}
+
 function createPrompt() {
+  const input = getInteractiveInput();
+  if (!input) {
+    console.error(`Non-interactive stdin. Re-run from a terminal, or use:
+  node install.mjs --yes --api-key <key> --clients claude-desktop,cursor
+One-line install: curl -fsSL .../install.sh | bash`);
+    process.exit(1);
+  }
   return createInterface({
-    input: process.stdin,
+    input,
     output: process.stdout,
   });
 }
 
 function ask(rl, question, { defaultValue = "", secret = false } = {}) {
   const suffix = defaultValue ? ` [${defaultValue}]` : "";
+  const input = getInteractiveInput() ?? process.stdin;
   return new Promise((resolve) => {
-    if (secret && process.stdin.isTTY && process.stdin.setRawMode) {
+    if (secret && input.isTTY && input.setRawMode) {
       process.stdout.write(`${question}${suffix}: `);
       let value = "";
       const onData = (chunk) => {
@@ -140,8 +183,8 @@ function ask(rl, question, { defaultValue = "", secret = false } = {}) {
         for (const char of text) {
           const code = char.charCodeAt(0);
           if (code === 13 || code === 10) {
-            process.stdin.off("data", onData);
-            process.stdin.setRawMode(false);
+            input.off("data", onData);
+            input.setRawMode(false);
             process.stdout.write("\n");
             resolve(value || defaultValue);
             return;
@@ -154,9 +197,9 @@ function ask(rl, question, { defaultValue = "", secret = false } = {}) {
         }
       };
       try {
-        process.stdin.setRawMode(true);
-        process.stdin.resume();
-        process.stdin.on("data", onData);
+        input.setRawMode(true);
+        input.resume();
+        input.on("data", onData);
         return;
       } catch {
         process.stdout.write("(input visible)\n");
@@ -309,9 +352,8 @@ async function main() {
 
   assertNodeVersion();
 
-  console.log("Dimensions Analytics MCP — setup wizard\n");
-
   const rl = createPrompt();
+  console.log("Dimensions Analytics MCP — setup wizard\n");
   try {
     const apiKey = await promptApiKey(rl, opts);
     const clientIds = await promptClients(rl, opts);
