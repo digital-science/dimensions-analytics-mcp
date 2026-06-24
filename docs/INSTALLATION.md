@@ -9,8 +9,10 @@ Use the guided installer. It checks Node.js, downloads Dimensions Analytics MCP,
 Paste in Terminal:
 
 ```bash
-curl -fsSL https://raw.githubusercontent.com/digital-science/dimensions-analytics-mcp/main/scripts/install.sh | bash
+bash -c "$(curl -fsSL https://raw.githubusercontent.com/digital-science/dimensions-analytics-mcp/main/scripts/install.sh)"
 ```
+
+Use this form (not `curl … | bash`). Piping the script to bash leaves stdin as the pipe, so the wizard cannot read your answers.
 
 Install [Node.js 20+](https://nodejs.org/) first if prompted (the script can install via Homebrew on Mac).
 
@@ -40,7 +42,7 @@ Example prompts: **[USAGE.md](./USAGE.md)**.
 ### Pin a release (optional)
 
 ```bash
-DIMENSIONS_MCP_INSTALL_REF=v1.0.3 curl -fsSL https://raw.githubusercontent.com/digital-science/dimensions-analytics-mcp/main/scripts/install.sh | bash
+DIMENSIONS_MCP_INSTALL_REF=v1.0.3 bash -c "$(curl -fsSL https://raw.githubusercontent.com/digital-science/dimensions-analytics-mcp/main/scripts/install.sh)"
 ```
 
 ### Non-interactive (advanced)

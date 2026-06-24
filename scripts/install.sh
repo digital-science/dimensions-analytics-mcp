@@ -1,6 +1,8 @@
 #!/usr/bin/env bash
 # Dimensions Analytics MCP one-step installer (macOS, Linux, Git Bash on Windows)
-# Run from the repo, or: curl -fsSL https://raw.githubusercontent.com/digital-science/dimensions-analytics-mcp/main/scripts/install.sh | bash
+# Run from the repo, or:
+#   bash -c "$(curl -fsSL https://raw.githubusercontent.com/digital-science/dimensions-analytics-mcp/main/scripts/install.sh)"
+# Do not use "curl ... | bash" — that leaves stdin as a pipe and prompts cannot read your answers.
 set -euo pipefail
 
 SCRIPT_DIR=""
@@ -72,9 +74,27 @@ resolve_install_mjs() {
   local tmp mjs
   tmp="$(mktemp -d)"
   mjs="${tmp}/install.mjs"
-  info "Downloading installer from ${RAW}/scripts/install.mjs ..." >&2
-  curl -fsSL "${RAW}/scripts/install.mjs" -o "${mjs}"
+  info "Downloading installer from ${REPO} (${REF}) ..." >&2
+  if ! curl -fsSL \
+    -H "Accept: application/vnd.github.raw+json" \
+    "https://api.github.com/repos/${REPO}/contents/scripts/install.mjs?ref=${REF}" \
+    -o "${mjs}"; then
+    curl -fsSL "${RAW}/scripts/install.mjs" -o "${mjs}"
+  fi
   printf '%s\n' "${mjs}"
+}
+
+run_installer() {
+  local mjs="$1"
+  shift
+  if [[ -t 0 ]]; then
+    exec node "${mjs}" "$@"
+  fi
+  if exec 3< /dev/tty 2>/dev/null; then
+    exec node "${mjs}" "$@" 0<&3 3<&-
+  fi
+  warn "No interactive terminal. Pass --yes --api-key and --clients, or run ./scripts/install.sh from a clone."
+  exec node "${mjs}" "$@"
 }
 
 main() {
@@ -84,14 +104,7 @@ main() {
   fi
   local mjs
   mjs="$(resolve_install_mjs)"
-  if [[ -t 0 ]]; then
-    exec node "${mjs}" "$@"
-  elif [[ -r /dev/tty ]]; then
-    exec node "${mjs}" "$@" </dev/tty
-  else
-    warn "No interactive terminal. Pass --yes --api-key and --clients, or run ./scripts/install.sh from a clone."
-    exec node "${mjs}" "$@"
-  fi
+  run_installer "${mjs}" "$@"
 }
 
 main "$@"

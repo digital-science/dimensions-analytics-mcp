@@ -97,7 +97,7 @@ function printHelp() {
   console.log(`Dimensions Analytics MCP installer
 
 One-line install (Mac / Linux):
-  curl -fsSL https://raw.githubusercontent.com/${REPO}/main/scripts/install.sh | bash
+  bash -c "$(curl -fsSL https://raw.githubusercontent.com/${REPO}/main/scripts/install.sh)"
 
 One-line install (Windows PowerShell):
   irm https://raw.githubusercontent.com/${REPO}/main/scripts/install.ps1 | iex
@@ -162,7 +162,7 @@ function createPrompt() {
   if (!input) {
     console.error(`Non-interactive stdin. Re-run from a terminal, or use:
   node install.mjs --yes --api-key <key> --clients claude-desktop,cursor
-One-line install: curl -fsSL .../install.sh | bash`);
+One-line install: bash -c "$(curl -fsSL .../install.sh)"`);
     process.exit(1);
   }
   return createInterface({

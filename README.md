@@ -18,7 +18,7 @@ Don’t have an API key yet? [Request a demo or quote here](https://www.dimensio
 **Mac / Linux** — paste in Terminal:
 
 ```bash
-curl -fsSL https://raw.githubusercontent.com/digital-science/dimensions-analytics-mcp/main/scripts/install.sh | bash
+bash -c "$(curl -fsSL https://raw.githubusercontent.com/digital-science/dimensions-analytics-mcp/main/scripts/install.sh)"
 ```
 
 **Windows** — paste in PowerShell:
