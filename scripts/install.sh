@@ -69,7 +69,7 @@ resolve_install_mjs() {
   local tmp mjs
   tmp="$(mktemp -d)"
   mjs="${tmp}/install.mjs"
-  info "Downloading installer from ${RAW}/scripts/install.mjs ..."
+  info "Downloading installer from ${RAW}/scripts/install.mjs ..." >&2
   curl -fsSL "${RAW}/scripts/install.mjs" -o "${mjs}"
   printf '%s\n' "${mjs}"
 }
