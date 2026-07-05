@@ -98,15 +98,18 @@ export class DimensionsClient {
 
     if (this.config.backend === "internal") {
       const internal = this.config.internal!;
+      this.rateLimiter = new RateLimiter({
+        maxRequests: 1000,
+        windowMs: 60_000,
+      });
       this.internalClient = new InternalDslClient({
         config: internal.service,
         userEmail: internal.userEmail,
         clientIp: internal.clientIp,
         timeout: this.config.timeout,
-      });
-      this.rateLimiter = new RateLimiter({
-        maxRequests: 1000,
-        windowMs: 60_000,
+        maxRetries: this.config.maxRetries,
+        retryDelay: this.config.retryDelay,
+        rateLimiter: this.rateLimiter,
       });
       return;
     }

@@ -27,6 +27,7 @@ import { registerLookupTools } from "./tools/lookup.js";
 import { registerQueryTools } from "./tools/query.js";
 import { registerSchemaTools, validateFieldAliases } from "./tools/schema.js";
 import { registerSearchTools } from "./tools/search.js";
+import { initMcpUsageTracking } from "./usage-tracking.js";
 
 /**
  * Configuration options for the MCP server.
@@ -46,6 +47,10 @@ export interface McpServerConfig {
   userEmail?: string;
   /** Client IP to forward to dsl-service and auth.json */
   clientIp?: string;
+  /** MCP session id for usage tracking */
+  mcpSessionId?: string;
+  /** Coarse MCP client label (cursor, vscode, etc.) */
+  mcpClient?: string;
 }
 
 /**
@@ -153,6 +158,7 @@ async function loadSchemaForServer(
  * Warms the shared schema cache for hosted deployment (call once at process startup).
  */
 export async function warmHostedSchemaCache(hosted: HostedEnvConfig): Promise<SchemaStore> {
+  initMcpUsageTracking({ deployment: "hosted", client: "bootstrap" });
   const client = createBootstrapDimensionsClient(hosted);
   return getSharedSchemaStore(client);
 }
@@ -167,6 +173,12 @@ export async function createMcpServerAsync(config: McpServerConfig = {}): Promis
   schemaStore: SchemaStore;
 }> {
   const { mode, hosted } = resolveDeployment(config);
+
+  initMcpUsageTracking({
+    deployment: mode,
+    client: config.mcpClient ?? (mode === "local" ? "stdio" : "unknown"),
+    sessionId: config.mcpSessionId,
+  });
 
   const client = createDimensionsClient({
     mode,

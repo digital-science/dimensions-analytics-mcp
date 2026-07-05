@@ -3,6 +3,7 @@
  * @module mcp/http-server
  */
 
+import { randomUUID } from "node:crypto";
 import type { IncomingMessage, Server } from "node:http";
 import { createMcpExpressApp } from "@modelcontextprotocol/sdk/server/express.js";
 import { StreamableHTTPServerTransport } from "@modelcontextprotocol/sdk/server/streamableHttp.js";
@@ -11,6 +12,7 @@ import type { HostedEnvConfig } from "../client/deployment-config.js";
 import { AuthenticationError } from "../client/errors.js";
 import { parseBearerToken, resolveUserFromApiKey } from "../client/resolve-api-key-user.js";
 import { createMcpServerAsync, warmHostedSchemaCache } from "./server.js";
+import { mcpClientFromUserAgent } from "./usage-tracking.js";
 
 export interface HostedHttpServerOptions {
   readonly hosted: HostedEnvConfig;
@@ -57,11 +59,18 @@ export function startHostedHttpServer(options: HostedHttpServerOptions): HostedH
         clientIp,
       });
 
+      const mcpSessionId = randomUUID();
+      const mcpClient = mcpClientFromUserAgent(
+        typeof req.headers["user-agent"] === "string" ? req.headers["user-agent"] : undefined,
+      );
+
       const { server } = await createMcpServerAsync({
         deploymentMode: "hosted",
         hosted: options.hosted,
         userEmail,
         clientIp,
+        mcpSessionId,
+        mcpClient,
       });
 
       const transport = new StreamableHTTPServerTransport({

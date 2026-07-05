@@ -8,6 +8,7 @@ import type { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js";
 import { z } from "zod";
 import { type DimensionsClient, EntitySchema, type EntityType } from "../../dsl/index.js";
 import { withFieldAliases } from "../middleware/field-aliases.js";
+import { registerTrackedTool } from "../usage-tracking.js";
 import {
   asArray,
   formatErrorResult,
@@ -22,7 +23,8 @@ import {
  */
 export function registerLookupTools(server: McpServer, client: DimensionsClient): void {
   // Get publication by DOI
-  server.registerTool(
+  registerTrackedTool(
+    server,
     "get_by_doi",
     {
       description:
@@ -75,7 +77,8 @@ export function registerLookupTools(server: McpServer, client: DimensionsClient)
   );
 
   // Get publication by PubMed ID
-  server.registerTool(
+  registerTrackedTool(
+    server,
     "get_by_pmid",
     {
       description:
@@ -128,7 +131,8 @@ export function registerLookupTools(server: McpServer, client: DimensionsClient)
   );
 
   // Get entity by Dimensions ID
-  server.registerTool(
+  registerTrackedTool(
+    server,
     "get_by_id",
     {
       description:

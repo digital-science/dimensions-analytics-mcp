@@ -18,6 +18,9 @@ import {
   UnprocessableEntityError,
 } from "./errors.js";
 import type { RateLimiter } from "./rate-limiter.js";
+import { executeRequestWithRetry } from "./request-retry.js";
+import { getMcpUsageSession } from "./usage-context.js";
+import { buildMcpUsageHeaders, buildMcpUserAgent } from "./usage-headers.js";
 
 /**
  * Configuration options for the HTTP client.
@@ -145,10 +148,24 @@ export class HttpClient {
     dsl: string,
     options?: RequestOptions,
   ): Promise<DimensionsResponse> {
+    const sessionHeaders: Record<string, string> = {};
+    const usageHeaders = buildMcpUsageHeaders();
+    if (Object.keys(usageHeaders).length > 0) {
+      Object.assign(sessionHeaders, usageHeaders);
+      const session = getMcpUsageSession();
+      if (session) {
+        sessionHeaders["User-Agent"] = buildMcpUserAgent(session.version, session.client);
+      }
+    }
+
     return this.wrapFetch<DimensionsResponse>({
       url,
       method: "POST",
-      headers: { "Content-Type": "application/x-www-form-urlencoded" },
+      headers: {
+        "Content-Type": "application/x-www-form-urlencoded",
+        ...sessionHeaders,
+        ...options?.headers,
+      },
       body: dsl,
       timeoutMs: options?.timeout ?? this.timeout,
       signal: options?.signal,
@@ -301,41 +318,16 @@ export class HttpClient {
   }
 
   /**
-   * Determines if an error is retryable.
-   * @param error - Error to check
-   * @returns True if the error should be retried
+   * Executes a request with retry logic.
+   * @param requestFn - Function that executes the request
+   * @returns Response from successful request
    */
-  private isRetryable(error: unknown): boolean {
-    // Retry rate limit errors
-    if (error instanceof RateLimitError) {
-      return true;
-    }
-
-    // Retry server errors (5xx)
-    if (error instanceof ServerError) {
-      return true;
-    }
-
-    // Retry network errors
-    if (error instanceof NetworkError) {
-      return true;
-    }
-
-    // Retry timeout errors
-    if (error instanceof TimeoutError) {
-      return true;
-    }
-
-    // Don't retry other errors (400, 401, 403, etc.)
-    return false;
-  }
-
-  /**
-   * Delays execution for the specified time.
-   * @param ms - Delay in milliseconds
-   */
-  private delay(ms: number): Promise<void> {
-    return new Promise((resolve) => setTimeout(resolve, ms));
+  private async executeWithRetry<T>(requestFn: () => Promise<T>): Promise<T> {
+    return executeRequestWithRetry(requestFn, {
+      maxRetries: this.maxRetries,
+      retryDelay: this.retryDelay,
+      rateLimiter: this.rateLimiter,
+    });
   }
 
   /**
@@ -392,64 +384,6 @@ export class HttpClient {
       timeoutMs: options?.timeout ?? this.timeout,
       signal: options?.signal,
     });
-  }
-
-  /**
-   * Calculates the delay before the next retry attempt.
-   * For rate-limit errors, uses the client rate limiter's slot timing.
-   * For other transient errors, uses exponential backoff with jitter.
-   * The result is capped at 60 seconds.
-   * @param error - The error that triggered the retry
-   * @param attempt - The current attempt number (0-based)
-   * @returns Delay in milliseconds
-   */
-  private calculateRetryDelay(error: unknown, attempt: number): number {
-    const MAX_DELAY = 60_000;
-
-    if (error instanceof RateLimitError) {
-      const delay =
-        error.clientRateLimit?.retryAfterMs ??
-        this.rateLimiter?.getRetryDelayMs() ??
-        2000 * 2 ** attempt;
-      return Math.min(delay, MAX_DELAY);
-    }
-
-    const backoff = this.retryDelay * 2 ** attempt * (0.5 + Math.random() * 0.5);
-    return Math.min(backoff, MAX_DELAY);
-  }
-
-  /**
-   * Executes a request with retry logic.
-   * Uses client-side throttling before each attempt and exponential backoff for transient errors.
-   * @param requestFn - Function that executes the request
-   * @returns Response from successful request
-   */
-  private async executeWithRetry<T>(requestFn: () => Promise<T>): Promise<T> {
-    let lastError: Error | null = null;
-
-    for (let attempt = 0; attempt <= this.maxRetries; attempt++) {
-      await this.rateLimiter?.waitIfNeeded();
-      try {
-        const result = await requestFn();
-        this.rateLimiter?.recordRequest();
-        return result;
-      } catch (error) {
-        lastError = error as Error;
-
-        if (!this.isRetryable(error)) {
-          throw error;
-        }
-
-        if (attempt >= this.maxRetries) {
-          throw error;
-        }
-
-        const retryDelay = this.calculateRetryDelay(error, attempt);
-        await this.delay(retryDelay);
-      }
-    }
-
-    throw lastError ?? new NetworkError("Unknown error occurred");
   }
 
   /**

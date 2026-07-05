@@ -7,6 +7,7 @@
 import type { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js";
 import { z } from "zod";
 import type { DimensionsClient } from "../../dsl/index.js";
+import { registerTrackedTool } from "../usage-tracking.js";
 import { formatErrorResult, formatToolResult, READ_ONLY_API_ANNOTATIONS } from "../utils.js";
 
 /**
@@ -15,7 +16,8 @@ import { formatErrorResult, formatToolResult, READ_ONLY_API_ANNOTATIONS } from "
  * @param client - Dimensions client instance
  */
 export function registerFunctionTools(server: McpServer, client: DimensionsClient): void {
-  server.registerTool(
+  registerTrackedTool(
+    server,
     "extract_affiliations",
     {
       description:
@@ -61,7 +63,8 @@ export function registerFunctionTools(server: McpServer, client: DimensionsClien
     },
   );
 
-  server.registerTool(
+  registerTrackedTool(
+    server,
     "extract_grants",
     {
       description:

@@ -19,6 +19,7 @@ import {
   validateSearchPaginationPolicy,
 } from "../../dsl/index.js";
 import { withFieldAliases } from "../middleware/field-aliases.js";
+import { registerTrackedTool } from "../usage-tracking.js";
 import {
   formatErrorResult,
   formatToolResult,
@@ -99,7 +100,8 @@ export function registerSearchTools(
     const resultKey = searchResultKey(source);
     const toolName = searchToolName(source);
 
-    server.registerTool(
+    registerTrackedTool(
+      server,
       toolName,
       {
         description: meta.description,

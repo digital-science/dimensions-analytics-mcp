@@ -10,6 +10,7 @@ import {
 } from "../../src/client/errors.js";
 import { HttpClient } from "../../src/client/http-client.js";
 import { RateLimiter } from "../../src/client/rate-limiter.js";
+import * as requestRetry from "../../src/client/request-retry.js";
 
 /**
  * Creates a mock auth provider for testing.
@@ -42,6 +43,7 @@ describe("HttpClient", () => {
 
   afterEach(() => {
     globalThis.fetch = originalFetch;
+    requestRetry.resetRequestRetryDelayFn();
     vi.restoreAllMocks();
   });
 
@@ -156,7 +158,7 @@ describe("HttpClient", () => {
 
   describe("retry behavior", () => {
     it("retries on 429 rate limit error", async () => {
-      vi.spyOn(client as never, "delay" as never).mockResolvedValue(undefined as never);
+      requestRetry.setRequestRetryDelayFn(async () => {});
 
       const mockFetch = vi
         .fn()
@@ -239,7 +241,7 @@ describe("HttpClient", () => {
     });
 
     it("exhausts retries and throws RateLimitError", async () => {
-      vi.spyOn(client as never, "delay" as never).mockResolvedValue(undefined as never);
+      requestRetry.setRequestRetryDelayFn(async () => {});
 
       const mockFetch = vi.fn().mockResolvedValue({
         ok: false,
@@ -279,9 +281,8 @@ describe("HttpClient", () => {
         rateLimiter,
       });
 
-      const delaySpy = vi
-        .spyOn(limitedClient as never, "delay" as never)
-        .mockResolvedValue(undefined as never);
+      const delaySpy = vi.fn(async () => {});
+      requestRetry.setRequestRetryDelayFn(delaySpy);
 
       const mockFetch = vi
         .fn()
@@ -304,9 +305,8 @@ describe("HttpClient", () => {
     });
 
     it("uses exponential backoff for 5xx errors", async () => {
-      const delaySpy = vi
-        .spyOn(client as never, "delay" as never)
-        .mockResolvedValue(undefined as never);
+      const delaySpy = vi.fn(async () => {});
+      requestRetry.setRequestRetryDelayFn(delaySpy);
 
       const mockFetch = vi
         .fn()
@@ -349,9 +349,8 @@ describe("HttpClient", () => {
         retryDelay: 100000, // Very large base delay
       });
 
-      const delaySpy = vi
-        .spyOn(largeDelayClient as never, "delay" as never)
-        .mockResolvedValue(undefined as never);
+      const delaySpy = vi.fn(async () => {});
+      requestRetry.setRequestRetryDelayFn(delaySpy);
 
       const mockFetch = vi
         .fn()
@@ -385,9 +384,10 @@ describe("HttpClient", () => {
         rateLimiter,
       });
 
-      const delaySpy = vi
-        .spyOn(limitedClient as never, "delay" as never)
-        .mockResolvedValue(undefined as never);
+      const delays: number[] = [];
+      requestRetry.setRequestRetryDelayFn(async (ms) => {
+        delays.push(ms);
+      });
 
       const mockFetch = vi
         .fn()
@@ -405,8 +405,8 @@ describe("HttpClient", () => {
 
       await limitedClient.query("search publications");
 
-      expect(delaySpy).toHaveBeenCalledTimes(1);
-      expect(delaySpy).toHaveBeenCalledWith(60_000);
+      expect(delays).toHaveLength(1);
+      expect(delays[0]).toBe(60_000);
     });
   });
 
@@ -865,7 +865,7 @@ describe("HttpClient", () => {
     });
 
     it("retries postJson on rate limit error", async () => {
-      vi.spyOn(client as never, "delay" as never).mockResolvedValue(undefined as never);
+      requestRetry.setRequestRetryDelayFn(async () => {});
 
       const mockFetch = vi
         .fn()

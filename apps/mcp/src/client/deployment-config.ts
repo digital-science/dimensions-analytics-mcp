@@ -1,5 +1,8 @@
 /**
  * Deployment mode and hosted backend configuration from environment.
+ *
+ * Hosted usage tracking: MCP sends X-Dimensions-* headers on dsl-service requests
+ * (see usage-headers.ts). dsl-service derives channel/user fields server-side.
  * @module client/deployment-config
  */
 
@@ -49,42 +52,6 @@ function readIntEnv(raw: string | undefined, fallback: number, min: number): num
  */
 export function hostedBootstrapUser(host: string): string {
   return `mcp@${host}`;
-}
-
-/**
- * MCP-prefixed user label for dsl usage logs (reversible plus-addressing).
- */
-export function mcpTrackingUser(dimensionsUser: string): string {
-  const at = dimensionsUser.indexOf("@");
-  if (at <= 0) return `mcp+${dimensionsUser}`;
-  return `mcp+${dimensionsUser.slice(0, at)}${dimensionsUser.slice(at)}`;
-}
-
-export interface HostedDslLoggingInfo {
-  user: string;
-  dimensions_user: string;
-  channel: "mcp";
-  mcp_user: string;
-  product_variant: string;
-  source: "dimensions-analytics-mcp-hosted";
-}
-
-/**
- * `additional_logging_info` for hosted dsl-service queries.
- * `X-DIMENSIONS-USER` stays the canonical Dimensions user; channel fields tag MCP traffic.
- */
-export function buildHostedDslLoggingInfo(
-  dimensionsUser: string,
-  variant: string,
-): HostedDslLoggingInfo {
-  return {
-    user: dimensionsUser,
-    dimensions_user: dimensionsUser,
-    channel: "mcp",
-    mcp_user: mcpTrackingUser(dimensionsUser),
-    product_variant: variant,
-    source: "dimensions-analytics-mcp-hosted",
-  };
 }
 
 /**

@@ -24,6 +24,7 @@ import {
 import { queryHashFromDsl, runAggregateFetch, runFileFetch } from "../batch-fetch.js";
 import { resolveExportFormat } from "../export-format.js";
 import { withFieldAliases } from "../middleware/field-aliases.js";
+import { registerTrackedTool } from "../usage-tracking.js";
 import {
   formatErrorResult,
   formatToolResult,
@@ -84,7 +85,8 @@ export function registerFetchSearchPagesTools(
 ): void {
   const entityList = schemaStore.structuredEntityTypes().join(", ");
 
-  server.registerTool(
+  registerTrackedTool(
+    server,
     "fetch_search_pages",
     {
       description:

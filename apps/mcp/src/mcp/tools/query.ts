@@ -12,6 +12,7 @@ import {
   validateExecuteDslPolicy,
 } from "../../dsl/index.js";
 import type { SchemaStore } from "../schema/index.js";
+import { registerTrackedTool } from "../usage-tracking.js";
 import { formatErrorResult, formatToolResult } from "../utils.js";
 
 /**
@@ -26,7 +27,8 @@ export function registerQueryTools(
   schemaStore: SchemaStore,
 ): void {
   const sources = schemaStore.structuredEntityTypes().join(", ");
-  server.registerTool(
+  registerTrackedTool(
+    server,
     "execute_dsl",
     {
       description: `Execute a raw Dimensions DSL query. Read dimensions://schema/policy and dimensions://examples first. Official docs: https://docs.dimensions.ai/dsl/

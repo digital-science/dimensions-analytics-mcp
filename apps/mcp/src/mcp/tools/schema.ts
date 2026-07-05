@@ -9,6 +9,7 @@ import type { DimensionsClient } from "../../dsl/index.js";
 import { buildReverseAliasMap } from "../middleware/field-aliases.js";
 import type { SchemaContext } from "../schema/context.js";
 import { loadSchema, type SchemaStore } from "../schema/index.js";
+import { registerTrackedTool } from "../usage-tracking.js";
 import { formatErrorResult, formatToolResult, READ_ONLY_API_ANNOTATIONS } from "../utils.js";
 
 /**
@@ -22,7 +23,8 @@ export function registerSchemaTools(
   client: DimensionsClient,
   context: SchemaContext,
 ): void {
-  server.registerTool(
+  registerTrackedTool(
+    server,
     "describe_schema",
     {
       description:
@@ -98,7 +100,8 @@ export function registerSchemaTools(
     },
   );
 
-  server.registerTool(
+  registerTrackedTool(
+    server,
     "refresh_schema",
     {
       description:

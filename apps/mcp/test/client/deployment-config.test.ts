@@ -4,12 +4,7 @@
  */
 
 import { afterEach, beforeEach, describe, expect, it } from "vitest";
-import {
-  buildHostedDslLoggingInfo,
-  hostedBootstrapUser,
-  loadDeploymentConfig,
-  mcpTrackingUser,
-} from "../../src/client/deployment-config.js";
+import { hostedBootstrapUser, loadDeploymentConfig } from "../../src/client/deployment-config.js";
 
 const HOSTED_ENV = {
   DEPLOYMENT_MODE: "hosted",
@@ -70,24 +65,5 @@ describe("loadDeploymentConfig", () => {
 describe("hostedBootstrapUser", () => {
   it("derives mcp@host from DSL_HOST", () => {
     expect(hostedBootstrapUser("app.dimensions.ai")).toBe("mcp@app.dimensions.ai");
-  });
-});
-
-describe("mcpTrackingUser", () => {
-  it("prefixes canonical email with mcp+", () => {
-    expect(mcpTrackingUser("alice@university.edu")).toBe("mcp+alice@university.edu");
-  });
-});
-
-describe("buildHostedDslLoggingInfo", () => {
-  it("includes channel metadata for dsl-service logs", () => {
-    expect(buildHostedDslLoggingInfo("alice@university.edu", "standard")).toEqual({
-      user: "alice@university.edu",
-      dimensions_user: "alice@university.edu",
-      channel: "mcp",
-      mcp_user: "mcp+alice@university.edu",
-      product_variant: "standard",
-      source: "dimensions-analytics-mcp-hosted",
-    });
   });
 });

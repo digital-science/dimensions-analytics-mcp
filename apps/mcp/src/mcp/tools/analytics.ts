@@ -16,6 +16,7 @@ import {
 } from "../../dsl/index.js";
 import { resolveFacetFieldName, withFieldAliases } from "../middleware/field-aliases.js";
 import type { SchemaStore } from "../schema/index.js";
+import { registerTrackedTool } from "../usage-tracking.js";
 import { formatErrorResult, formatToolResult, READ_ONLY_API_ANNOTATIONS } from "../utils.js";
 import { applyAnalyticsFilters } from "./analytics-filters.js";
 
@@ -123,7 +124,8 @@ export function registerAnalyticsTools(
   const entityTypeSchema = entityTypeEnum(schemaStore);
 
   // Facet Query
-  server.registerTool(
+  registerTrackedTool(
+    server,
     "facet_query",
     {
       description:
@@ -212,7 +214,8 @@ export function registerAnalyticsTools(
   );
 
   // Aggregate Query
-  server.registerTool(
+  registerTrackedTool(
+    server,
     "aggregate_query",
     {
       description:
@@ -320,7 +323,8 @@ export function registerAnalyticsTools(
   );
 
   // Citation Trend
-  server.registerTool(
+  registerTrackedTool(
+    server,
     "citation_trend",
     {
       description:
@@ -382,7 +386,8 @@ export function registerAnalyticsTools(
   );
 
   // Funding Trend
-  server.registerTool(
+  registerTrackedTool(
+    server,
     "funding_trend",
     {
       description:
