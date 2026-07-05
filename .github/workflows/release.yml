@@ -55,8 +55,13 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           LEFTHOOK: "0"
 
+      # changesets sets published=true only when it publishes via a changeset file.
+      # When changesets are already consumed on main, it falls back to publish:packages
+      # without setting published — still tag if no version PR was opened.
       - name: Create v-prefixed git tag
-        if: steps.changesets.outputs.published == 'true'
+        if: >-
+          steps.changesets.outputs.published == 'true' ||
+          (steps.changesets.outcome == 'success' && steps.changesets.outputs.pullRequestNumber == '')
         run: |
           VERSION=$(jq -r '.version' apps/mcp/package.json)
           if git rev-parse "v$VERSION" >/dev/null 2>&1; then
@@ -67,7 +72,9 @@ jobs:
           fi
 
       - name: Create GitHub Release
-        if: steps.changesets.outputs.published == 'true'
+        if: >-
+          steps.changesets.outputs.published == 'true' ||
+          (steps.changesets.outcome == 'success' && steps.changesets.outputs.pullRequestNumber == '')
         run: |
           VERSION=$(jq -r '.version' apps/mcp/package.json)
           if gh release view "v$VERSION" >/dev/null 2>&1; then
