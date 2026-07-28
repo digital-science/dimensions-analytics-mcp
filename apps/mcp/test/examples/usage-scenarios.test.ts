@@ -38,9 +38,9 @@ describe("usage-scenarios", () => {
     registerSimilarDocumentsTool(server as never, client as never);
   });
 
-  it("documents twelve natural-language workflows", () => {
-    expect(USAGE_SCENARIOS).toHaveLength(12);
-    expect(new Set(USAGE_SCENARIOS.map((s) => s.id)).size).toBe(12);
+  it("documents thirteen natural-language workflows", () => {
+    expect(USAGE_SCENARIOS).toHaveLength(13);
+    expect(new Set(USAGE_SCENARIOS.map((s) => s.id)).size).toBe(13);
   });
 
   for (const scenario of USAGE_SCENARIOS) {

@@ -51,6 +51,7 @@ After Dimensions Analytics MCP is connected, you can ask in plain language. The 
 | Funding leaders | “Which funders have the most grant funding on climate adaptation?” | `aggregate_query` |
 | Citations over time | “Citation trend for large language model publications from 2018 to 2024.” | `citation_trend` |
 | Similar papers from an abstract | “Find publications similar to this abstract about spinal cord injury macrophages.” | `similar_documents` |
+| Similar grants from a description | “Find grants similar to this description of CAR-T cancer immunotherapy.” | `similar_documents` |
 | Build a complex query | “Run a DSL query: include CRISPR or gene editing, exclude animal models, year ≥ 2020.” | `execute_dsl` |
 
 **Routing notes:**
@@ -144,7 +145,7 @@ After Dimensions Analytics MCP is connected, you can ask in plain language. The 
 }
 ```
 
-**Similar documents from abstract** — `similar_documents`:
+**Similar documents from abstract** — `similar_documents` (publications):
 
 ```json
 {
@@ -153,6 +154,18 @@ After Dimensions Analytics MCP is connected, you can ask in plain language. The 
   "yearFrom": 2016,
   "limit": 10,
   "fields": ["id", "title", "year"]
+}
+```
+
+**Similar grants from description** — `similar_documents` (grants):
+
+```json
+{
+  "entityType": "grants",
+  "text": "Development of novel cancer immunotherapy approaches using checkpoint inhibitors and CAR-T cell engineering for solid tumors.",
+  "yearFrom": 2020,
+  "limit": 10,
+  "fields": ["id", "title", "funding_usd", "start_year"]
 }
 ```
 
@@ -541,21 +554,81 @@ extract_concepts(text: "CRISPR gene editing enables precise DNA modification")
 classify(text: "Stem cell therapy for diabetes", system: "for")
 ```
 
+Prefer the structured **`similar_documents`** tool for similarity search. Equivalent raw DSL:
+
+```text
+search publications for similar_documents("After spinal cord injury, macrophages infiltrate the lesion site")
+where year > 2015
+return publications[id+title+year]
+sort by score desc
+limit 5
+```
+
+```text
+search grants for similar_documents("Cancer immunotherapy with checkpoint inhibitors and CAR-T")
+where start_year >= 2020
+return grants[id+title]
+sort by score desc
+limit 5
+```
+
 More patterns: MCP resource `dimensions://examples` and [DSL docs](https://docs.dimensions.ai/dsl/).
 
 ---
 
-## Entity resolution and similarity tools
+## Similar documents (`similar_documents`)
+
+Find publications or grants with similar research topics from abstract/description prose. Uses Dimensions concept extraction and weighted concepts search (**not** vector embeddings). Supported `entityType` values: `publications`, `grants`.
+
+| Parameter | Description |
+|-----------|-------------|
+| `entityType` | `publications` or `grants` |
+| `text` | Abstract, description, or other topical prose (longer text works better than short keywords) |
+| `limit` | Max rows (default `20`, max `1000`) |
+| `skip` / `page` | Pagination (same policy as `search_*`) |
+| `fields` | Optional fields to return |
+| `filters` | Extra `where` clauses |
+| `yearFrom` / `yearTo` | Year range (`year` for publications; `start_year` for grants) |
+| `sortBy` | Sort field (default `score` for relevance) |
+
+For a known record: call `get_by_id` / `get_by_doi` first, then pass its abstract or description as `text`.
+
+**Publications:**
+
+```json
+{
+  "entityType": "publications",
+  "text": "After spinal cord injury, macrophages infiltrate the lesion site and contribute to both tissue damage and repair processes. Understanding macrophage polarization could lead to novel therapeutic strategies.",
+  "yearFrom": 2016,
+  "limit": 10,
+  "fields": ["id", "title", "year", "doi"]
+}
+```
+
+**Grants:**
+
+```json
+{
+  "entityType": "grants",
+  "text": "Development of novel cancer immunotherapy approaches using checkpoint inhibitors and CAR-T cell engineering for solid tumors.",
+  "yearFrom": 2020,
+  "limit": 10,
+  "fields": ["id", "title", "funding_usd", "start_year"]
+}
+```
+
+---
+
+## Entity resolution tools
 
 | Tool | Example use |
 |------|-------------|
 | `extract_affiliations` | Resolve affiliation strings to ROR/GRID IDs |
 | `extract_grants` | Resolve grant numbers to grant records |
-| `similar_documents` | Find publications/grants with similar topics from abstract or description text |
 
 Exact argument shapes are in the MCP tool schema in your host (Cursor, Claude Desktop, etc.).
 
-`similar_documents` uses Dimensions concept extraction and weighted concepts search (not vector embeddings). Supported entities: **publications** and **grants**. Classification and concept extraction remain available via **`execute_dsl`** using `classify()` and `extract_concepts()` — see [Raw DSL](#raw-dsl-execute_dsl) and `dimensions://examples`.
+Classification and concept extraction remain available via **`execute_dsl`** using `classify()` and `extract_concepts()` — see [Raw DSL](#raw-dsl-execute_dsl) and `dimensions://examples`. For topic-similar documents, use [`similar_documents`](#similar-documents-similar_documents).
 
 ---
 

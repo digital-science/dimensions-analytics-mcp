@@ -184,6 +184,25 @@ export const USAGE_SCENARIOS: readonly UsageScenario[] = [
     ],
   },
   {
+    id: "similar-grants",
+    goal: "Similar grants from a description",
+    prompt: "Find grants similar to this description of CAR-T cancer immunotherapy.",
+    tool: "similar_documents",
+    args: {
+      entityType: "grants",
+      text: "Development of novel cancer immunotherapy approaches using checkpoint inhibitors and CAR-T cell engineering for solid tumors.",
+      yearFrom: 2020,
+      limit: 10,
+      fields: ["id", "title", "funding_usd", "start_year"],
+    },
+    dslContains: [
+      "search grants for similar_documents(",
+      "start_year >= 2020",
+      "sort by score desc",
+      "limit 10",
+    ],
+  },
+  {
     id: "build-complex-query",
     goal: "Build a complex query",
     prompt:

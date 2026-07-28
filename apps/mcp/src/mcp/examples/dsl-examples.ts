@@ -55,13 +55,15 @@ export const DSL_EXAMPLES_BY_ENTITY: Record<string, readonly string[]> = {
   ],
 };
 
-/** General DSL patterns (describe, functions, pagination). */
+/** General DSL patterns (describe, functions, pagination, similarity). */
 export const DSL_GENERAL_EXAMPLES = [
   "describe version",
   "describe schema",
   "describe source publications",
   'extract_concepts(text: "CRISPR gene editing enables precise DNA modification")',
   'classify(text: "Stem cell therapy for diabetes", system: "for")',
+  'search publications for similar_documents("After spinal cord injury, macrophages infiltrate the lesion site") where year > 2015 return publications[id+title+year] sort by score desc limit 5',
+  'search grants for similar_documents("Cancer immunotherapy with checkpoint inhibitors and CAR-T") where start_year >= 2020 return grants[id+title] sort by score desc limit 5',
 ] as const;
 
 /** Link to official DSL documentation. */

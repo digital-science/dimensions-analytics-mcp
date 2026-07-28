@@ -20,6 +20,14 @@ describe("dsl-examples", () => {
     expect(getDslExamplesForSource("unknown")).toBeUndefined();
   });
 
+  it("includes similar_documents examples for publications and grants", () => {
+    const pubs = getDslExamplesForSource("publications") ?? [];
+    const grants = getDslExamplesForSource("grants") ?? [];
+    expect(pubs.some((q) => q.includes("similar_documents("))).toBe(true);
+    expect(grants.some((q) => q.includes("similar_documents("))).toBe(true);
+    expect(DSL_GENERAL_EXAMPLES.some((q) => q.includes("similar_documents("))).toBe(true);
+  });
+
   it("uses sort by (not bare sort) and places sort before limit", () => {
     for (const dsl of ALL_EXAMPLES) {
       expect(dsl).not.toMatch(/\blimit \d+ sort\b/);
