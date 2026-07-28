@@ -60,6 +60,9 @@ describe("createMcpServerAsync", () => {
     expect(instructions).toContain("search_researchers matches names only");
     expect(instructions).toContain("research_orgs.id");
     expect(instructions).toContain("funder_orgs");
+    expect(instructions).toContain("search_organizations for institution lookup");
+    expect(instructions).toContain("search_source_titles");
+    expect(instructions).toContain("search_reports");
     expect(instructions).toContain("fetch_search_pages");
     expect(instructions).toContain("dimensions://schema/policy");
   });

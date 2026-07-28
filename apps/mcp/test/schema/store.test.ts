@@ -41,5 +41,10 @@ describe("SchemaStore", () => {
     const types = store.structuredEntityTypes();
     expect(types).toContain("publications");
     expect(types).toContain("organizations");
+    expect(types).toContain("reports");
+    expect(types).toContain("source_titles");
+    expect(types).toContain("funder_groups");
+    expect(types).toContain("research_org_groups");
+    expect(types).toHaveLength(12);
   });
 });

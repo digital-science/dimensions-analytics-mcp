@@ -18,7 +18,11 @@ export type EntityType =
   | "clinical_trials"
   | "datasets"
   | "policy_documents"
-  | "organizations";
+  | "organizations"
+  | "reports"
+  | "source_titles"
+  | "funder_groups"
+  | "research_org_groups";
 
 /** Search indexes for `search <source> in <index> for "..."` clauses. */
 export type SearchIndex =
@@ -34,7 +38,8 @@ export type SearchIndex =
   | "acknowledgements"
   | "raw_affiliations"
   | "assignees"
-  | "title_abstract_claims";
+  | "title_abstract_claims"
+  | "name";
 
 /** Sort direction for order-by clauses. */
 export type SortOrder = "asc" | "desc";
@@ -62,6 +67,10 @@ export const VALID_ENTITIES: readonly EntityType[] = [
   "datasets",
   "policy_documents",
   "organizations",
+  "reports",
+  "source_titles",
+  "funder_groups",
+  "research_org_groups",
 ] as const;
 
 /** Valid search indexes for runtime validation. */
@@ -79,4 +88,5 @@ export const VALID_INDEXES: readonly SearchIndex[] = [
   "raw_affiliations",
   "assignees",
   "title_abstract_claims",
+  "name",
 ] as const;

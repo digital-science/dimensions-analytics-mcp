@@ -1,5 +1,11 @@
 # Changelog
 
+## 1.1.0
+
+### Minor Changes
+
+- Add structured search tools for previously missing schema sources: `search_reports`, `search_source_titles`, `search_funder_groups`, and `search_research_org_groups` (also available via analytics / `fetch_search_pages` entity types).
+
 ## 1.0.4
 
 ### Patch Changes

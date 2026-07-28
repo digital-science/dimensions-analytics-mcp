@@ -103,6 +103,10 @@ export const ENTITY_ALIASES: Readonly<Record<EntityType, Readonly<Record<string,
   policy_documents: { ...POLICY_DOCUMENT_ALIASES },
   researchers: { ...RESEARCHER_ALIASES },
   organizations: { ...ORGANIZATION_ALIASES },
+  reports: {},
+  source_titles: {},
+  funder_groups: {},
+  research_org_groups: {},
 };
 
 // ---------------------------------------------------------------------------

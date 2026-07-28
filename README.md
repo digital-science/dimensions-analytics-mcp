@@ -2,7 +2,7 @@
 
 Connect [Cursor](https://cursor.com), [Claude Desktop](https://claude.ai), VS Code, and other MCP clients to [Dimensions](https://www.dimensions.ai/) research data.
 
-Dimensions Analytics MCP lets your AI assistant search publications, grants, researchers, and more; run analytics and trends; look up DOIs and Dimensions IDs; and explore the live Dimensions schema — all through natural language in tools your client already supports.
+Dimensions Analytics MCP lets your AI assistant search publications, grants, researchers, reports, source titles, and more; run analytics and trends; look up DOIs and Dimensions IDs; and explore the live Dimensions schema — all through natural language in tools your client already supports.
 
 After a short install, you configure your MCP client once, restart the app, and use **dimensions** like any other integration. Example prompts and workflows are in **[docs/USAGE.md](./docs/USAGE.md)**.
 
@@ -35,7 +35,7 @@ When done, **restart your AI app** and look for **dimensions** in MCP settings.
 
 ## Using Dimensions in chat
 
-Once connected, ask your assistant to search publications, grants, researchers, run analytics, or look up a DOI.
+Once connected, ask your assistant to search publications, grants, researchers, reports, journals, run analytics, or look up a DOI.
 
 Tool reference: [docs/USAGE.md](./docs/USAGE.md#all-mcp-tools).
 

@@ -250,4 +250,54 @@ export const SEARCH_ENTITY_METADATA: readonly SearchEntityMetadata[] = [
       sortBy: z.enum(["name"]).optional().describe("Sort results by this field"),
     },
   },
+  {
+    source: "reports",
+    description:
+      "Search technical reports in the Dimensions database. Returns report titles, abstracts, responsible organizations, funders, and related metadata.",
+    applyConvenienceFilters: (builder, args) => {
+      yearRange("yearFrom", "yearTo", "year")(builder, args);
+    },
+    extraInputSchema: {
+      yearFrom: z.number().int().optional().describe("Filter reports from this year (inclusive)"),
+      yearTo: z.number().int().optional().describe("Filter reports up to this year (inclusive)"),
+      sortBy: z.enum(["year", "date"]).optional().describe("Sort results by this field"),
+    },
+  },
+  {
+    source: "source_titles",
+    description:
+      "Search publication source titles (journals, preprint platforms, book series, proceedings) in the Dimensions database. " +
+      "Use for journal / ISSN lookup — not for searching articles (use search_publications).",
+    applyConvenienceFilters: (builder, args) => {
+      if (typeof args.sourceTitleType === "string") {
+        builder.where("type", "=", args.sourceTitleType);
+      }
+    },
+    extraInputSchema: {
+      sourceTitleType: z
+        .enum(["journal", "book_series", "proceeding", "preprint_platform"])
+        .optional()
+        .describe("Filter by source title type"),
+      sortBy: z
+        .enum(["sjr", "snip", "start_year"])
+        .optional()
+        .describe("Sort results by this field"),
+    },
+  },
+  {
+    source: "funder_groups",
+    description:
+      "Search curated funder groups in the Dimensions database. Returns group name and member organization GRID IDs. " +
+      "Query matches group names (search index: name).",
+    applyConvenienceFilters: noop,
+    extraInputSchema: {},
+  },
+  {
+    source: "research_org_groups",
+    description:
+      "Search curated research organization groups in the Dimensions database. Returns group name and member organization GRID IDs. " +
+      "Query matches group names (search index: name).",
+    applyConvenienceFilters: noop,
+    extraInputSchema: {},
+  },
 ];

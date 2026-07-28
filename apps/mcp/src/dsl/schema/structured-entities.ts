@@ -13,6 +13,10 @@ export const STRUCTURED_ENTITY_TYPES = [
   "datasets",
   "policy_documents",
   "organizations",
+  "reports",
+  "source_titles",
+  "funder_groups",
+  "research_org_groups",
 ] as const;
 
 /** A source with a structured search tool. */

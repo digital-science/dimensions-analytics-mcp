@@ -76,5 +76,29 @@ export const searchSuite: EvalSuite = {
       args: { query: "Massachusetts Institute of Technology", limit: 5 },
       assertions: [isSuccess(), hasField("totalCount"), arrayMinLength("organizations", 1)],
     },
+    {
+      name: "search reports for climate",
+      tool: "search_reports",
+      args: { query: "climate change", limit: 5 },
+      assertions: [isSuccess(), hasField("totalCount"), arrayMinLength("reports", 1)],
+    },
+    {
+      name: "search source titles for Nature",
+      tool: "search_source_titles",
+      args: { query: "Nature", limit: 5 },
+      assertions: [isSuccess(), hasField("totalCount"), arrayMinLength("source_titles", 1)],
+    },
+    {
+      name: "search funder groups for NIH",
+      tool: "search_funder_groups",
+      args: { query: "NIH", limit: 5 },
+      assertions: [isSuccess(), hasField("totalCount"), arrayMinLength("funder_groups", 1)],
+    },
+    {
+      name: "search research org groups",
+      tool: "search_research_org_groups",
+      args: { query: "University", limit: 5 },
+      assertions: [isSuccess(), hasField("totalCount"), arrayMinLength("research_org_groups", 1)],
+    },
   ],
 };

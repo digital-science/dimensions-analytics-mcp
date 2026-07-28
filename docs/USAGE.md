@@ -574,6 +574,10 @@ Classification, concept extraction, and similarity search remain available via *
 | `search_datasets` | Search research datasets and repositories |
 | `search_policy_documents` | Search policy briefs and government documents |
 | `search_organizations` | Search universities, research institutes, and companies |
+| `search_reports` | Search technical reports |
+| `search_source_titles` | Search journals, preprint platforms, book series, and proceedings |
+| `search_funder_groups` | Search curated funder groups (name → member GRID ids) |
+| `search_research_org_groups` | Search curated research organization groups (name → member GRID ids) |
 | `fetch_search_pages` | Paginated / batch search (page, aggregate, JSONL/CSV export) — **local stdio only** |
 | `get_by_doi` | Retrieve publication by DOI |
 | `get_by_pmid` | Retrieve publication by PubMed ID |

@@ -39,6 +39,18 @@ export const DSL_EXAMPLES_BY_ENTITY: Record<string, readonly string[]> = {
     'search organizations for "Stanford" return organizations limit 10',
     'search organizations where country = "United States" return organizations limit 10',
   ],
+  reports: [
+    'search reports for "climate change" return reports[basics] limit 10',
+    "search reports where year >= 2020 return reports[id+title+year] limit 20",
+  ],
+  source_titles: [
+    'search source_titles for "Nature" return source_titles[basics] limit 10',
+    'search source_titles where type = "journal" return source_titles[id+title+issn+sjr] limit 20',
+  ],
+  funder_groups: ['search funder_groups for "NIH" return funder_groups[basics] limit 10'],
+  research_org_groups: [
+    'search research_org_groups for "Ivy League" return research_org_groups[basics] limit 10',
+  ],
 };
 
 /** General DSL patterns (describe, functions, pagination). */

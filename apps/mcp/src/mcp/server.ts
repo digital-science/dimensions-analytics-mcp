@@ -103,6 +103,8 @@ export function buildServerInstructions(schemaStore: SchemaStore): string {
       "search_researchers matches names only — topic→researcher uses facet_query (entityType publications, facetField researchers);",
       "search_grants funderOrgName needs exact Dimensions names (NCI/NSF acronyms resolve; discover funders via facet_query/aggregate_query on facetField funder_orgs);",
       "search_organizations for institution lookup — prefer GRID id in filters when the name is ambiguous;",
+      "search_source_titles for journals / ISSN lookup (not articles); search_reports for technical reports;",
+      "search_funder_groups / search_research_org_groups for curated group name → member GRID ids;",
       "facet_query supports yearFrom/yearTo for year-scoped facets.",
     ].join(" "),
     [

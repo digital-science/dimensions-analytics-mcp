@@ -37,7 +37,7 @@ describe("search tools", () => {
     registerSearchTools(server as never, client as never, testSchemaStore());
   });
 
-  it("registers all 8 search tools", () => {
+  it("registers all 12 search tools", () => {
     const expectedTools = [
       "search_publications",
       "search_grants",
@@ -47,11 +47,15 @@ describe("search tools", () => {
       "search_datasets",
       "search_policy_documents",
       "search_organizations",
+      "search_reports",
+      "search_source_titles",
+      "search_funder_groups",
+      "search_research_org_groups",
     ];
     for (const name of expectedTools) {
       expect(handlers.has(name)).toBe(true);
     }
-    expect(handlers.size).toBe(8);
+    expect(handlers.size).toBe(12);
   });
 
   describe("search_publications", () => {
@@ -240,6 +244,42 @@ describe("search tools", () => {
       });
       const parsed = parseToolResult(result);
       expect(parsed.clinicalTrials).toHaveLength(1);
+    });
+  });
+
+  describe("search_reports", () => {
+    it("applies year filters and returns reports", async () => {
+      client.rawQuery.mockResolvedValue(apiRows("reports", [{ id: "rep.1", title: "Report" }], 1));
+
+      const result = await callTool(handlers, "search_reports", {
+        query: "climate",
+        yearFrom: 2020,
+        yearTo: 2024,
+        limit: 10,
+      });
+
+      const dsl = client.rawQuery.mock.calls[0][0] as string;
+      expect(dsl).toContain("search reports");
+      expect(dsl).toContain("year >= 2020");
+      expect(dsl).toContain("year <= 2024");
+      expect(parseToolResult(result).reports).toHaveLength(1);
+    });
+  });
+
+  describe("search_funder_groups", () => {
+    it("searches funder groups by name", async () => {
+      client.rawQuery.mockResolvedValue(
+        apiRows("funder_groups", [{ id: "fg.1", name: "NIH Institutes" }], 1),
+      );
+
+      const result = await callTool(handlers, "search_funder_groups", {
+        query: "NIH",
+        limit: 10,
+      });
+
+      const dsl = client.rawQuery.mock.calls[0][0] as string;
+      expect(dsl).toContain("search funder_groups");
+      expect(parseToolResult(result).funder_groups).toHaveLength(1);
     });
   });
 

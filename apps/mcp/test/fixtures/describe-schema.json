@@ -3801,6 +3801,80 @@
       "fieldsets": ["basics", "categories"],
       "metrics": { "count": { "name": "count", "description": "Total count" } },
       "search_fields": ["full_data", "title_abstract_only", "concepts"]
+    },
+    "funder_groups": {
+      "fields": {
+        "id": {
+          "type": "string",
+          "description": "The Dimensions ID of the group.",
+          "long_description": null,
+          "is_entity": false,
+          "is_filter": true,
+          "is_facet": false,
+          "is_multivalue": false,
+          "solr_fields": { "return": "id", "filter": "id" }
+        },
+        "name": {
+          "type": "string",
+          "description": "The name of the group.",
+          "long_description": null,
+          "is_entity": false,
+          "is_filter": true,
+          "is_facet": false,
+          "is_multivalue": false,
+          "solr_fields": { "return": "name", "filter": "name" }
+        },
+        "organization_ids": {
+          "type": "string",
+          "description": "The GRID IDs of the organizations which are members of this group.",
+          "long_description": null,
+          "is_entity": false,
+          "is_filter": true,
+          "is_facet": false,
+          "is_multivalue": true,
+          "solr_fields": { "return": "values", "filter": "values" }
+        }
+      },
+      "fieldsets": ["basics"],
+      "metrics": { "count": { "name": "count", "description": "Total count" } },
+      "search_fields": ["name"]
+    },
+    "research_org_groups": {
+      "fields": {
+        "id": {
+          "type": "string",
+          "description": "The Dimensions ID of the group.",
+          "long_description": null,
+          "is_entity": false,
+          "is_filter": true,
+          "is_facet": false,
+          "is_multivalue": false,
+          "solr_fields": { "return": "id", "filter": "id" }
+        },
+        "name": {
+          "type": "string",
+          "description": "The name of the group.",
+          "long_description": null,
+          "is_entity": false,
+          "is_filter": true,
+          "is_facet": false,
+          "is_multivalue": false,
+          "solr_fields": { "return": "name", "filter": "name" }
+        },
+        "organization_ids": {
+          "type": "string",
+          "description": "The GRID IDs of the organizations which are members of this group.",
+          "long_description": null,
+          "is_entity": false,
+          "is_filter": true,
+          "is_facet": false,
+          "is_multivalue": true,
+          "solr_fields": { "return": "values", "filter": "values" }
+        }
+      },
+      "fieldsets": ["basics"],
+      "metrics": { "count": { "name": "count", "description": "Total count" } },
+      "search_fields": ["name"]
     }
   },
   "entities": {

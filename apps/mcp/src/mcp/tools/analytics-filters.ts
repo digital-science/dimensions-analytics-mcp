@@ -14,6 +14,8 @@ const ENTITY_YEAR_FIELD: Partial<Record<EntityType, string>> = {
   clinical_trials: "year",
   datasets: "year",
   policy_documents: "year",
+  reports: "year",
+  source_titles: "start_year",
 };
 
 /**

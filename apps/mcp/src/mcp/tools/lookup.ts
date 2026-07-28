@@ -136,7 +136,7 @@ export function registerLookupTools(server: McpServer, client: DimensionsClient)
     "get_by_id",
     {
       description:
-        "Retrieve any entity by its Dimensions ID. Supports publications, grants, patents, clinical trials, datasets, policy documents, researchers, and organizations.",
+        "Retrieve any entity by its Dimensions ID. Supports publications, grants, patents, clinical trials, datasets, policy documents, researchers, organizations, reports, source titles, funder groups, and research org groups.",
       inputSchema: {
         entityType: EntitySchema.describe("The type of entity to look up"),
         id: z.string().describe("The Dimensions ID to look up"),
