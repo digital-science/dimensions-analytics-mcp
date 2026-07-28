@@ -1,5 +1,11 @@
 # Changelog
 
+## 1.2.0
+
+### Minor Changes
+
+- Add `similar_documents` MCP tool for concept-based similar publication/grant lookup from abstract text (replacing the need to hand-write `similar_documents()` via `execute_dsl`).
+
 ## 1.1.0
 
 ### Minor Changes

@@ -63,6 +63,7 @@ describe("createMcpServerAsync", () => {
     expect(instructions).toContain("search_organizations for institution lookup");
     expect(instructions).toContain("search_source_titles");
     expect(instructions).toContain("search_reports");
+    expect(instructions).toContain("similar_documents");
     expect(instructions).toContain("fetch_search_pages");
     expect(instructions).toContain("dimensions://schema/policy");
   });
@@ -137,6 +138,7 @@ describe("MCP protocol", () => {
     const toolNames = tools.tools.map((t) => t.name);
     expect(toolNames).toContain("search_publications");
     expect(toolNames).toContain("fetch_search_pages");
+    expect(toolNames).toContain("similar_documents");
     expect(toolNames).toContain("execute_dsl");
     expect(toolNames).not.toContain("validate_dsl");
 

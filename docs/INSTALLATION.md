@@ -42,7 +42,7 @@ Example prompts: **[USAGE.md](./USAGE.md)**.
 ### Pin a release (optional)
 
 ```bash
-DIMENSIONS_MCP_INSTALL_REF=v1.1.0 bash -c "$(curl -fsSL https://raw.githubusercontent.com/digital-science/dimensions-analytics-mcp/main/scripts/install.sh)"
+DIMENSIONS_MCP_INSTALL_REF=v1.2.0 bash -c "$(curl -fsSL https://raw.githubusercontent.com/digital-science/dimensions-analytics-mcp/main/scripts/install.sh)"
 ```
 
 ### Non-interactive (advanced)

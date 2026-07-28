@@ -165,6 +165,25 @@ export const USAGE_SCENARIOS: readonly UsageScenario[] = [
     dslContains: ["large language model", "citations_per_year(2018, 2024)"],
   },
   {
+    id: "similar-documents",
+    goal: "Similar papers from an abstract",
+    prompt: "Find publications similar to this abstract about spinal cord injury macrophages.",
+    tool: "similar_documents",
+    args: {
+      entityType: "publications",
+      text: "After spinal cord injury, macrophages infiltrate the lesion site and contribute to both tissue damage and repair processes.",
+      yearFrom: 2016,
+      limit: 10,
+      fields: ["id", "title", "year"],
+    },
+    dslContains: [
+      "search publications for similar_documents(",
+      "year >= 2016",
+      "sort by score desc",
+      "limit 10",
+    ],
+  },
+  {
     id: "build-complex-query",
     goal: "Build a complex query",
     prompt:

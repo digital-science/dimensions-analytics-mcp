@@ -2,7 +2,7 @@
 
 How to use the Dimensions Analytics MCP server with an AI assistant or by calling tools directly. This guide assumes **local stdio** — see [INSTALLATION.md](./INSTALLATION.md). For env vars and names, see [REFERENCE.md](./REFERENCE.md).
 
-Advanced NLP, classify, and similarity queries use **`execute_dsl`**.
+Advanced NLP (`classify`, `extract_concepts`) uses **`execute_dsl`**. Topic-similar document lookup uses **`similar_documents`**.
 
 ## Before you query
 
@@ -23,7 +23,7 @@ Structured tools accept [field aliases](./MCP_FIELD_ALIASES.md) (for example `to
 ```text
 1. describe_schema  or  read dimensions://schema/summary
 2. Pick approach:
-   - Natural language → search_* / facet_query / analytics (easiest)
+   - Natural language → search_* / similar_documents / facet_query / analytics (easiest)
    - Boolean concepts or NLP functions → execute_dsl
    - Full control → execute_dsl
 3. Refine with filters, facets, or citation_trend / funding_trend
@@ -50,6 +50,7 @@ After Dimensions Analytics MCP is connected, you can ask in plain language. The 
 | Topic breakdown (with year filter) | “Which journals publish the most machine learning research since 2020?” | `facet_query` |
 | Funding leaders | “Which funders have the most grant funding on climate adaptation?” | `aggregate_query` |
 | Citations over time | “Citation trend for large language model publications from 2018 to 2024.” | `citation_trend` |
+| Similar papers from an abstract | “Find publications similar to this abstract about spinal cord injury macrophages.” | `similar_documents` |
 | Build a complex query | “Run a DSL query: include CRISPR or gene editing, exclude animal models, year ≥ 2020.” | `execute_dsl` |
 
 **Routing notes:**
@@ -60,7 +61,8 @@ After Dimensions Analytics MCP is connected, you can ask in plain language. The 
 - **`search_publications` filters** — scope by organization with `research_orgs.id` (GRID id, e.g. `grid.168010.e` for Stanford University) or by researcher with `researchers.id` after a `search_researchers` lookup.
 - **`search_organizations`** — institution lookup by name; use GRID id from results when filtering publications or grants.
 - **`facet_query`** — supports `query`, `yearFrom` / `yearTo` (publications: `year`; grants: `start_year`), and `filters`. On grants, facet funding organizations with `facetField: "funder_orgs"`.
-- **`execute_dsl`** — use for boolean concept groups, classify/extract/similar DSL functions, and queries structured tools cannot express.
+- **`similar_documents`** — concept-based similarity (not embeddings) for **publications** or **grants** from abstract/description text. Prefer over hand-writing `similar_documents()` in `execute_dsl`. For a known record: `get_by_id` / `get_by_doi` first, then pass its abstract as `text`.
+- **`execute_dsl`** — use for boolean concept groups, `classify` / `extract_concepts`, and queries structured tools cannot express.
 
 ### Example tool arguments (natural-language rows)
 
@@ -139,6 +141,18 @@ After Dimensions Analytics MCP is connected, you can ask in plain language. The 
 ```json
 {
   "dsl": "search publications for \"CRISPR\" or for \"gene editing\" not for \"animal model\" where year >= 2020 return publications[id,title,doi,times_cited] sort by times_cited desc limit 20"
+}
+```
+
+**Similar documents from abstract** — `similar_documents`:
+
+```json
+{
+  "entityType": "publications",
+  "text": "After spinal cord injury, macrophages infiltrate the lesion site and contribute to both tissue damage and repair processes.",
+  "yearFrom": 2016,
+  "limit": 10,
+  "fields": ["id", "title", "year"]
 }
 ```
 
@@ -531,16 +545,17 @@ More patterns: MCP resource `dimensions://examples` and [DSL docs](https://docs.
 
 ---
 
-## Entity resolution tools
+## Entity resolution and similarity tools
 
 | Tool | Example use |
 |------|-------------|
 | `extract_affiliations` | Resolve affiliation strings to ROR/GRID IDs |
 | `extract_grants` | Resolve grant numbers to grant records |
+| `similar_documents` | Find publications/grants with similar topics from abstract or description text |
 
 Exact argument shapes are in the MCP tool schema in your host (Cursor, Claude Desktop, etc.).
 
-Classification, concept extraction, and similarity search remain available via **`execute_dsl`** using DSL functions such as `classify()`, `extract_concepts()`, and `similar_documents()` — see [Raw DSL](#raw-dsl-execute_dsl) and `dimensions://examples`.
+`similar_documents` uses Dimensions concept extraction and weighted concepts search (not vector embeddings). Supported entities: **publications** and **grants**. Classification and concept extraction remain available via **`execute_dsl`** using `classify()` and `extract_concepts()` — see [Raw DSL](#raw-dsl-execute_dsl) and `dimensions://examples`.
 
 ---
 
@@ -588,7 +603,8 @@ Classification, concept extraction, and similarity search remain available via *
 | `funding_trend` | Funding awarded over time for a topic or entity |
 | `extract_affiliations` | Resolve organization affiliations to GRID/ROR identifiers |
 | `extract_grants` | Resolve grant numbers to full grant records |
-| `execute_dsl` | Execute raw Dimensions DSL queries (classify, extract concepts, similarity, KWQ, and more) |
+| `similar_documents` | Find publications/grants with similar topics from abstract text (concept-based) |
+| `execute_dsl` | Execute raw Dimensions DSL queries (classify, extract concepts, KWQ, and more) |
 | `describe_schema` | Summarize live describe schema (sources, entities, limits) |
 | `refresh_schema` | Reload describe schema from the API |
 

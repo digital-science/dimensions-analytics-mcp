@@ -27,6 +27,7 @@ import { registerLookupTools } from "./tools/lookup.js";
 import { registerQueryTools } from "./tools/query.js";
 import { registerSchemaTools, validateFieldAliases } from "./tools/schema.js";
 import { registerSearchTools } from "./tools/search.js";
+import { registerSimilarDocumentsTool } from "./tools/similar-documents.js";
 import { initMcpUsageTracking } from "./usage-tracking.js";
 
 /**
@@ -94,7 +95,7 @@ export function buildServerInstructions(schemaStore: SchemaStore): string {
     [
       "Workflow:",
       "(1) Discover schema — read dimensions://schema/summary, dimensions://fields/{entity}, dimensions://examples/{source}, or describe_schema;",
-      "(2) Search — search_* for keyword discovery with filters; get_by_doi, get_by_pmid, get_by_id for known identifiers;",
+      "(2) Search — search_* for keyword discovery with filters; similar_documents for topic-similar pubs/grants from abstract text; get_by_doi, get_by_pmid, get_by_id for known identifiers;",
       "(3) Analyze — facet_query, aggregate_query, citation_trend, funding_trend;",
       "(4) Drill down — get_by_id, search_* with filters (e.g. researchers.id, research_orgs.id), facet_query for top researchers at an org.",
     ].join(" "),
@@ -105,12 +106,14 @@ export function buildServerInstructions(schemaStore: SchemaStore): string {
       "search_organizations for institution lookup — prefer GRID id in filters when the name is ambiguous;",
       "search_source_titles for journals / ISSN lookup (not articles); search_reports for technical reports;",
       "search_funder_groups / search_research_org_groups for curated group name → member GRID ids;",
+      "similar_documents finds concept-similar publications/grants from prose (not embeddings); for a known ID, get_by_id then pass abstract/description as text;",
       "facet_query supports yearFrom/yearTo for year-scoped facets.",
     ].join(" "),
     [
       "Query construction:",
       "for ranked publication search (e.g. most-cited since 2020), use search_publications with query, yearFrom, sortBy (times_cited or total_citations), limit — do not hand-write execute_dsl;",
-      "use execute_dsl for boolean concept groups and DSL special functions;",
+      "for similar-document lookup, use similar_documents — do not hand-write similar_documents() in execute_dsl;",
+      "use execute_dsl for boolean concept groups and remaining DSL special functions (classify, extract_concepts);",
       "use execute_dsl only when structured tools are insufficient; DSL order is return ... sort by FIELD order limit N (never limit before sort).",
     ].join(" "),
     [
@@ -138,6 +141,7 @@ function registerAllTools(
   registerLookupTools(server, client);
   registerQueryTools(server, client, schemaStore);
   registerFunctionTools(server, client);
+  registerSimilarDocumentsTool(server, client);
   registerAnalyticsTools(server, client, schemaStore);
   registerSchemaTools(server, client, schemaContext);
 }

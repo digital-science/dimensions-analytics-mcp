@@ -12,11 +12,13 @@ export const DSL_EXAMPLES_BY_ENTITY: Record<string, readonly string[]> = {
     'search publications for "machine learning" return publications[id+title+doi] limit 10',
     'search publications for "CRISPR" where year >= 2020 return publications[id+title+times_cited+year] sort by times_cited desc limit 25',
     'search publications in title_only for "gene therapy" return publications[basics] limit 10',
+    'search publications for similar_documents("After spinal cord injury, macrophages infiltrate the lesion site") where year > 2015 return publications[id+title+year] sort by score desc limit 5',
     "search publications return publications facet journal limit 20",
   ],
   grants: [
     'search grants for "cancer immunotherapy" return grants limit 10',
     'search grants where funder_org_name = "National Institutes of Health" return grants[basics] limit 10',
+    'search grants for similar_documents("Cancer immunotherapy with checkpoint inhibitors and CAR-T") where start_year >= 2020 return grants[id+title] sort by score desc limit 5',
     "search grants return grants aggregate funding_usd",
   ],
   patents: [

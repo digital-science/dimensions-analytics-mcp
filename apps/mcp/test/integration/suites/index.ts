@@ -10,6 +10,7 @@ import { lookupSuite } from "./lookup.integration.js";
 import { querySuite } from "./query.integration.js";
 import { resourcesSuite } from "./resources.integration.js";
 import { searchSuite } from "./search.integration.js";
+import { similarDocumentsSuite } from "./similar-documents.integration.js";
 
 /** All integration test suites, in execution order. */
 export const allSuites: readonly EvalSuite[] = [
@@ -17,6 +18,7 @@ export const allSuites: readonly EvalSuite[] = [
   lookupSuite,
   querySuite,
   functionsSuite,
+  similarDocumentsSuite,
   analyticsSuite,
   resourcesSuite,
 ];

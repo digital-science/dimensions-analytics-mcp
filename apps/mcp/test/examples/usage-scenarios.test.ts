@@ -8,6 +8,7 @@ import { registerAnalyticsTools } from "../../src/mcp/tools/analytics.js";
 import { registerLookupTools } from "../../src/mcp/tools/lookup.js";
 import { registerQueryTools } from "../../src/mcp/tools/query.js";
 import { registerSearchTools } from "../../src/mcp/tools/search.js";
+import { registerSimilarDocumentsTool } from "../../src/mcp/tools/similar-documents.js";
 import { testSchemaStore } from "../helpers/schema-fixture.js";
 import {
   callTool,
@@ -34,11 +35,12 @@ describe("usage-scenarios", () => {
     registerLookupTools(server as never, client as never);
     registerAnalyticsTools(server as never, client as never, schemaStore);
     registerQueryTools(server as never, client as never, schemaStore);
+    registerSimilarDocumentsTool(server as never, client as never);
   });
 
-  it("documents eleven natural-language workflows", () => {
-    expect(USAGE_SCENARIOS).toHaveLength(11);
-    expect(new Set(USAGE_SCENARIOS.map((s) => s.id)).size).toBe(11);
+  it("documents twelve natural-language workflows", () => {
+    expect(USAGE_SCENARIOS).toHaveLength(12);
+    expect(new Set(USAGE_SCENARIOS.map((s) => s.id)).size).toBe(12);
   });
 
   for (const scenario of USAGE_SCENARIOS) {
