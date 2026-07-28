@@ -58,32 +58,42 @@ jobs:
       # changesets sets published=true only when it publishes via a changeset file.
       # When changesets are already consumed on main, it falls back to publish:packages
       # without setting published — still tag if no version PR was opened.
+      # LEFTHOOK=0: pnpm install installs lefthook hooks; pre-push runs `just test`
+      # which is not available on the runner and would fail tag pushes.
       - name: Create v-prefixed git tag
         if: >-
           steps.changesets.outputs.published == 'true' ||
           (steps.changesets.outcome == 'success' && steps.changesets.outputs.pullRequestNumber == '')
+        env:
+          LEFTHOOK: "0"
         run: |
+          set -eux
           VERSION=$(jq -r '.version' apps/mcp/package.json)
-          if git rev-parse "v$VERSION" >/dev/null 2>&1; then
+          echo "Creating tag v$VERSION for $(git rev-parse HEAD)"
+          git fetch --tags origin
+          if git rev-parse "refs/tags/v$VERSION" >/dev/null 2>&1; then
             echo "Tag v$VERSION already exists, skipping"
           else
             git tag "v$VERSION"
-            git push origin "v$VERSION"
+            git push origin "refs/tags/v$VERSION"
           fi
 
       - name: Create GitHub Release
         if: >-
           steps.changesets.outputs.published == 'true' ||
           (steps.changesets.outcome == 'success' && steps.changesets.outputs.pullRequestNumber == '')
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          LEFTHOOK: "0"
         run: |
+          set -eux
           VERSION=$(jq -r '.version' apps/mcp/package.json)
           if gh release view "v$VERSION" >/dev/null 2>&1; then
             echo "Release v$VERSION already exists, skipping"
           else
+            NOTES=$(sed -n "/^## ${VERSION}$/,/^## /p" apps/mcp/CHANGELOG.md | sed '$d' | tail -n +2)
             gh release create "v$VERSION" \
               --title "v$VERSION" \
-              --notes "See package CHANGELOGs for details." \
+              --notes "${NOTES:-See package CHANGELOGs for details.}" \
               --verify-tag
           fi
-        env:
-          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
