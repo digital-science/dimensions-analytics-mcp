@@ -35,7 +35,9 @@ Install [Node.js 20+](https://nodejs.org/) first if prompted (the script can ins
 
 No GitHub account or token is required.
 
-**When finished:** quit and reopen each configured app. You should see **dimensions** in the MCP integrations list.
+**Before configuring Claude Desktop:** quit Claude completely (macOS: Cmd+Q; Windows: Exit from the tray icon). Closing the window is not enough. If Claude is running, it can overwrite `claude_desktop_config.json` from memory and drop the new entry after the installer finishes.
+
+**When finished:** open (or reopen) each configured app. You should see **dimensions** in the MCP integrations list. For Claude Desktop, confirm Chat mode (Cowork does not read `claude_desktop_config.json`).
 
 Example prompts: **[USAGE.md](./USAGE.md)**.
 
@@ -49,6 +51,7 @@ DIMENSIONS_MCP_INSTALL_REF=v1.2.0 bash -c "$(curl -fsSL https://raw.githubuserco
 
 ```bash
 curl -fsSL https://raw.githubusercontent.com/digital-science/dimensions-analytics-mcp/main/scripts/install.mjs -o /tmp/install.mjs
+curl -fsSL https://raw.githubusercontent.com/digital-science/dimensions-analytics-mcp/main/scripts/install-config.mjs -o /tmp/install-config.mjs
 export DIMENSIONS_API_KEY=...
 node /tmp/install.mjs --clients claude-desktop,cursor --yes
 ```
@@ -179,6 +182,12 @@ claude mcp add --transport stdio --env DIMENSIONS_API_KEY=your-api-key dimension
 ```
 
 On native Windows, if `dimensions-analytics-mcp` fails to start, use `"command": "node"` with the full path to `main.js` (see installer output).
+
+### Troubleshooting: installer said Done, but Claude has no dimensions entry
+
+1. Open `~/Library/Application Support/Claude/claude_desktop_config.json` (Windows: `%APPDATA%\Claude\claude_desktop_config.json`) and check for a `"dimensions"` key under `mcpServers`.
+2. If it is missing and a `.backup-*` file next to the config is byte-identical to the live file, Claude was almost certainly running during install and restored its previous config. Fully quit Claude, re-run the installer, verify `"dimensions"` is in the JSON **before** reopening Claude, then open Chat.
+3. The guided installer refuses to write Claude’s config while Claude is running, and verifies the entry after write.
 
 ---
 

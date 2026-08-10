@@ -62,8 +62,19 @@ offer_node_install() {
   exit 1
 }
 
+download_installer_file() {
+  local dest="$1"
+  local name="$2"
+  if ! curl -fsSL \
+    -H "Accept: application/vnd.github.raw+json" \
+    "https://api.github.com/repos/${REPO}/contents/scripts/${name}?ref=${REF}" \
+    -o "${dest}"; then
+    curl -fsSL "${RAW}/scripts/${name}" -o "${dest}"
+  fi
+}
+
 resolve_install_mjs() {
-  if [[ -n "${SCRIPT_DIR}" && -f "${SCRIPT_DIR}/install.mjs" ]]; then
+  if [[ -n "${SCRIPT_DIR}" && -f "${SCRIPT_DIR}/install.mjs" && -f "${SCRIPT_DIR}/install-config.mjs" ]]; then
     printf '%s\n' "${SCRIPT_DIR}/install.mjs"
     return
   fi
@@ -71,17 +82,12 @@ resolve_install_mjs() {
     warn "curl is required to download the installer."
     exit 1
   fi
-  local tmp mjs
+  local tmp
   tmp="$(mktemp -d)"
-  mjs="${tmp}/install.mjs"
   info "Downloading installer from ${REPO} (${REF}) ..." >&2
-  if ! curl -fsSL \
-    -H "Accept: application/vnd.github.raw+json" \
-    "https://api.github.com/repos/${REPO}/contents/scripts/install.mjs?ref=${REF}" \
-    -o "${mjs}"; then
-    curl -fsSL "${RAW}/scripts/install.mjs" -o "${mjs}"
-  fi
-  printf '%s\n' "${mjs}"
+  download_installer_file "${tmp}/install.mjs" "install.mjs"
+  download_installer_file "${tmp}/install-config.mjs" "install-config.mjs"
+  printf '%s\n' "${tmp}/install.mjs"
 }
 
 run_installer() {

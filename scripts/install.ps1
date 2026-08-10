@@ -48,14 +48,17 @@ function Offer-NodeInstall {
 
 function Resolve-InstallMjs {
   $local = Join-Path $ScriptDir "install.mjs"
-  if (Test-Path $local) {
+  $localConfig = Join-Path $ScriptDir "install-config.mjs"
+  if ((Test-Path $local) -and (Test-Path $localConfig)) {
     return $local
   }
   $tempDir = Join-Path $env:TEMP "dimensions-analytics-mcp-install"
   New-Item -ItemType Directory -Force -Path $tempDir | Out-Null
+  Write-Info "Downloading installer from $RawBase/scripts/ ..."
   $dest = Join-Path $tempDir "install.mjs"
-  Write-Info "Downloading installer from $RawBase/scripts/install.mjs ..."
+  $destConfig = Join-Path $tempDir "install-config.mjs"
   Invoke-WebRequest -Uri "$RawBase/scripts/install.mjs" -OutFile $dest -UseBasicParsing
+  Invoke-WebRequest -Uri "$RawBase/scripts/install-config.mjs" -OutFile $destConfig -UseBasicParsing
   return $dest
 }
 

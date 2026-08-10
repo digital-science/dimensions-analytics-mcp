@@ -16,6 +16,7 @@ import {
 import { homedir, platform } from "node:os";
 import { dirname, join } from "node:path";
 import { createInterface } from "node:readline";
+import { hasServerEntry, isClaudeDesktopRunning, mergeServerEntry } from "./install-config.mjs";
 
 const REPO = "digital-science/dimensions-analytics-mcp";
 const REPO_URL = `https://github.com/${REPO}`;
@@ -30,6 +31,7 @@ const CLIENTS = {
   "claude-desktop": {
     label: "Claude Desktop",
     configKey: "mcpServers",
+    requiresQuitBeforeWrite: true,
     configPath() {
       if (platform() === "win32") {
         const appData = process.env.APPDATA;
@@ -331,15 +333,51 @@ function backupFile(path) {
   console.log(`  Backup: ${backup}`);
 }
 
+function assertClaudeDesktopQuit() {
+  if (!isClaudeDesktopRunning()) return;
+  const quitHint =
+    platform() === "win32"
+      ? "Right-click the Claude tray icon → Exit (closing the window is not enough)."
+      : "Quit Claude completely with Cmd+Q / Claude menu → Quit (closing the window is not enough).";
+  console.error(`
+Claude Desktop is still running. It will overwrite ${CLIENTS["claude-desktop"].configPath()}
+from its in-memory config and drop any MCP entries the installer writes.
+
+${quitHint}
+Then re-run this installer.
+`);
+  process.exit(1);
+}
+
 function configureClient(clientId, apiKey, mainJs) {
   const client = CLIENTS[clientId];
   const configPath = client.configPath();
+  if (client.requiresQuitBeforeWrite) {
+    assertClaudeDesktopQuit();
+  }
+
   const entry = buildServerEntry(apiKey, mainJs);
-  const doc = readJson(configPath);
-  if (!doc[client.configKey]) doc[client.configKey] = {};
-  doc[client.configKey][SERVER_NAME] = entry;
+  let doc;
+  try {
+    doc = mergeServerEntry(readJson(configPath), client.configKey, SERVER_NAME, entry);
+  } catch (err) {
+    console.error(`${client.label}: ${err instanceof Error ? err.message : err}`);
+    console.error(`  Config file: ${configPath}`);
+    process.exit(1);
+  }
+
   backupFile(configPath);
   writeJson(configPath, doc);
+
+  const written = readJson(configPath);
+  if (!hasServerEntry(written, client.configKey, SERVER_NAME, entry)) {
+    console.error(`
+${client.label}: wrote ${configPath}, but "${SERVER_NAME}" is missing after write.
+If Claude Desktop was open, quit it completely and re-run the installer.
+`);
+    process.exit(1);
+  }
+
   console.log(`  ${client.label}: ${configPath}`);
 }
 
@@ -382,7 +420,9 @@ async function main() {
 Done!
 
 Next steps:
-  1. Quit and reopen each configured app (Claude Desktop, Cursor, VS Code, etc.).
+  1. Open (or reopen) each configured app so it reloads MCP config.
+     For Claude Desktop: it must have been fully quit before this install;
+     open it now and check Chat (not Cowork) for "dimensions".
   2. Look for "dimensions" in the app's MCP / integrations list.
   3. Try a prompt — ${REPO_URL}/blob/main/docs/USAGE.md
 
