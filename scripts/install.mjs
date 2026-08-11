@@ -333,27 +333,47 @@ function backupFile(path) {
   console.log(`  Backup: ${backup}`);
 }
 
-function assertClaudeDesktopQuit() {
+async function waitForClaudeDesktopQuit(rl, { nonInteractive = false } = {}) {
   if (!isClaudeDesktopRunning()) return;
+
+  const configPath = CLIENTS["claude-desktop"].configPath();
   const quitHint =
     platform() === "win32"
       ? "Right-click the Claude tray icon → Exit (closing the window is not enough)."
       : "Quit Claude completely with Cmd+Q / Claude menu → Quit (closing the window is not enough).";
-  console.error(`
-Claude Desktop is still running. It will overwrite ${CLIENTS["claude-desktop"].configPath()}
+
+  if (nonInteractive) {
+    console.error(`
+Claude Desktop is still running. It will overwrite ${configPath}
 from its in-memory config and drop any MCP entries the installer writes.
 
 ${quitHint}
-Then re-run this installer.
+Then re-run this installer (or run without --yes so it can wait for you to quit).
 `);
-  process.exit(1);
+    process.exit(1);
+  }
+
+  console.log(`
+Claude Desktop is still running. It will overwrite ${configPath}
+from its in-memory config and drop any MCP entries the installer writes.
+
+${quitHint}
+`);
+
+  while (isClaudeDesktopRunning()) {
+    await ask(rl, "Quit Claude Desktop, then press Enter to continue (Ctrl+C to cancel)");
+    if (isClaudeDesktopRunning()) {
+      console.log("Claude Desktop is still running. Close it completely, then try again.\n");
+    }
+  }
+  console.log("  Claude Desktop quit — continuing.\n");
 }
 
-function configureClient(clientId, apiKey, mainJs) {
+async function configureClient(rl, clientId, apiKey, mainJs, { nonInteractive = false } = {}) {
   const client = CLIENTS[clientId];
   const configPath = client.configPath();
   if (client.requiresQuitBeforeWrite) {
-    assertClaudeDesktopQuit();
+    await waitForClaudeDesktopQuit(rl, { nonInteractive });
   }
 
   const entry = buildServerEntry(apiKey, mainJs);
@@ -413,7 +433,7 @@ async function main() {
 
     console.log("\nConfiguring MCP clients...");
     for (const clientId of clientIds) {
-      configureClient(clientId, apiKey, mainJs);
+      await configureClient(rl, clientId, apiKey, mainJs, { nonInteractive: opts.yes });
     }
 
     console.log(`
@@ -421,8 +441,7 @@ Done!
 
 Next steps:
   1. Open (or reopen) each configured app so it reloads MCP config.
-     For Claude Desktop: it must have been fully quit before this install;
-     open it now and check Chat (not Cowork) for "dimensions".
+     For Claude Desktop: open Chat (not Cowork) and look for "dimensions".
   2. Look for "dimensions" in the app's MCP / integrations list.
   3. Try a prompt — ${REPO_URL}/blob/main/docs/USAGE.md
 

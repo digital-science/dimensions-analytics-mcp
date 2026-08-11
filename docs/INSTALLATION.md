@@ -35,7 +35,7 @@ Install [Node.js 20+](https://nodejs.org/) first if prompted (the script can ins
 
 No GitHub account or token is required.
 
-**Before configuring Claude Desktop:** quit Claude completely (macOS: Cmd+Q; Windows: Exit from the tray icon). Closing the window is not enough. If Claude is running, it can overwrite `claude_desktop_config.json` from memory and drop the new entry after the installer finishes.
+**Claude Desktop:** if Claude is still running when the installer configures it, the wizard pauses and asks you to quit Claude (macOS: Cmd+Q; Windows: Exit from the tray icon — closing the window is not enough), then press Enter to continue. Only Claude needs this; Cursor / VS Code / Windsurf are configured in the same run without stopping. If Claude is running it can overwrite `claude_desktop_config.json` from memory and drop the new entry.
 
 **When finished:** open (or reopen) each configured app. You should see **dimensions** in the MCP integrations list. For Claude Desktop, confirm Chat mode (Cowork does not read `claude_desktop_config.json`).
 
@@ -187,7 +187,7 @@ On native Windows, if `dimensions-analytics-mcp` fails to start, use `"command":
 
 1. Open `~/Library/Application Support/Claude/claude_desktop_config.json` (Windows: `%APPDATA%\Claude\claude_desktop_config.json`) and check for a `"dimensions"` key under `mcpServers`.
 2. If it is missing and a `.backup-*` file next to the config is byte-identical to the live file, Claude was almost certainly running during install and restored its previous config. Fully quit Claude, re-run the installer, verify `"dimensions"` is in the JSON **before** reopening Claude, then open Chat.
-3. The guided installer refuses to write Claude’s config while Claude is running, and verifies the entry after write.
+3. The guided installer pauses while Claude is running (press Enter after quitting), and verifies the entry after write. With `--yes`, quit Claude first or the installer exits instead of waiting.
 
 ---
 
