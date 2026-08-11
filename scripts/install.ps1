@@ -3,7 +3,13 @@
 #Requires -Version 5.1
 $ErrorActionPreference = "Stop"
 
-$ScriptDir = Split-Path -Parent $MyInvocation.MyCommand.Path
+# Path is only set when the script is run from a file. Piped `irm ... | iex` has no path.
+$ScriptDir = $null
+if ($MyInvocation.MyCommand.Path) {
+  $ScriptDir = Split-Path -Parent $MyInvocation.MyCommand.Path
+} elseif ($PSScriptRoot) {
+  $ScriptDir = $PSScriptRoot
+}
 $Repo = "digital-science/dimensions-analytics-mcp"
 $Ref = if ($env:DIMENSIONS_MCP_INSTALL_REF) { $env:DIMENSIONS_MCP_INSTALL_REF } else { "main" }
 $RawBase = "https://raw.githubusercontent.com/$Repo/$Ref"
@@ -47,10 +53,12 @@ function Offer-NodeInstall {
 }
 
 function Resolve-InstallMjs {
-  $local = Join-Path $ScriptDir "install.mjs"
-  $localConfig = Join-Path $ScriptDir "install-config.mjs"
-  if ((Test-Path $local) -and (Test-Path $localConfig)) {
-    return $local
+  if ($ScriptDir) {
+    $local = Join-Path $ScriptDir "install.mjs"
+    $localConfig = Join-Path $ScriptDir "install-config.mjs"
+    if ((Test-Path $local) -and (Test-Path $localConfig)) {
+      return $local
+    }
   }
   $tempDir = Join-Path $env:TEMP "dimensions-analytics-mcp-install"
   New-Item -ItemType Directory -Force -Path $tempDir | Out-Null
