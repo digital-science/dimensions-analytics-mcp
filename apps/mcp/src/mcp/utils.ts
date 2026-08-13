@@ -2,9 +2,7 @@
  * Utility functions for MCP tools.
  * @module mcp/utils
  */
-
-import type { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js";
-import type { ToolAnnotations } from "@modelcontextprotocol/sdk/types.js";
+import type { McpServer, ToolAnnotations } from "@modelcontextprotocol/server";
 import {
   buildPaginationMetadata,
   DimensionsError,

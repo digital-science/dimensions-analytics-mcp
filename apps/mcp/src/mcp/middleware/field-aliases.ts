@@ -4,8 +4,7 @@
  * via a higher-order function (decorator) pattern.
  * @module mcp/middleware/field-aliases
  */
-
-import type { CallToolResult } from "@modelcontextprotocol/sdk/types.js";
+import type { CallToolResult } from "@modelcontextprotocol/server";
 import type { EntityType } from "../../dsl/index.js";
 
 // ---------------------------------------------------------------------------

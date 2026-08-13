@@ -12,7 +12,11 @@ describe("registerSchemaResources", () => {
     const context = { store: testSchemaStore() };
     const resources: Array<{ name: string; uri: string | { uriTemplate?: string } }> = [];
     const server = {
-      resource: (name: string, uri: string | { uriTemplate?: string }, ..._rest: unknown[]) => {
+      registerResource: (
+        name: string,
+        uri: string | { uriTemplate?: string },
+        ..._rest: unknown[]
+      ) => {
         resources.push({ name, uri });
       },
     };

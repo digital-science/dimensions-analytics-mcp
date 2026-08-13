@@ -3,8 +3,7 @@
  * Registers `search_{source}` tools from describe schema and shared QueryBuilder handlers.
  * @module mcp/tools/search
  */
-
-import type { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js";
+import type { McpServer } from "@modelcontextprotocol/server";
 import { z } from "zod";
 import type { DimensionsClient } from "../../dsl/index.js";
 import {
@@ -105,11 +104,11 @@ export function registerSearchTools(
       toolName,
       {
         description: meta.description,
-        inputSchema: {
+        inputSchema: z.object({
           ...SHARED_SEARCH_INPUT,
           ...meta.extraInputSchema,
-        },
-        outputSchema: {
+        }),
+        outputSchema: z.object({
           totalCount: z.number().describe("Total matching records"),
           returnedCount: z.number().describe("Records returned in this response"),
           truncated: z
@@ -119,7 +118,7 @@ export function registerSearchTools(
           truncationWarning: z.string().optional().describe("Warning message when truncated"),
           ...PAGINATION_OUTPUT_SCHEMA,
           [resultKey]: z.array(z.record(z.string(), z.unknown())).describe("Result records"),
-        },
+        }),
         annotations: READ_ONLY_API_ANNOTATIONS,
       },
       withFieldAliases(

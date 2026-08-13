@@ -3,8 +3,7 @@
  * Supports single-page, aggregate, and JSONL file export modes.
  * @module mcp/tools/fetch-search-pages
  */
-
-import type { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js";
+import type { McpServer } from "@modelcontextprotocol/server";
 import { z } from "zod";
 import { ValidationError } from "../../client/index.js";
 import {
@@ -95,7 +94,7 @@ export function registerFetchSearchPagesTools(
         "Default mode returns one page. Use aggregate for ID counts/sums without full rows. " +
         "Use file mode to stream JSONL or CSV locally — never for bulk mirroring of Dimensions data. " +
         `Entities: ${entityList}.`,
-      inputSchema: {
+      inputSchema: z.object({
         entityType: z
           .enum(STRUCTURED_ENTITY_TYPES)
           .describe("Dimensions source to search (same as search_* tools)"),
@@ -156,8 +155,8 @@ export function registerFetchSearchPagesTools(
           .describe(
             "Required when maxPages > 5 or planned records > 5000. Acknowledges reasonable-use policy.",
           ),
-      },
-      outputSchema: {
+      }),
+      outputSchema: z.object({
         mode: z.string(),
         entityType: z.string(),
         totalCount: z.number().optional(),
@@ -176,7 +175,7 @@ export function registerFetchSearchPagesTools(
             totalFundingUsd: z.number().optional(),
           })
           .optional(),
-      },
+      }),
       annotations: READ_ONLY_API_ANNOTATIONS,
     },
     withFieldAliases(

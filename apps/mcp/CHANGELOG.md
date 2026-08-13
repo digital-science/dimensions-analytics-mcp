@@ -1,5 +1,13 @@
 # Changelog
 
+## 1.3.0
+
+### Minor Changes
+
+- Check npm on startup and auto-install same-major updates for guided prefix installs. Other layouts log a stale-version warning with a manual upgrade recipe.
+
+- Migrate to MCP TypeScript SDK v2 so advertised tool schemas use JSON Schema 2020-12, unblocking Claude Desktop/Code clients that reject draft-07 `outputSchema`.
+
 ## 1.2.0
 
 ### Minor Changes

@@ -4,8 +4,8 @@
  * @module mcp/tools/analytics
  */
 
-import type { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js";
-import { ErrorCode, McpError } from "@modelcontextprotocol/sdk/types.js";
+import type { McpServer } from "@modelcontextprotocol/server";
+import { ProtocolError, ProtocolErrorCode } from "@modelcontextprotocol/server";
 import { z } from "zod";
 import type { Currency, DimensionsClient, EntityType } from "../../dsl/index.js";
 import {
@@ -60,8 +60,8 @@ function entityTypeEnum(schemaStore: SchemaStore) {
 function assertFacetField(schemaStore: SchemaStore, entity: string, facetField: string): void {
   const valid = schemaStore.facetFields(entity);
   if (!valid.includes(facetField)) {
-    throw new McpError(
-      ErrorCode.InvalidParams,
+    throw new ProtocolError(
+      ProtocolErrorCode.InvalidParams,
       `Invalid facet field "${facetField}" for entity "${entity}". Valid fields: ${valid.join(", ") || "(none)"}`,
     );
   }
@@ -77,8 +77,8 @@ function assertIndicators(schemaStore: SchemaStore, entity: string, indicators: 
   const valid = new Set(schemaStore.metrics(entity));
   const invalid = indicators.filter((name) => !valid.has(name));
   if (invalid.length > 0) {
-    throw new McpError(
-      ErrorCode.InvalidParams,
+    throw new ProtocolError(
+      ProtocolErrorCode.InvalidParams,
       `Invalid indicator(s) for entity "${entity}": ${invalid.join(", ")}. Valid metrics: ${[...valid].join(", ") || "(none)"}`,
     );
   }
@@ -131,7 +131,7 @@ export function registerAnalyticsTools(
       description:
         "Distribution analysis across entity dimensions. Returns facet buckets showing how records " +
         "are distributed across a categorical field. Example: 'What journals publish the most CRISPR research?'",
-      inputSchema: {
+      inputSchema: z.object({
         entityType: entityTypeSchema,
         facetField: z
           .string()
@@ -165,13 +165,13 @@ export function registerAnalyticsTools(
           .array(ExtendedWhereFilterSchema)
           .optional()
           .describe("Additional where-clause filters before faceting"),
-      },
-      outputSchema: {
+      }),
+      outputSchema: z.object({
         entityType: z.string().describe("Entity type analyzed"),
         facetField: z.string().describe("Field faceted on"),
         totalBuckets: z.number().describe("Number of facet buckets returned"),
         buckets: z.array(z.record(z.string(), z.unknown())).describe("Facet bucket distribution"),
-      },
+      }),
       annotations: READ_ONLY_API_ANNOTATIONS,
     },
     withFieldAliases(
@@ -221,7 +221,7 @@ export function registerAnalyticsTools(
       description:
         "Metric aggregation on facet buckets. Returns facet buckets enriched with aggregated indicator " +
         "values. Example: 'Which funders have the highest average citation ratio?'",
-      inputSchema: {
+      inputSchema: z.object({
         entityType: entityTypeSchema,
         facetField: z
           .string()
@@ -263,8 +263,8 @@ export function registerAnalyticsTools(
           .array(ExtendedWhereFilterSchema)
           .optional()
           .describe("Additional where-clause filters before aggregating"),
-      },
-      outputSchema: {
+      }),
+      outputSchema: z.object({
         entityType: z.string().describe("Entity type analyzed"),
         facetField: z.string().describe("Field faceted on"),
         indicators: z.array(z.string()).describe("Aggregation indicators computed"),
@@ -272,7 +272,7 @@ export function registerAnalyticsTools(
         buckets: z
           .array(z.record(z.string(), z.unknown()))
           .describe("Facet buckets with aggregated values"),
-      },
+      }),
       annotations: READ_ONLY_API_ANNOTATIONS,
     },
     withFieldAliases(
@@ -330,7 +330,7 @@ export function registerAnalyticsTools(
       description:
         "Year-by-year citation counts for a topic. Returns annual citation totals for publications " +
         "matching the query over the specified year range.",
-      inputSchema: {
+      inputSchema: z.object({
         query: z
           .string()
           .min(1)
@@ -347,22 +347,22 @@ export function registerAnalyticsTools(
           .min(1900)
           .max(2100)
           .describe("Last year of the time range (inclusive)"),
-      },
-      outputSchema: {
+      }),
+      outputSchema: z.object({
         query: z.string().describe("Search query used"),
         startYear: z.number().describe("First year of range"),
         endYear: z.number().describe("Last year of range"),
         citationsPerYear: z
           .array(z.record(z.string(), z.unknown()))
           .describe("Annual citation totals"),
-      },
+      }),
       annotations: READ_ONLY_API_ANNOTATIONS,
     },
     async (args) => {
       try {
         if (args.startYear > args.endYear) {
-          throw new McpError(
-            ErrorCode.InvalidParams,
+          throw new ProtocolError(
+            ProtocolErrorCode.InvalidParams,
             `startYear (${args.startYear}) must be ≤ endYear (${args.endYear})`,
           );
         }
@@ -393,7 +393,7 @@ export function registerAnalyticsTools(
       description:
         "Year-by-year funding totals for a topic. Returns annual grant funding amounts for grants " +
         "matching the query over the specified year range.",
-      inputSchema: {
+      inputSchema: z.object({
         query: z
           .string()
           .min(1)
@@ -416,8 +416,8 @@ export function registerAnalyticsTools(
           .describe(
             `Currency for funding amounts (default USD). Supported: ${SUPPORTED_CURRENCIES.join(", ")}.`,
           ),
-      },
-      outputSchema: {
+      }),
+      outputSchema: z.object({
         query: z.string().describe("Search query used"),
         startYear: z.number().describe("First year of range"),
         endYear: z.number().describe("Last year of range"),
@@ -425,14 +425,14 @@ export function registerAnalyticsTools(
         fundingPerYear: z
           .array(z.record(z.string(), z.unknown()))
           .describe("Annual funding totals"),
-      },
+      }),
       annotations: READ_ONLY_API_ANNOTATIONS,
     },
     async (args) => {
       try {
         if (args.startYear > args.endYear) {
-          throw new McpError(
-            ErrorCode.InvalidParams,
+          throw new ProtocolError(
+            ProtocolErrorCode.InvalidParams,
             `startYear (${args.startYear}) must be ≤ endYear (${args.endYear})`,
           );
         }

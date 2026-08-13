@@ -5,9 +5,7 @@
  * via in-memory transport, and executes eval suites against it.
  * @module test/integration/harness
  */
-
-import { Client } from "@modelcontextprotocol/sdk/client/index.js";
-import { InMemoryTransport } from "@modelcontextprotocol/sdk/inMemory.js";
+import { Client, InMemoryTransport } from "@modelcontextprotocol/client";
 import { createMcpServerAsync, type McpServerConfig } from "../../src/mcp/server.js";
 import { missingEnvVars } from "./env.js";
 import type {

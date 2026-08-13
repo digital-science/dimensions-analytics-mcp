@@ -2,9 +2,7 @@
  * Tests for the MCP server factory function and startup lifecycle.
  * @module test/server
  */
-
-import { Client } from "@modelcontextprotocol/sdk/client/index.js";
-import { InMemoryTransport } from "@modelcontextprotocol/sdk/inMemory.js";
+import { Client, InMemoryTransport } from "@modelcontextprotocol/client";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import {
   buildServerInstructions,
@@ -141,6 +139,20 @@ describe("MCP protocol", () => {
     expect(toolNames).toContain("similar_documents");
     expect(toolNames).toContain("execute_dsl");
     expect(toolNames).not.toContain("validate_dsl");
+
+    const jsonSchema2020 = "https://json-schema.org/draft/2020-12/schema";
+    for (const tool of tools.tools) {
+      const inputSchema = tool.inputSchema as { $schema?: string } | undefined;
+      const outputSchema = tool.outputSchema as { $schema?: string } | undefined;
+      expect(inputSchema?.$schema ?? jsonSchema2020).not.toContain("draft-07");
+      expect(outputSchema?.$schema ?? jsonSchema2020).not.toContain("draft-07");
+    }
+    for (const name of ["search_publications", "execute_dsl", "facet_query"]) {
+      const tool = tools.tools.find((t) => t.name === name);
+      const outputSchema = tool?.outputSchema as { $schema?: string } | undefined;
+      expect(outputSchema, `${name} should advertise outputSchema`).toBeDefined();
+      expect(outputSchema?.$schema).toBe(jsonSchema2020);
+    }
 
     const resources = await client.listResources();
     const uris = resources.resources.map((r) => r.uri);

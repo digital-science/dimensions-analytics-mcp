@@ -4,9 +4,9 @@
  * @module mcp/server
  */
 
-import { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js";
-import { StdioServerTransport } from "@modelcontextprotocol/sdk/server/stdio.js";
-import type { Transport } from "@modelcontextprotocol/sdk/shared/transport.js";
+import type { Transport } from "@modelcontextprotocol/server";
+import { McpServer } from "@modelcontextprotocol/server";
+import { StdioServerTransport } from "@modelcontextprotocol/server/stdio";
 import pkg from "../../package.json" with { type: "json" };
 import { type HostedEnvConfig, loadDeploymentConfig } from "../client/index.js";
 import { createBootstrapDimensionsClient, createDimensionsClient } from "../dsl/create-client.js";

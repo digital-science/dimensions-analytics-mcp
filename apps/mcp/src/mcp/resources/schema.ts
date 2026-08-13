@@ -3,8 +3,8 @@
  * @module mcp/resources/schema
  */
 
-import type { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js";
-import { ResourceTemplate } from "@modelcontextprotocol/sdk/server/mcp.js";
+import type { McpServer } from "@modelcontextprotocol/server";
+import { ResourceTemplate } from "@modelcontextprotocol/server";
 import {
   buildUsagePolicy,
   type DescribeField,
@@ -32,7 +32,7 @@ import type { SchemaContext } from "../schema/context.js";
  */
 export function registerSchemaResources(server: McpServer, context: SchemaContext): void {
   const schemaStore = () => context.store;
-  server.resource(
+  server.registerResource(
     "schema-summary",
     "dimensions://schema/summary",
     {
@@ -52,7 +52,7 @@ export function registerSchemaResources(server: McpServer, context: SchemaContex
   );
 
   // Full schema
-  server.resource(
+  server.registerResource(
     "schema-full",
     "dimensions://schema",
     {
@@ -72,7 +72,7 @@ export function registerSchemaResources(server: McpServer, context: SchemaContex
   );
 
   // Version
-  server.resource(
+  server.registerResource(
     "schema-version",
     "dimensions://schema/version",
     {
@@ -95,7 +95,7 @@ export function registerSchemaResources(server: McpServer, context: SchemaContex
   );
 
   // Limits (static until upstream `describe limits` exists)
-  server.resource(
+  server.registerResource(
     "schema-limits",
     "dimensions://schema/limits",
     {
@@ -113,7 +113,7 @@ export function registerSchemaResources(server: McpServer, context: SchemaContex
     }),
   );
 
-  server.resource(
+  server.registerResource(
     "schema-policy",
     "dimensions://schema/policy",
     {
@@ -132,7 +132,7 @@ export function registerSchemaResources(server: McpServer, context: SchemaContex
     }),
   );
 
-  server.resource(
+  server.registerResource(
     "dsl-examples",
     "dimensions://examples",
     {
@@ -160,7 +160,7 @@ export function registerSchemaResources(server: McpServer, context: SchemaContex
     }),
   );
 
-  server.resource(
+  server.registerResource(
     "dsl-examples-by-source",
     new ResourceTemplate("dimensions://examples/{source}", {
       list: async () => ({
@@ -219,7 +219,7 @@ export function registerSchemaResources(server: McpServer, context: SchemaContex
   );
 
   const sourceNames = () => schemaStore().sourceNames();
-  server.resource(
+  server.registerResource(
     "schema-sources",
     new ResourceTemplate("dimensions://schema/sources/{sourceName}", {
       list: async () => ({
@@ -256,7 +256,7 @@ export function registerSchemaResources(server: McpServer, context: SchemaContex
   );
 
   const entityNames = () => schemaStore().entityNames();
-  server.resource(
+  server.registerResource(
     "schema-entities",
     new ResourceTemplate("dimensions://schema/entities/{entityName}", {
       list: async () => ({
@@ -294,7 +294,7 @@ export function registerSchemaResources(server: McpServer, context: SchemaContex
 
   // Compatibility view for structured search tools
   const entityTypes = () => schemaStore().structuredEntityTypes();
-  server.resource(
+  server.registerResource(
     "fields",
     new ResourceTemplate("dimensions://fields/{entityType}", {
       list: async () => ({

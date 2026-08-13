@@ -3,8 +3,7 @@
  * Entity resolution helpers (affiliations, grants).
  * @module mcp/tools/functions
  */
-
-import type { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js";
+import type { McpServer } from "@modelcontextprotocol/server";
 import { z } from "zod";
 import type { DimensionsClient } from "../../dsl/index.js";
 import { registerTrackedTool } from "../usage-tracking.js";
@@ -24,7 +23,7 @@ export function registerFunctionTools(server: McpServer, client: DimensionsClien
         "Resolve and disambiguate organization affiliations using Dimensions entity resolution. " +
         "Takes freetext affiliation strings or structured organization data and returns matched " +
         "organizations with GRID/ROR identifiers and confidence scores.",
-      inputSchema: {
+      inputSchema: z.object({
         affiliations: z
           .array(
             z.object({
@@ -42,11 +41,11 @@ export function registerFunctionTools(server: McpServer, client: DimensionsClien
           .describe(
             "Array of affiliations to resolve. Each must have either 'affiliation' or 'name'",
           ),
-      },
-      outputSchema: {
+      }),
+      outputSchema: z.object({
         matchCount: z.number().describe("Number of resolved affiliations"),
         affiliations: z.array(z.record(z.string(), z.unknown())).describe("Resolved affiliations"),
-      },
+      }),
       annotations: READ_ONLY_API_ANNOTATIONS,
     },
     async (args) => {
@@ -71,7 +70,7 @@ export function registerFunctionTools(server: McpServer, client: DimensionsClien
         "Resolve grant numbers to Dimensions grant records. " +
         "Takes a grant number and optional funder information to find matching grants " +
         "with full metadata including funding amounts, dates, and funder details.",
-      inputSchema: {
+      inputSchema: z.object({
         grant_number: z.string().min(1).describe("Grant number to look up (e.g., 'R01HL117329')"),
         fundref: z
           .string()
@@ -81,11 +80,11 @@ export function registerFunctionTools(server: McpServer, client: DimensionsClien
           .string()
           .optional()
           .describe("Funder name as alternative to FundRef ID (e.g., 'NIH')"),
-      },
-      outputSchema: {
+      }),
+      outputSchema: z.object({
         matchCount: z.number().describe("Number of matched grants"),
         grants: z.array(z.record(z.string(), z.unknown())).describe("Matched grant records"),
-      },
+      }),
       annotations: READ_ONLY_API_ANNOTATIONS,
     },
     async (args) => {

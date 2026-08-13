@@ -2,9 +2,7 @@
  * MCP client helpers for hosted Streamable HTTP transport.
  * @module test/integration/hosted-client
  */
-
-import { Client } from "@modelcontextprotocol/sdk/client/index.js";
-import { StreamableHTTPClientTransport } from "@modelcontextprotocol/sdk/client/streamableHttp.js";
+import { Client, StreamableHTTPClientTransport } from "@modelcontextprotocol/client";
 import { hostedMcpEndpoint } from "./env.js";
 
 export interface HostedMcpSession {

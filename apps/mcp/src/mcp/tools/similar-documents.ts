@@ -3,8 +3,7 @@
  * Uses concept extraction + weighted concepts search (not vector embeddings).
  * @module mcp/tools/similar-documents
  */
-
-import type { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js";
+import type { McpServer } from "@modelcontextprotocol/server";
 import { z } from "zod";
 import type { DimensionsClient } from "../../dsl/index.js";
 import {
@@ -106,7 +105,7 @@ export function registerSimilarDocumentsTool(server: McpServer, client: Dimensio
         "Uses Dimensions concept extraction and weighted concepts search (not vector embeddings). " +
         "Prefer this over execute_dsl for similarity. For a known record: get_by_id / get_by_doi first, " +
         "then pass its abstract/description as text. Supported entityType: publications, grants only.",
-      inputSchema: {
+      inputSchema: z.object({
         entityType: z
           .enum(SIMILAR_DOCUMENTS_ENTITY_TYPES)
           .describe("Entity type to search (publications or grants)"),
@@ -158,8 +157,8 @@ export function registerSimilarDocumentsTool(server: McpServer, client: Dimensio
           .describe(
             "Required when skip≥5000, page≥5, or limit=1000 with skip>0. See dimensions://schema/policy.",
           ),
-      },
-      outputSchema: {
+      }),
+      outputSchema: z.object({
         entityType: z.enum(SIMILAR_DOCUMENTS_ENTITY_TYPES).describe("Entity type searched"),
         totalCount: z.number().describe("Total matching records"),
         returnedCount: z.number().describe("Records returned in this response"),
@@ -174,7 +173,7 @@ export function registerSimilarDocumentsTool(server: McpServer, client: Dimensio
           .array(z.record(z.string(), z.unknown()))
           .optional()
           .describe("Matching grants (when entityType is grants)"),
-      },
+      }),
       annotations: READ_ONLY_API_ANNOTATIONS,
     },
     withFieldAliases(

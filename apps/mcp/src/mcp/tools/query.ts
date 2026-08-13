@@ -3,8 +3,7 @@
  * Provides raw DSL query execution for power users.
  * @module mcp/tools/query
  */
-
-import type { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js";
+import type { McpServer } from "@modelcontextprotocol/server";
 import { z } from "zod";
 import {
   buildExecuteDslPolicyHints,
@@ -47,7 +46,7 @@ Examples:
 - return funders aggregate funding_usd
 
 Structured entity types: ${sources}`,
-      inputSchema: {
+      inputSchema: z.object({
         dsl: z.string().describe("Complete DSL query string to execute"),
         confirmLargeFetch: z
           .boolean()
@@ -56,8 +55,8 @@ Structured entity types: ${sources}`,
           .describe(
             "Required for deep pagination in DSL (skip≥5000). See dimensions://schema/policy.",
           ),
-      },
-      outputSchema: {
+      }),
+      outputSchema: z.object({
         result: z.record(z.string(), z.unknown()).describe("Raw DSL query response"),
         policyNotice: z.string().optional().describe("Reasonable-use reminder"),
         largeResultWarning: z
@@ -68,7 +67,7 @@ Structured entity types: ${sources}`,
           .string()
           .optional()
           .describe("Pagination guidance when results are truncated"),
-      },
+      }),
       annotations: {
         readOnlyHint: true,
         destructiveHint: false,

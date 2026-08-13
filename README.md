@@ -31,7 +31,7 @@ The installer checks Node.js, downloads Dimensions Analytics MCP, asks for your 
 
 No GitHub token is required. The installer downloads `@digital-science-dsl/dimensions-analytics-mcp` from npm.
 
-When done, **restart your AI app** and look for **dimensions** in MCP settings.
+When done, **restart your AI app** and look for **dimensions** in MCP settings. Guided prefix installs update themselves for same-major npm releases; other install methods log an upgrade warning. Details: **[Updating](./docs/INSTALLATION.md#updating)**.
 
 ## Using Dimensions in chat
 

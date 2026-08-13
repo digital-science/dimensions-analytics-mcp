@@ -4,9 +4,11 @@
  * Starts the Dimensions Analytics MCP server with stdio transport.
  * @module main
  */
-
-import { StdioServerTransport } from "@modelcontextprotocol/sdk/server/stdio.js";
+import { StdioServerTransport } from "@modelcontextprotocol/server/stdio";
+import { maybeAutoUpdateAndReexec } from "./mcp/auto-update.js";
 import { createMcpServerAsync } from "./mcp/server.js";
+
+maybeAutoUpdateAndReexec();
 
 let close: () => Promise<void>;
 

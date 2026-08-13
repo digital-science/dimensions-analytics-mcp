@@ -5,8 +5,8 @@
 
 import { randomUUID } from "node:crypto";
 import type { IncomingMessage, Server } from "node:http";
-import { createMcpExpressApp } from "@modelcontextprotocol/sdk/server/express.js";
-import { StreamableHTTPServerTransport } from "@modelcontextprotocol/sdk/server/streamableHttp.js";
+import { createMcpExpressApp } from "@modelcontextprotocol/express";
+import { NodeStreamableHTTPServerTransport } from "@modelcontextprotocol/node";
 import type { Request, Response } from "express";
 import type { HostedEnvConfig } from "../client/deployment-config.js";
 import { AuthenticationError } from "../client/errors.js";
@@ -73,7 +73,7 @@ export function startHostedHttpServer(options: HostedHttpServerOptions): HostedH
         mcpClient,
       });
 
-      const transport = new StreamableHTTPServerTransport({
+      const transport = new NodeStreamableHTTPServerTransport({
         sessionIdGenerator: undefined,
       });
 

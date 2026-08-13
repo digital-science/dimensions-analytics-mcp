@@ -2,8 +2,7 @@
  * Schema introspection and validation tools for the MCP server.
  * @module mcp/tools/schema
  */
-
-import type { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js";
+import type { McpServer } from "@modelcontextprotocol/server";
 import { z } from "zod";
 import type { DimensionsClient } from "../../dsl/index.js";
 import { buildReverseAliasMap } from "../middleware/field-aliases.js";
@@ -32,7 +31,7 @@ export function registerSchemaTools(
         "Default: compact summary with source/entity counts and resource URIs. " +
         "Use full=true or dimensions://schema for the complete describe payload. " +
         "Optionally fetch live describe for a single source or entity.",
-      inputSchema: {
+      inputSchema: z.object({
         source: z.string().optional().describe("Source name (e.g. publications)"),
         entity: z.string().optional().describe("Auxiliary entity name (e.g. journals)"),
         full: z
@@ -43,8 +42,8 @@ export function registerSchemaTools(
           .boolean()
           .optional()
           .describe("When true, fetch fresh describe for source/entity from the API"),
-      },
-      outputSchema: {
+      }),
+      outputSchema: z.object({
         summary: z
           .record(z.string(), z.unknown())
           .optional()
@@ -55,7 +54,7 @@ export function registerSchemaTools(
           .describe("Full or sliced schema when full=true or source/entity is set"),
         version: z.string().optional().describe("DSL version"),
         stats: z.record(z.string(), z.unknown()).optional().describe("Load stats and provenance"),
-      },
+      }),
       annotations: READ_ONLY_API_ANNOTATIONS,
     },
     async (args) => {
@@ -106,11 +105,11 @@ export function registerSchemaTools(
     {
       description:
         "Re-fetch describe schema from the Dimensions API, rebuild in-memory schema, and re-register MCP resources.",
-      inputSchema: {},
-      outputSchema: {
+      inputSchema: z.object({}),
+      outputSchema: z.object({
         refreshed: z.boolean(),
         stats: z.record(z.string(), z.unknown()),
-      },
+      }),
       annotations: READ_ONLY_API_ANNOTATIONS,
     },
     async () => {

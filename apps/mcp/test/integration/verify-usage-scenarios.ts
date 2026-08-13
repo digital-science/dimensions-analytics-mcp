@@ -3,9 +3,7 @@
  * Live verification of docs/USAGE.md natural-language scenarios.
  * Run: node --import tsx apps/mcp/test/integration/verify-usage-scenarios.ts
  */
-
-import { Client } from "@modelcontextprotocol/sdk/client/index.js";
-import { InMemoryTransport } from "@modelcontextprotocol/sdk/inMemory.js";
+import { Client, InMemoryTransport } from "@modelcontextprotocol/client";
 import { USAGE_SCENARIOS } from "../../src/mcp/examples/usage-scenarios.js";
 import { buildServerInstructions, createMcpServerAsync } from "../../src/mcp/server.js";
 

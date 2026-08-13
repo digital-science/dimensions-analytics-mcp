@@ -33,6 +33,11 @@ Install from npm does not require a GitHub token — see [INSTALLATION.md](./INS
 | `DIMENSIONS_MAX_RETRIES` | HTTP retry attempts for transient/rate-limit errors (default `3`) |
 | `DIMENSIONS_RETRY_DELAY_MS` | Base delay in ms for exponential backoff between retries (default `1000`) |
 | `DIMENSIONS_RATE_LIMIT_PER_MINUTE` | Client-side request cap per minute (default `30`, matching the API limit) |
+| `DIMENSIONS_MCP_AUTO_UPDATE` | Set to `0` / `false` / `off` to disable prefix auto-**install**. Version warnings still run. Default: on for guided prefix installs only |
+| `DIMENSIONS_MCP_UPDATE_CHECK` | Set to `0` / `false` / `off` to skip `npm view`, warnings, and auto-install (air-gapped machines) |
+| `DIMENSIONS_MCP_AUTO_UPDATE_INTERVAL_MS` | How often to check npm (default `86400000` = 24h) |
+
+Auto-install runs only for the guided prefix layout (`~/.dimensions-analytics-mcp`). npx, global, source, and hosted installs never self-install; they may log a stale-version warning with a manual recipe. See [INSTALLATION.md#updating](./INSTALLATION.md#updating).
 
 The config loader also accepts `DIMENSIONS_DSL_API_KEY` and `DIMENSIONS_DSL_BASE_URL` as aliases.
 

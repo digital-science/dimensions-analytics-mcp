@@ -5,6 +5,7 @@
  */
 
 import { loadDeploymentConfig } from "./client/deployment-config.js";
+import { maybeWarnStaleHostedVersion } from "./mcp/auto-update.js";
 import { startHostedHttpServer } from "./mcp/http-server.js";
 
 const deployment = loadDeploymentConfig();
@@ -12,6 +13,8 @@ if (deployment.deploymentMode !== "hosted") {
   console.error("http-main requires DEPLOYMENT_MODE=hosted");
   process.exit(1);
 }
+
+maybeWarnStaleHostedVersion();
 
 const { close, ready } = startHostedHttpServer({
   hosted: deployment,

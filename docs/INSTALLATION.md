@@ -41,6 +41,37 @@ No GitHub account or token is required.
 
 Example prompts: **[USAGE.md](./USAGE.md)**.
 
+### Updating
+
+Guided installs under `~/.dimensions-analytics-mcp` check npm about once a day. Same-major releases install in place and the server reloads in that spawn. New **major** versions are never applied automatically.
+
+If you installed **before** this updater existed (for example 1.0.x), upgrade **once** with the same installer command, then later minor/patch releases can apply automatically:
+
+```bash
+bash -c "$(curl -fsSL https://raw.githubusercontent.com/digital-science/dimensions-analytics-mcp/main/scripts/install.sh)"
+```
+
+```powershell
+irm https://raw.githubusercontent.com/digital-science/dimensions-analytics-mcp/main/scripts/install.ps1 | iex
+```
+
+Or, without the wizard:
+
+```bash
+npm install @digital-science-dsl/dimensions-analytics-mcp@latest --prefix ~/.dimensions-analytics-mcp
+```
+
+Then reopen your AI app.
+
+**npx, global, source, and hosted** installs do not auto-install. When a newer version is on npm, the server logs a warning (stderr / MCP logs) with the command to run:
+
+- **npx** — set MCP `args` to `["-y", "@digital-science-dsl/dimensions-analytics-mcp@latest"]` (or clear the npx cache) and restart. Without `@latest`, npx keeps the cached tarball.
+- **global** — `npm install -g @digital-science-dsl/dimensions-analytics-mcp@latest`, then restart.
+- **source** — `git pull && pnpm install && pnpm run build`.
+- **hosted** — bump the deployed image / npm pin and redeploy.
+
+Disable automatic installs with `DIMENSIONS_MCP_AUTO_UPDATE=0` in the MCP `env` block (version warnings still run). Disable checks entirely with `DIMENSIONS_MCP_UPDATE_CHECK=0`. Changelog: **[CHANGELOG.md](../apps/mcp/CHANGELOG.md)**.
+
 ### Pin a release (optional)
 
 ```bash
@@ -114,7 +145,7 @@ Requires [Node.js 20+](https://nodejs.org/) on your PATH (including for GUI apps
 }
 ```
 
-`-y` lets `npx` download the package without prompting. The first start may be slower while npm fetches the package; later starts use the npm cache.
+`-y` lets `npx` download the package without prompting. The first start may be slower while npm fetches the package; later starts use the npm cache and **will not pick up new releases** unless you pin `@latest` (see [Updating](#updating)).
 
 If `npx` is not found when the app launches, use the [guided installer](#quick-setup-recommended) (installs under `~/.dimensions-analytics-mcp` with an explicit `node` path) or Option B below.
 

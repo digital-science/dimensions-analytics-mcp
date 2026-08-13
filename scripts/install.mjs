@@ -445,6 +445,11 @@ Next steps:
   2. Look for "dimensions" in the app's MCP / integrations list.
   3. Try a prompt — ${REPO_URL}/blob/main/docs/USAGE.md
 
+This prefix install checks npm about once a day and applies same-major updates automatically.
+To force an update, run this installer again. To disable auto-install, set
+DIMENSIONS_MCP_AUTO_UPDATE=0 in the MCP env. If a newer version cannot be applied,
+the server logs a warning with upgrade steps.
+
 Installed server: ${mainJs}
 `);
   } finally {

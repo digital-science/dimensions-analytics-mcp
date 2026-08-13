@@ -3,8 +3,7 @@
  * Provides direct lookup by identifiers (DOI, PMID, Dimensions ID).
  * @module mcp/tools/lookup
  */
-
-import type { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js";
+import type { McpServer } from "@modelcontextprotocol/server";
 import { z } from "zod";
 import { type DimensionsClient, EntitySchema, type EntityType } from "../../dsl/index.js";
 import { withFieldAliases } from "../middleware/field-aliases.js";
@@ -29,18 +28,18 @@ export function registerLookupTools(server: McpServer, client: DimensionsClient)
     {
       description:
         "Retrieve a publication by its Digital Object Identifier (DOI). Returns full publication details including abstract, citations, and authors.",
-      inputSchema: {
+      inputSchema: z.object({
         doi: z.string().describe("The DOI to look up (e.g., '10.1038/nature12373')"),
         fields: z
           .array(z.string())
           .optional()
           .describe("Fields to return (e.g., ['id', 'title', 'abstract', 'times_cited'])"),
-      },
-      outputSchema: {
+      }),
+      outputSchema: z.object({
         found: z.boolean().describe("Whether the entity was found"),
         publication: z.record(z.string(), z.unknown()).optional().describe("The found entity"),
         message: z.string().optional().describe("Message when not found"),
-      },
+      }),
       annotations: READ_ONLY_API_ANNOTATIONS,
     },
     withFieldAliases(
@@ -83,18 +82,18 @@ export function registerLookupTools(server: McpServer, client: DimensionsClient)
     {
       description:
         "Retrieve a publication by its PubMed ID (PMID). Returns full publication details from Dimensions.",
-      inputSchema: {
+      inputSchema: z.object({
         pmid: z.string().describe("The PubMed ID to look up (e.g., '23846567')"),
         fields: z
           .array(z.string())
           .optional()
           .describe("Fields to return (e.g., ['id', 'title', 'abstract', 'times_cited'])"),
-      },
-      outputSchema: {
+      }),
+      outputSchema: z.object({
         found: z.boolean().describe("Whether the entity was found"),
         publication: z.record(z.string(), z.unknown()).optional().describe("The found entity"),
         message: z.string().optional().describe("Message when not found"),
-      },
+      }),
       annotations: READ_ONLY_API_ANNOTATIONS,
     },
     withFieldAliases(
@@ -137,17 +136,17 @@ export function registerLookupTools(server: McpServer, client: DimensionsClient)
     {
       description:
         "Retrieve any entity by its Dimensions ID. Supports publications, grants, patents, clinical trials, datasets, policy documents, researchers, organizations, reports, source titles, funder groups, and research org groups.",
-      inputSchema: {
+      inputSchema: z.object({
         entityType: EntitySchema.describe("The type of entity to look up"),
         id: z.string().describe("The Dimensions ID to look up"),
         fields: z.array(z.string()).optional().describe("Fields to return"),
-      },
-      outputSchema: {
+      }),
+      outputSchema: z.object({
         found: z.boolean().describe("Whether the entity was found"),
         entity: z.record(z.string(), z.unknown()).optional().describe("The found entity"),
         entityType: z.string().optional().describe("The type of the found entity"),
         message: z.string().optional().describe("Message when not found"),
-      },
+      }),
       annotations: READ_ONLY_API_ANNOTATIONS,
     },
     withFieldAliases(

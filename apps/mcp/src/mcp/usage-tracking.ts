@@ -4,7 +4,7 @@
  */
 
 import { randomUUID } from "node:crypto";
-import type { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js";
+import type { McpServer } from "@modelcontextprotocol/server";
 import pkg from "../../package.json" with { type: "json" };
 import {
   type McpDeploymentMode,
