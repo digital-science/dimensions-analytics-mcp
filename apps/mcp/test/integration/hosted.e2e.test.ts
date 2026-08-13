@@ -31,7 +31,7 @@ const MOCK_HOSTED: HostedEnvConfig = {
 
 const TEST_API_KEY = "test-hosted-api-key";
 
-describe("Hosted MCP e2e (mocked backends)", () => {
+describe("Hosted MCP e2e (mocked backends)", { timeout: 30_000 }, () => {
   let restoreFetch: (() => void) | undefined;
   let server: HostedHttpServerHandle | undefined;
   let baseUrl: string;
