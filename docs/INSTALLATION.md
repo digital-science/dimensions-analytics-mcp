@@ -29,9 +29,10 @@ Install [Node.js 20+](https://nodejs.org/) first if prompted (the script can ins
 ### What the installer does
 
 1. Asks for your **Dimensions API key** — same key as the [Dimensions DSL API](https://docs.dimensions.ai/dsl/).
-2. Asks which apps to configure: **Claude Desktop**, **Cursor**, **VS Code (Copilot MCP)**, or **Windsurf**.
-3. Installs `@digital-science-dsl/dimensions-analytics-mcp` from npm to `~/.dimensions-analytics-mcp` and updates each app’s MCP config file.
-4. Backs up any existing config before changing it.
+2. Asks for a **custom instance URL** if you do not use `app.dimensions.ai` (optional; press Enter for the standard instance).
+3. Asks which apps to configure: **Claude Desktop**, **Cursor**, **VS Code (Copilot MCP)**, or **Windsurf**.
+4. Installs `@digital-science-dsl/dimensions-analytics-mcp` from npm to `~/.dimensions-analytics-mcp` and updates each app’s MCP config file.
+5. Backs up any existing config before changing it.
 
 No GitHub account or token is required.
 
@@ -84,6 +85,8 @@ DIMENSIONS_MCP_INSTALL_REF=v1.2.0 bash -c "$(curl -fsSL https://raw.githubuserco
 curl -fsSL https://raw.githubusercontent.com/digital-science/dimensions-analytics-mcp/main/scripts/install.mjs -o /tmp/install.mjs
 curl -fsSL https://raw.githubusercontent.com/digital-science/dimensions-analytics-mcp/main/scripts/install-config.mjs -o /tmp/install-config.mjs
 export DIMENSIONS_API_KEY=...
+# Custom instance only, e.g. https://nsf.dimensions.ai
+# export DIMENSIONS_BASE_URL=https://nsf.dimensions.ai
 node /tmp/install.mjs --clients claude-desktop,cursor --yes
 ```
 
@@ -107,6 +110,19 @@ cd dimensions-analytics-mcp
 
 If you prefer to configure everything yourself:
 
+### Custom Dimensions instance
+
+If you log in at a URL other than `https://app.dimensions.ai` (for example `https://nsf.dimensions.ai`), you **must** add `DIMENSIONS_BASE_URL` to the MCP `env` block. The snippets below show the standard instance. For a custom instance, use:
+
+```json
+"env": {
+  "DIMENSIONS_API_KEY": "your-api-key",
+  "DIMENSIONS_BASE_URL": "https://nsf.dimensions.ai"
+}
+```
+
+A key issued on a custom instance is valid only on that host. Without `DIMENSIONS_BASE_URL`, the server authenticates against `https://app.dimensions.ai` and start-up fails with `401 Unauthorized`.
+
 ### 1. Install the server
 
 **Option A — `npx` (no global install)**
@@ -128,6 +144,8 @@ Requires [Node.js 20+](https://nodejs.org/) on your PATH (including for GUI apps
   }
 }
 ```
+
+**Custom instance:** add `"DIMENSIONS_BASE_URL": "https://your-instance.dimensions.ai"` to `env` — see [Custom Dimensions instance](#custom-dimensions-instance).
 
 **VS Code** — key `servers`:
 
@@ -157,7 +175,7 @@ npm install -g @digital-science-dsl/dimensions-analytics-mcp
 
 ### 2. MCP configuration (stdio, global install)
 
-Pass your Dimensions API key in `env`. The installer uses a local `node` path under `~/.dimensions-analytics-mcp` for reliability; a global install can use `"command": "dimensions-analytics-mcp"` instead.
+Pass your Dimensions API key in `env` (and `DIMENSIONS_BASE_URL` on a custom instance). The installer uses a local `node` path under `~/.dimensions-analytics-mcp` for reliability; a global install can use `"command": "dimensions-analytics-mcp"` instead.
 
 ```json
 {
@@ -211,6 +229,8 @@ Pass your Dimensions API key in `env`. The installer uses a local `node` path un
 ```bash
 claude mcp add --transport stdio --env DIMENSIONS_API_KEY=your-api-key dimensions -- dimensions-analytics-mcp
 ```
+
+Custom instance: add `--env DIMENSIONS_BASE_URL=https://nsf.dimensions.ai` (use your instance URL).
 
 On native Windows, if `dimensions-analytics-mcp` fails to start, use `"command": "node"` with the full path to `main.js` (see installer output).
 

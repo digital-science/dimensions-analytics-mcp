@@ -6,7 +6,7 @@ Advanced NLP (`classify`, `extract_concepts`) uses **`execute_dsl`**. Topic-simi
 
 ## Before you query
 
-1. **Connect the server** with your API key via local stdio (see [INSTALLATION.md](./INSTALLATION.md)).
+1. **Connect the server** with your API key via local stdio (see [INSTALLATION.md](./INSTALLATION.md)). Custom instances also need `DIMENSIONS_BASE_URL`.
 2. **Let the host load tools** — on startup the server fetches live `describe schema` and registers tools/resources.
 3. **Discover fields** before building filters:
    - MCP resource `dimensions://fields/publications` (replace entity as needed)

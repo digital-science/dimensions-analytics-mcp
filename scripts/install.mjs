@@ -16,7 +16,12 @@ import {
 import { homedir, platform } from "node:os";
 import { dirname, join } from "node:path";
 import { createInterface } from "node:readline";
-import { hasServerEntry, isClaudeDesktopRunning, mergeServerEntry } from "./install-config.mjs";
+import {
+  buildServerEntry,
+  hasServerEntry,
+  isClaudeDesktopRunning,
+  mergeServerEntry,
+} from "./install-config.mjs";
 
 const REPO = "digital-science/dimensions-analytics-mcp";
 const REPO_URL = `https://github.com/${REPO}`;
@@ -76,6 +81,7 @@ const CLIENTS = {
 function parseArgs(argv) {
   const opts = {
     apiKey: process.env.DIMENSIONS_API_KEY,
+    baseUrl: process.env.DIMENSIONS_BASE_URL,
     clients: null,
     yes: false,
     help: false,
@@ -85,6 +91,7 @@ function parseArgs(argv) {
     if (arg === "--help" || arg === "-h") opts.help = true;
     else if (arg === "--yes" || arg === "-y") opts.yes = true;
     else if (arg === "--api-key") opts.apiKey = argv[++i];
+    else if (arg === "--base-url") opts.baseUrl = argv[++i];
     else if (arg === "--clients") {
       opts.clients = argv[++i]
         ?.split(",")
@@ -110,6 +117,7 @@ From a git clone:
 
 Options:
   --api-key <key>           Dimensions API key (or DIMENSIONS_API_KEY env)
+  --base-url <url>          Custom instance URL (or DIMENSIONS_BASE_URL env)
   --clients <list>          Comma-separated: claude-desktop,cursor,vscode,windsurf
   --yes, -y                 Skip confirmation prompts
   --help, -h                Show this help
@@ -164,6 +172,7 @@ function createPrompt() {
   if (!input) {
     console.error(`Non-interactive stdin. Re-run from a terminal, or use:
   node install.mjs --yes --api-key <key> --clients claude-desktop,cursor
+  (add --base-url for a custom Dimensions instance)
 One-line install: bash -c "$(curl -fsSL .../install.sh)"`);
     process.exit(1);
   }
@@ -227,6 +236,17 @@ Find it in your Dimensions account settings.
     process.exit(1);
   }
   return apiKey;
+}
+
+async function promptBaseUrl(rl, opts) {
+  if (opts.baseUrl) return opts.baseUrl;
+  if (opts.yes) return "";
+  console.log(`
+Custom Dimensions instance?
+If you log in at a URL other than app.dimensions.ai (for example nsf.dimensions.ai),
+enter that URL. Press Enter to use the standard instance.
+`);
+  return ask(rl, "Dimensions instance URL (optional)");
 }
 
 async function promptClients(rl, opts) {
@@ -303,14 +323,6 @@ function resolveMainJs() {
   return mainJs;
 }
 
-function buildServerEntry(apiKey, mainJs) {
-  return {
-    command: "node",
-    args: [mainJs],
-    env: { DIMENSIONS_API_KEY: apiKey },
-  };
-}
-
 function readJson(path) {
   if (!existsSync(path)) return {};
   try {
@@ -369,14 +381,21 @@ ${quitHint}
   console.log("  Claude Desktop quit — continuing.\n");
 }
 
-async function configureClient(rl, clientId, apiKey, mainJs, { nonInteractive = false } = {}) {
+async function configureClient(
+  rl,
+  clientId,
+  apiKey,
+  mainJs,
+  baseUrl,
+  { nonInteractive = false } = {},
+) {
   const client = CLIENTS[clientId];
   const configPath = client.configPath();
   if (client.requiresQuitBeforeWrite) {
     await waitForClaudeDesktopQuit(rl, { nonInteractive });
   }
 
-  const entry = buildServerEntry(apiKey, mainJs);
+  const entry = buildServerEntry(apiKey, mainJs, baseUrl);
   let doc;
   try {
     doc = mergeServerEntry(readJson(configPath), client.configKey, SERVER_NAME, entry);
@@ -414,6 +433,7 @@ async function main() {
   console.log("Dimensions Analytics MCP — setup wizard\n");
   try {
     const apiKey = await promptApiKey(rl, opts);
+    const baseUrl = await promptBaseUrl(rl, opts);
     const clientIds = await promptClients(rl, opts);
 
     if (!opts.yes) {
@@ -433,7 +453,7 @@ async function main() {
 
     console.log("\nConfiguring MCP clients...");
     for (const clientId of clientIds) {
-      await configureClient(rl, clientId, apiKey, mainJs, { nonInteractive: opts.yes });
+      await configureClient(rl, clientId, apiKey, mainJs, baseUrl, { nonInteractive: opts.yes });
     }
 
     console.log(`

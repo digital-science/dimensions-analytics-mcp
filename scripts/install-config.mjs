@@ -3,6 +3,50 @@
  */
 import { spawnSync } from "node:child_process";
 
+export const DEFAULT_DIMENSIONS_BASE_URL = "https://app.dimensions.ai";
+
+/**
+ * @param {unknown} raw
+ * @returns {string | undefined}
+ */
+export function normalizeDimensionsBaseUrl(raw) {
+  if (raw == null) return undefined;
+  let value = String(raw).trim();
+  if (!value) return undefined;
+  if (!/^https?:\/\//i.test(value)) {
+    value = `https://${value}`;
+  }
+  return value.replace(/\/+$/, "");
+}
+
+/**
+ * @param {string} apiKey
+ * @param {unknown} [baseUrl]
+ * @returns {Record<string, string>}
+ */
+export function buildServerEnv(apiKey, baseUrl) {
+  const env = { DIMENSIONS_API_KEY: apiKey };
+  const normalized = normalizeDimensionsBaseUrl(baseUrl);
+  if (normalized && normalized !== DEFAULT_DIMENSIONS_BASE_URL) {
+    env.DIMENSIONS_BASE_URL = normalized;
+  }
+  return env;
+}
+
+/**
+ * @param {string} apiKey
+ * @param {string} mainJs
+ * @param {unknown} [baseUrl]
+ * @returns {{ command: string, args: string[], env: Record<string, string> }}
+ */
+export function buildServerEntry(apiKey, mainJs, baseUrl) {
+  return {
+    command: "node",
+    args: [mainJs],
+    env: buildServerEnv(apiKey, baseUrl),
+  };
+}
+
 /**
  * @param {Record<string, unknown>} doc
  * @param {string} configKey

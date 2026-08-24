@@ -27,7 +27,7 @@ Install from npm does not require a GitHub token — see [INSTALLATION.md](./INS
 
 | Variable | Purpose |
 |----------|---------|
-| `DIMENSIONS_BASE_URL` | Dimensions API base URL (default `https://app.dimensions.ai`) |
+| `DIMENSIONS_BASE_URL` | Dimensions API base URL. **Required for custom instances** (e.g. `https://nsf.dimensions.ai`). Default `https://app.dimensions.ai`. Omit this variable on the standard instance. |
 | `SCHEMA_CACHE_PATH` | Read/write last-good `describe schema` JSON (envelope with `cachedAt`) |
 | `SCHEMA_CACHE_TTL_MS` | Max cache age before refresh from API (default `86400000` = 24h) |
 | `DIMENSIONS_MAX_RETRIES` | HTTP retry attempts for transient/rate-limit errors (default `3`) |
@@ -40,6 +40,15 @@ Install from npm does not require a GitHub token — see [INSTALLATION.md](./INS
 Auto-install runs only for the guided prefix layout (`~/.dimensions-analytics-mcp`). npx, global, source, and hosted installs never self-install; they may log a stale-version warning with a manual recipe. See [INSTALLATION.md#updating](./INSTALLATION.md#updating).
 
 The config loader also accepts `DIMENSIONS_DSL_API_KEY` and `DIMENSIONS_DSL_BASE_URL` as aliases.
+
+**Custom instance:** Keys from a host other than `app.dimensions.ai` must be used with `DIMENSIONS_BASE_URL` set to that host (no trailing slash). Otherwise authentication fails with `401 Unauthorized`. Example MCP `env`:
+
+```json
+"env": {
+  "DIMENSIONS_API_KEY": "your-api-key",
+  "DIMENSIONS_BASE_URL": "https://nsf.dimensions.ai"
+}
+```
 
 ## Config file (optional)
 

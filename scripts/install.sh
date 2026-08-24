@@ -99,7 +99,7 @@ run_installer() {
   if exec 3< /dev/tty 2>/dev/null; then
     exec node "${mjs}" "$@" 0<&3 3<&-
   fi
-  warn "No interactive terminal. Pass --yes --api-key and --clients, or run ./scripts/install.sh from a clone."
+  warn "No interactive terminal. Pass --yes --api-key and --clients (and --base-url for a custom instance), or run ./scripts/install.sh from a clone."
   exec node "${mjs}" "$@"
 }
 

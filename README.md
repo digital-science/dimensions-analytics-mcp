@@ -27,9 +27,18 @@ bash -c "$(curl -fsSL https://raw.githubusercontent.com/digital-science/dimensio
 irm https://raw.githubusercontent.com/digital-science/dimensions-analytics-mcp/main/scripts/install.ps1 | iex
 ```
 
-The installer checks Node.js, downloads Dimensions Analytics MCP, asks for your API key, and configures Claude Desktop, Cursor, VS Code (Copilot), or Windsurf. Full details: **[Installation](./docs/INSTALLATION.md)**.
+The installer checks Node.js, downloads Dimensions Analytics MCP, asks for your API key **and, if needed, a custom instance URL**, and configures Claude Desktop, Cursor, VS Code (Copilot), or Windsurf. Full details: **[Installation](./docs/INSTALLATION.md)**.
 
 No GitHub token is required. The installer downloads `@digital-science-dsl/dimensions-analytics-mcp` from npm.
+
+**Custom Dimensions instance:** If you log in at a URL other than `https://app.dimensions.ai` (for example `https://nsf.dimensions.ai`), you **must** set `DIMENSIONS_BASE_URL` to that URL. A key from a custom instance fails with `401 Unauthorized` against the standard host. The installer asks for this; for manual config:
+
+```json
+"env": {
+  "DIMENSIONS_API_KEY": "your-api-key",
+  "DIMENSIONS_BASE_URL": "https://nsf.dimensions.ai"
+}
+```
 
 When done, **restart your AI app** and look for **dimensions** in MCP settings. Guided prefix installs update themselves for same-major npm releases; other install methods log an upgrade warning. Details: **[Updating](./docs/INSTALLATION.md#updating)**.
 

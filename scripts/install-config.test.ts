@@ -1,11 +1,66 @@
 import { describe, expect, it } from "vitest";
-import { hasServerEntry, isClaudeDesktopRunning, mergeServerEntry } from "./install-config.mjs";
+import {
+  buildServerEntry,
+  buildServerEnv,
+  hasServerEntry,
+  isClaudeDesktopRunning,
+  mergeServerEntry,
+  normalizeDimensionsBaseUrl,
+} from "./install-config.mjs";
 
 const entry = {
   command: "node",
   args: ["/tmp/main.js"],
   env: { DIMENSIONS_API_KEY: "secret" },
 };
+
+describe("normalizeDimensionsBaseUrl", () => {
+  it("returns undefined for blank input", () => {
+    expect(normalizeDimensionsBaseUrl(undefined)).toBeUndefined();
+    expect(normalizeDimensionsBaseUrl("")).toBeUndefined();
+    expect(normalizeDimensionsBaseUrl("   ")).toBeUndefined();
+  });
+
+  it("adds https and strips a trailing slash", () => {
+    expect(normalizeDimensionsBaseUrl("nsf.dimensions.ai/")).toBe("https://nsf.dimensions.ai");
+  });
+
+  it("keeps an explicit https URL", () => {
+    expect(normalizeDimensionsBaseUrl("https://nsf.dimensions.ai")).toBe(
+      "https://nsf.dimensions.ai",
+    );
+  });
+});
+
+describe("buildServerEnv", () => {
+  it("includes only the API key for the standard instance", () => {
+    expect(buildServerEnv("secret")).toEqual({ DIMENSIONS_API_KEY: "secret" });
+    expect(buildServerEnv("secret", "")).toEqual({ DIMENSIONS_API_KEY: "secret" });
+    expect(buildServerEnv("secret", "https://app.dimensions.ai")).toEqual({
+      DIMENSIONS_API_KEY: "secret",
+    });
+  });
+
+  it("adds DIMENSIONS_BASE_URL for a custom instance", () => {
+    expect(buildServerEnv("secret", "https://nsf.dimensions.ai")).toEqual({
+      DIMENSIONS_API_KEY: "secret",
+      DIMENSIONS_BASE_URL: "https://nsf.dimensions.ai",
+    });
+  });
+});
+
+describe("buildServerEntry", () => {
+  it("writes custom-instance env onto the MCP server entry", () => {
+    expect(buildServerEntry("secret", "/tmp/main.js", "nsf.dimensions.ai")).toEqual({
+      command: "node",
+      args: ["/tmp/main.js"],
+      env: {
+        DIMENSIONS_API_KEY: "secret",
+        DIMENSIONS_BASE_URL: "https://nsf.dimensions.ai",
+      },
+    });
+  });
+});
 
 describe("mergeServerEntry", () => {
   it("creates mcpServers when missing", () => {
