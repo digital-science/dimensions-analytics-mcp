@@ -31,12 +31,12 @@ The installer checks Node.js, downloads Dimensions Analytics MCP, asks for your 
 
 No GitHub token is required. The installer downloads `@digital-science-dsl/dimensions-analytics-mcp` from npm.
 
-**Custom Dimensions instance:** If you log in at a URL other than `https://app.dimensions.ai` (for example `https://nsf.dimensions.ai`), you **must** set `DIMENSIONS_BASE_URL` to that URL. A key from a custom instance fails with `401 Unauthorized` against the standard host. The installer asks for this; for manual config:
+**Custom Dimensions instance:** If you log in at a URL other than `https://app.dimensions.ai` (for example `https://your-instance.dimensions.ai`), you **must** set `DIMENSIONS_BASE_URL` to that URL. A key from a custom instance fails with `401 Unauthorized` against the standard host. The installer asks for this; for manual config:
 
 ```json
 "env": {
   "DIMENSIONS_API_KEY": "your-api-key",
-  "DIMENSIONS_BASE_URL": "https://nsf.dimensions.ai"
+  "DIMENSIONS_BASE_URL": "https://your-instance.dimensions.ai"
 }
 ```
 

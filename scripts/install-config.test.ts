@@ -22,12 +22,14 @@ describe("normalizeDimensionsBaseUrl", () => {
   });
 
   it("adds https and strips a trailing slash", () => {
-    expect(normalizeDimensionsBaseUrl("nsf.dimensions.ai/")).toBe("https://nsf.dimensions.ai");
+    expect(normalizeDimensionsBaseUrl("your-instance.dimensions.ai/")).toBe(
+      "https://your-instance.dimensions.ai",
+    );
   });
 
   it("keeps an explicit https URL", () => {
-    expect(normalizeDimensionsBaseUrl("https://nsf.dimensions.ai")).toBe(
-      "https://nsf.dimensions.ai",
+    expect(normalizeDimensionsBaseUrl("https://your-instance.dimensions.ai")).toBe(
+      "https://your-instance.dimensions.ai",
     );
   });
 });
@@ -42,21 +44,21 @@ describe("buildServerEnv", () => {
   });
 
   it("adds DIMENSIONS_BASE_URL for a custom instance", () => {
-    expect(buildServerEnv("secret", "https://nsf.dimensions.ai")).toEqual({
+    expect(buildServerEnv("secret", "https://your-instance.dimensions.ai")).toEqual({
       DIMENSIONS_API_KEY: "secret",
-      DIMENSIONS_BASE_URL: "https://nsf.dimensions.ai",
+      DIMENSIONS_BASE_URL: "https://your-instance.dimensions.ai",
     });
   });
 });
 
 describe("buildServerEntry", () => {
   it("writes custom-instance env onto the MCP server entry", () => {
-    expect(buildServerEntry("secret", "/tmp/main.js", "nsf.dimensions.ai")).toEqual({
+    expect(buildServerEntry("secret", "/tmp/main.js", "your-instance.dimensions.ai")).toEqual({
       command: "node",
       args: ["/tmp/main.js"],
       env: {
         DIMENSIONS_API_KEY: "secret",
-        DIMENSIONS_BASE_URL: "https://nsf.dimensions.ai",
+        DIMENSIONS_BASE_URL: "https://your-instance.dimensions.ai",
       },
     });
   });

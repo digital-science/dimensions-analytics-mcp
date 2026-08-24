@@ -243,7 +243,7 @@ async function promptBaseUrl(rl, opts) {
   if (opts.yes) return "";
   console.log(`
 Custom Dimensions instance?
-If you log in at a URL other than app.dimensions.ai (for example nsf.dimensions.ai),
+If you log in at a URL other than app.dimensions.ai (for example your-instance.dimensions.ai),
 enter that URL. Press Enter to use the standard instance.
 `);
   return ask(rl, "Dimensions instance URL (optional)");

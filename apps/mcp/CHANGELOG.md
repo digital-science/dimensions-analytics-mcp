@@ -4,7 +4,7 @@
 
 ### Patch Changes
 
-- Document and prompt for `DIMENSIONS_BASE_URL` so custom-instance users (for example `nsf.dimensions.ai`) are not authenticated against `app.dimensions.ai` and fail with 401.
+- Document and prompt for `DIMENSIONS_BASE_URL` so custom-instance users (for example `your-instance.dimensions.ai`) are not authenticated against `app.dimensions.ai` and fail with 401.
 
 ## 1.3.0
 

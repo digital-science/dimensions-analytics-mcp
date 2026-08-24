@@ -27,7 +27,7 @@ Install from npm does not require a GitHub token — see [INSTALLATION.md](./INS
 
 | Variable | Purpose |
 |----------|---------|
-| `DIMENSIONS_BASE_URL` | Dimensions API base URL. **Required for custom instances** (e.g. `https://nsf.dimensions.ai`). Default `https://app.dimensions.ai`. Omit this variable on the standard instance. |
+| `DIMENSIONS_BASE_URL` | Dimensions API base URL. **Required for custom instances** (e.g. `https://your-instance.dimensions.ai`). Default `https://app.dimensions.ai`. Omit this variable on the standard instance. |
 | `SCHEMA_CACHE_PATH` | Read/write last-good `describe schema` JSON (envelope with `cachedAt`) |
 | `SCHEMA_CACHE_TTL_MS` | Max cache age before refresh from API (default `86400000` = 24h) |
 | `DIMENSIONS_MAX_RETRIES` | HTTP retry attempts for transient/rate-limit errors (default `3`) |
@@ -46,7 +46,7 @@ The config loader also accepts `DIMENSIONS_DSL_API_KEY` and `DIMENSIONS_DSL_BASE
 ```json
 "env": {
   "DIMENSIONS_API_KEY": "your-api-key",
-  "DIMENSIONS_BASE_URL": "https://nsf.dimensions.ai"
+  "DIMENSIONS_BASE_URL": "https://your-instance.dimensions.ai"
 }
 ```
 

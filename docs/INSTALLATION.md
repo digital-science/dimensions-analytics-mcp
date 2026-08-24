@@ -85,8 +85,8 @@ DIMENSIONS_MCP_INSTALL_REF=v1.2.0 bash -c "$(curl -fsSL https://raw.githubuserco
 curl -fsSL https://raw.githubusercontent.com/digital-science/dimensions-analytics-mcp/main/scripts/install.mjs -o /tmp/install.mjs
 curl -fsSL https://raw.githubusercontent.com/digital-science/dimensions-analytics-mcp/main/scripts/install-config.mjs -o /tmp/install-config.mjs
 export DIMENSIONS_API_KEY=...
-# Custom instance only, e.g. https://nsf.dimensions.ai
-# export DIMENSIONS_BASE_URL=https://nsf.dimensions.ai
+# Custom instance only, e.g. https://your-instance.dimensions.ai
+# export DIMENSIONS_BASE_URL=https://your-instance.dimensions.ai
 node /tmp/install.mjs --clients claude-desktop,cursor --yes
 ```
 
@@ -112,12 +112,12 @@ If you prefer to configure everything yourself:
 
 ### Custom Dimensions instance
 
-If you log in at a URL other than `https://app.dimensions.ai` (for example `https://nsf.dimensions.ai`), you **must** add `DIMENSIONS_BASE_URL` to the MCP `env` block. The snippets below show the standard instance. For a custom instance, use:
+If you log in at a URL other than `https://app.dimensions.ai` (for example `https://your-instance.dimensions.ai`), you **must** add `DIMENSIONS_BASE_URL` to the MCP `env` block. The snippets below show the standard instance. For a custom instance, use:
 
 ```json
 "env": {
   "DIMENSIONS_API_KEY": "your-api-key",
-  "DIMENSIONS_BASE_URL": "https://nsf.dimensions.ai"
+  "DIMENSIONS_BASE_URL": "https://your-instance.dimensions.ai"
 }
 ```
 
@@ -230,7 +230,7 @@ Pass your Dimensions API key in `env` (and `DIMENSIONS_BASE_URL` on a custom ins
 claude mcp add --transport stdio --env DIMENSIONS_API_KEY=your-api-key dimensions -- dimensions-analytics-mcp
 ```
 
-Custom instance: add `--env DIMENSIONS_BASE_URL=https://nsf.dimensions.ai` (use your instance URL).
+Custom instance: add `--env DIMENSIONS_BASE_URL=https://your-instance.dimensions.ai` (use your instance URL).
 
 On native Windows, if `dimensions-analytics-mcp` fails to start, use `"command": "node"` with the full path to `main.js` (see installer output).
 
