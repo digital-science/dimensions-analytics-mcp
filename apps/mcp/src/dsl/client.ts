@@ -97,7 +97,7 @@ export class DimensionsClient {
     this.config = parseResult.data;
 
     if (this.config.backend === "internal") {
-      const internal = this.config.internal!;
+      const { internal } = this.config;
       this.rateLimiter = new RateLimiter({
         maxRequests: 1000,
         windowMs: 60_000,
@@ -116,7 +116,7 @@ export class DimensionsClient {
 
     this.authProvider = createAuthProvider({
       type: "jwt",
-      apiKey: this.config.apiKey!,
+      apiKey: this.config.apiKey,
       authUrl: `${this.config.baseUrl}/api/auth.json`,
       timeout: this.config.timeout,
     });
@@ -144,7 +144,10 @@ export class DimensionsClient {
     if (this.internalClient) {
       return this.internalClient.query(dsl, options);
     }
-    const response = await this.httpClient!.query(dsl, endpoint, options);
+    if (!this.httpClient) {
+      throw new Error("DimensionsClient HTTP backend is not configured");
+    }
+    const response = await this.httpClient.query(dsl, endpoint, options);
     return response as DslResponse;
   }
 

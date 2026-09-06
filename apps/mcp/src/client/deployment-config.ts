@@ -84,18 +84,23 @@ export function loadDeploymentConfig(): AppDeploymentConfig {
     throw new Error(`Hosted deployment requires: ${missing.join(", ")}`);
   }
 
-  const internal = InternalDslEnvSchema.parse({
+  const hosted = InternalDslEnvSchema.extend({
+    radarAuthUrl: z.string().url(),
+  }).parse({
     serviceUrl,
     username,
     password,
     dslSchema,
     host,
     variant,
+    radarAuthUrl,
   });
+
+  const { radarAuthUrl: parsedRadarAuthUrl, ...internal } = hosted;
 
   return {
     deploymentMode: "hosted",
-    radarAuthUrl: radarAuthUrl!.replace(/\/$/, ""),
+    radarAuthUrl: parsedRadarAuthUrl.replace(/\/$/, ""),
     internal,
     httpPort: readIntEnv(process.env.MCP_HTTP_PORT, 8080, 1),
   };

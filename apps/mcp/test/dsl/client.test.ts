@@ -91,6 +91,28 @@ describe("DimensionsClient", () => {
       });
       expect(client).toBeInstanceOf(DimensionsClient);
     });
+
+    it("throws ValidationError for an internal backend without internal config", () => {
+      expect(() => new DimensionsClient({ backend: "internal" })).toThrow(ValidationError);
+    });
+
+    it("accepts a valid internal backend configuration", () => {
+      const client = new DimensionsClient({
+        backend: "internal",
+        internal: {
+          service: {
+            serviceUrl: "https://dsl.example.com",
+            username: "svc",
+            password: "secret",
+            dslSchema: "external",
+            host: "app.example.com",
+            variant: "standard",
+          },
+          userEmail: "user@example.com",
+        },
+      });
+      expect(client).toBeInstanceOf(DimensionsClient);
+    });
   });
 
   describe("send()", () => {

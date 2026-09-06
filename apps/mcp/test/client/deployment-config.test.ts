@@ -54,6 +54,17 @@ describe("loadDeploymentConfig", () => {
     });
   });
 
+  it("strips a trailing slash from RADAR_AUTH_URL", () => {
+    Object.assign(process.env, HOSTED_ENV, {
+      RADAR_AUTH_URL: "https://app.example.com/",
+    });
+
+    expect(loadDeploymentConfig()).toMatchObject({
+      deploymentMode: "hosted",
+      radarAuthUrl: "https://app.example.com",
+    });
+  });
+
   it("throws when hosted mode is missing required variables", () => {
     process.env.DEPLOYMENT_MODE = "hosted";
     process.env.DSL_SERVICE_URL = "https://dsl.example.com";
