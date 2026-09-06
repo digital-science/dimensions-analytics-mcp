@@ -1,5 +1,11 @@
 # Changelog
 
+## 1.4.1
+
+### Patch Changes
+
+- Replace non-null assertions with typed public/internal client config, and bump `@types/node` to 24 and `fast-check` to 4.9.
+
 ## 1.4.0
 
 ### Minor Changes
