@@ -131,7 +131,8 @@ export const SEARCH_ENTITY_METADATA: readonly SearchEntityMetadata[] = [
     source: "researchers",
     description:
       "Search researcher profiles by name in the Dimensions database. The query matches researcher names, not research topics — " +
-      "for topic→researcher discovery use facet_query with entityType publications and facetField researchers.",
+      "for topic→researcher discovery use facet_query with entityType publications and facetField researchers. " +
+      "Each result includes profile_url (canonical /details/entities/publication/author/{id} — never invent /discover/researcher/{id}).",
     applyConvenienceFilters: noop,
     extraInputSchema: {
       sortBy: z
@@ -229,7 +230,8 @@ export const SEARCH_ENTITY_METADATA: readonly SearchEntityMetadata[] = [
   {
     source: "organizations",
     description:
-      "Search research organizations in the Dimensions database. Returns universities, research institutes, hospitals, and companies with research output.",
+      "Search research organizations in the Dimensions database. Returns universities, research institutes, hospitals, and companies with research output. " +
+      "Each result includes profile_url (canonical /details/organization/{id}).",
     applyConvenienceFilters: (builder, args) => {
       if (typeof args.orgType === "string") {
         builder.where("types", "=", args.orgType);

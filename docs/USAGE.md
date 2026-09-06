@@ -58,7 +58,9 @@ After Dimensions Analytics MCP is connected, you can ask in plain language. The 
 
 - **`search_publications`** — use `yearFrom`, `sortBy: "total_citations"` (alias), and `limit`; do not put `limit` before `sort` in raw DSL.
 - **`search_grants` / `funderOrgName`** — acronyms NCI, NSF, NEH resolve automatically; umbrella labels such as NIH may still match no grants. Discover institute names with **`aggregate_query`** or **`facet_query`** on `facetField: "funder_orgs"`.
-- **`search_researchers`** — matches **names** in the researcher index, not research topics. For topic → people, use **`facet_query`** with `entityType: "publications"` and `facetField: "researchers"`.
+- **`search_researchers`** — matches **names** in the researcher index, not research topics. For topic → people, use **`facet_query`** with `entityType: "publications"` and `facetField: "researchers"`. Results include `profile_url` (canonical `/details/entities/publication/author/{id}` — never invent `/discover/researcher/{id}`).
+- **Profile URLs** — `search_*`, `get_by_*`, `similar_documents`, and researcher/org `facet_query` buckets attach `profile_url` for the configured instance (`DIMENSIONS_BASE_URL`). Use `construct_profile_url` or `dimensions://schema/profile-urls` when you only have an ID. Organization profiles are `/details/organization/{id}`.
+- **Identity fields** — `search_*`, `get_by_*`, and `similar_documents` always return `id` (and `doi` for publications), even when `fields` omits them. Default lists use the `basics` fieldset plus those identifiers.
 - **`search_publications` filters** — scope by organization with `research_orgs.id` (GRID id, e.g. `grid.168010.e` for Stanford University) or by researcher with `researchers.id` after a `search_researchers` lookup.
 - **`search_organizations`** — institution lookup by name; use GRID id from results when filtering publications or grants.
 - **`facet_query`** — supports `query`, `yearFrom` / `yearTo` (publications: `year`; grants: `start_year`), and `filters`. On grants, facet funding organizations with `facetField: "funder_orgs"`.
@@ -643,6 +645,7 @@ Classification and concept extraction remain available via **`execute_dsl`** usi
 | `dimensions://schema/version` | DSL version string |
 | `dimensions://schema/limits` | Numeric caps (`maxLimit`, `maxPages`, etc.) |
 | `dimensions://schema/policy` | Reasonable-use rules and MCP guardrails |
+| `dimensions://schema/profile-urls` | Canonical Dimensions web profile URL templates |
 | `dimensions://schema/sources/{name}` | Fields, facets, metrics for a source |
 | `dimensions://fields/{entityType}` | Filterable/facet fields + alias hints |
 | `dimensions://examples` | All curated example queries |
@@ -670,6 +673,7 @@ Classification and concept extraction remain available via **`execute_dsl`** usi
 | `get_by_doi` | Retrieve publication by DOI |
 | `get_by_pmid` | Retrieve publication by PubMed ID |
 | `get_by_id` | Retrieve any entity by Dimensions ID |
+| `construct_profile_url` | Build a canonical Dimensions web profile URL from entity type + ID |
 | `aggregate_query` | Numeric aggregation (sum/avg/count) over any entity with grouping |
 | `facet_query` | Facet counts for top values of any field |
 | `citation_trend` | Citation counts over time for a topic or entity |

@@ -23,6 +23,7 @@ import {
 import { queryHashFromDsl, runAggregateFetch, runFileFetch } from "../batch-fetch.js";
 import { resolveExportFormat } from "../export-format.js";
 import { withFieldAliases } from "../middleware/field-aliases.js";
+import { attachProfileUrls } from "../profile-urls.js";
 import { registerTrackedTool } from "../usage-tracking.js";
 import {
   formatErrorResult,
@@ -302,7 +303,7 @@ export function registerFetchSearchPagesTools(
           const dsl = buildDsl(skip, limit);
           const response = (await client.rawQuery(dsl)) as Record<string, unknown>;
           const parsed = parseEntityResponse(response, entityType);
-          const rows = parsed.data as Record<string, unknown>[];
+          const rows = attachProfileUrls(entityType, parsed.data as Record<string, unknown>[]);
           const resultKey = searchResultKey(entityType);
 
           return formatToolResult(

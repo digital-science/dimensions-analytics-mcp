@@ -74,7 +74,7 @@ describe("similar_documents tool", () => {
     expect(dsl).toContain("year >= 2018");
     expect(dsl).toContain("year <= 2024");
     expect(dsl).toContain("limit 5");
-    expect(dsl).toContain("return publications[id+title+year]");
+    expect(dsl).toContain("return publications[id+doi+title+year]");
   });
 
   it("uses start_year for grants year filters", async () => {
@@ -112,7 +112,18 @@ describe("similar_documents tool", () => {
     expect(data.entityType).toBe("publications");
     expect(data.totalCount).toBe(2);
     expect(data.returnedCount).toBe(2);
-    expect(data.publications).toEqual(pubs);
+    expect(data.publications).toEqual([
+      {
+        id: "pub.1",
+        title: "Paper A",
+        profile_url: "https://app.dimensions.ai/details/publication/pub.1",
+      },
+      {
+        id: "pub.2",
+        title: "Paper B",
+        profile_url: "https://app.dimensions.ai/details/publication/pub.2",
+      },
+    ]);
   });
 
   it("formats grant results", async () => {
@@ -127,7 +138,13 @@ describe("similar_documents tool", () => {
     const data = parseToolResult(result);
 
     expect(data.entityType).toBe("grants");
-    expect(data.grants).toEqual(grants);
+    expect(data.grants).toEqual([
+      {
+        id: "grant.1",
+        title: "Grant A",
+        profile_url: "https://app.dimensions.ai/details/grant/grant.1",
+      },
+    ]);
     expect(data.publications).toBeUndefined();
   });
 

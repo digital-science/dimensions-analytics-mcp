@@ -23,6 +23,7 @@ import {
   getDslExamplesForSource,
 } from "../examples/dsl-examples.js";
 import { buildReverseAliasMap } from "../middleware/field-aliases.js";
+import { profileUrlCatalog } from "../profile-urls.js";
 import type { SchemaContext } from "../schema/context.js";
 
 /**
@@ -127,6 +128,25 @@ export function registerSchemaResources(server: McpServer, context: SchemaContex
           uri: uri.href,
           mimeType: "application/json",
           text: JSON.stringify(buildUsagePolicy(), null, 2),
+        },
+      ],
+    }),
+  );
+
+  server.registerResource(
+    "schema-profile-urls",
+    "dimensions://schema/profile-urls",
+    {
+      description:
+        "Canonical Dimensions web profile URL templates — use these instead of inventing /discover/researcher/ paths",
+      mimeType: "application/json",
+    },
+    async (uri) => ({
+      contents: [
+        {
+          uri: uri.href,
+          mimeType: "application/json",
+          text: JSON.stringify(profileUrlCatalog(), null, 2),
         },
       ],
     }),

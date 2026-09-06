@@ -131,7 +131,11 @@ describe("fetch_search_pages", () => {
 
       const lines = (await readFile(outputPath, "utf8")).trim().split("\n");
       expect(lines).toHaveLength(1);
-      expect(JSON.parse(lines[0])).toEqual({ id: "pub.1", title: "A" });
+      expect(JSON.parse(lines[0])).toEqual({
+        id: "pub.1",
+        title: "A",
+        profile_url: "https://app.dimensions.ai/details/publication/pub.1",
+      });
 
       const meta = JSON.parse(await readFile(`${outputPath}.meta.json`, "utf8"));
       expect(meta.recordsWritten).toBe(1);
@@ -165,12 +169,14 @@ describe("fetch_search_pages", () => {
 
       expect(parsed.outputFormat).toBe("csv");
       const csv = await readFile(outputPath, "utf8");
-      expect(csv).toContain("title,id,year\n");
-      expect(csv).toContain("Alpha,pub.1,2024\n");
+      expect(csv).toContain("title,id,profile_url,year\n");
+      expect(csv).toContain(
+        "Alpha,pub.1,https://app.dimensions.ai/details/publication/pub.1,2024\n",
+      );
 
       const meta = JSON.parse(await readFile(`${outputPath}.meta.json`, "utf8"));
       expect(meta.format).toBe("csv");
-      expect(meta.columns).toEqual(["title", "id", "year"]);
+      expect(meta.columns).toEqual(["title", "id", "profile_url", "year"]);
     });
 
     it("requires outputPath", async () => {

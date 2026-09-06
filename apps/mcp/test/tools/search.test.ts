@@ -90,6 +90,30 @@ describe("search tools", () => {
       expect(dsl).toContain('type = "article"');
       expect(dsl).toContain("limit 50");
       expect(dsl).toContain("sort by times_cited desc");
+      expect(dsl).toContain("publications[id+doi+title]");
+    });
+
+    it("always requests id and doi even when fields omit them", async () => {
+      client.rawQuery.mockResolvedValue(apiRows("publications", [], 0));
+
+      await callTool(handlers, "search_publications", {
+        query: "Joerg Sixt",
+        fields: ["title", "year"],
+      });
+
+      const dsl = client.rawQuery.mock.calls[0][0] as string;
+      expect(dsl).toContain("return publications[id+doi+title+year]");
+    });
+
+    it("requests basics plus identity fields when fields are omitted", async () => {
+      client.rawQuery.mockResolvedValue(apiRows("publications", [], 0));
+
+      await callTool(handlers, "search_publications", {
+        query: "Joerg Sixt",
+      });
+
+      const dsl = client.rawQuery.mock.calls[0][0] as string;
+      expect(dsl).toContain("return publications[basics+id+doi]");
     });
 
     it("formats result correctly", async () => {
@@ -107,7 +131,18 @@ describe("search tools", () => {
 
       expect(parsed.totalCount).toBe(2);
       expect(parsed.returnedCount).toBe(2);
-      expect(parsed.publications).toEqual(mockPublications);
+      expect(parsed.publications).toEqual([
+        {
+          id: "pub1",
+          title: "Paper A",
+          profile_url: "https://app.dimensions.ai/details/publication/pub1",
+        },
+        {
+          id: "pub2",
+          title: "Paper B",
+          profile_url: "https://app.dimensions.ai/details/publication/pub2",
+        },
+      ]);
     });
 
     it("uses default limit when not specified", async () => {
@@ -161,7 +196,13 @@ describe("search tools", () => {
 
       const parsed = parseToolResult(result);
       expect(parsed.totalCount).toBe(1);
-      expect(parsed.grants).toEqual(mockGrants);
+      expect(parsed.grants).toEqual([
+        {
+          id: "g1",
+          title: "Cancer Research Grant",
+          profile_url: "https://app.dimensions.ai/details/grant/g1",
+        },
+      ]);
     });
 
     it("resolves funder acronyms in funderOrgName", async () => {
@@ -210,7 +251,14 @@ describe("search tools", () => {
       });
 
       const parsed = parseToolResult(result);
-      expect(parsed.researchers).toEqual(mockResearchers);
+      expect(parsed.researchers).toEqual([
+        {
+          id: "r1",
+          first_name: "Jennifer",
+          last_name: "Doudna",
+          profile_url: "https://app.dimensions.ai/details/entities/publication/author/r1",
+        },
+      ]);
     });
   });
 

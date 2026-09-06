@@ -6,7 +6,9 @@
 import type { McpServer } from "@modelcontextprotocol/server";
 import { z } from "zod";
 import { type DimensionsClient, EntitySchema, type EntityType } from "../../dsl/index.js";
+import { mergeIdentityFields } from "../identity-fields.js";
 import { withFieldAliases } from "../middleware/field-aliases.js";
+import { attachProfileUrl } from "../profile-urls.js";
 import { registerTrackedTool } from "../usage-tracking.js";
 import {
   asArray,
@@ -51,13 +53,14 @@ export function registerLookupTools(server: McpServer, client: DimensionsClient)
             .search("publications")
             .where("doi", "=", args.doi)
             .limit(1);
-          if (args.fields?.length) qb.fields(args.fields);
+          qb.fields(mergeIdentityFields("publications", args.fields));
           const dsl = qb.build();
 
           const response = await client.rawQuery(dsl);
           const publications = asArray(response.publications);
+          const publication = publications[0];
 
-          if (publications.length === 0) {
+          if (!publication) {
             return formatToolResult({
               found: false,
               message: `No publication found with DOI: ${args.doi}`,
@@ -66,7 +69,7 @@ export function registerLookupTools(server: McpServer, client: DimensionsClient)
 
           return formatToolResult({
             found: true,
-            publication: publications[0],
+            publication: attachProfileUrl("publications", publication),
           });
         } catch (error) {
           return formatErrorResult(error);
@@ -105,13 +108,14 @@ export function registerLookupTools(server: McpServer, client: DimensionsClient)
             .search("publications")
             .where("pmid", "=", args.pmid)
             .limit(1);
-          if (args.fields?.length) qb.fields(args.fields);
+          qb.fields(mergeIdentityFields("publications", args.fields));
           const dsl = qb.build();
 
           const response = await client.rawQuery(dsl);
           const publications = asArray(response.publications);
+          const publication = publications[0];
 
-          if (publications.length === 0) {
+          if (!publication) {
             return formatToolResult({
               found: false,
               message: `No publication found with PMID: ${args.pmid}`,
@@ -120,7 +124,7 @@ export function registerLookupTools(server: McpServer, client: DimensionsClient)
 
           return formatToolResult({
             found: true,
-            publication: publications[0],
+            publication: attachProfileUrl("publications", publication),
           });
         } catch (error) {
           return formatErrorResult(error);
@@ -158,13 +162,14 @@ export function registerLookupTools(server: McpServer, client: DimensionsClient)
             .search(args.entityType as EntityType)
             .where("id", "=", args.id)
             .limit(1);
-          if (args.fields?.length) qb.fields(args.fields);
+          qb.fields(mergeIdentityFields(args.entityType, args.fields));
           const dsl = qb.build();
 
           const response = await client.rawQuery(dsl);
           const entities = asArray(response[args.entityType]);
+          const entity = entities[0];
 
-          if (entities.length === 0) {
+          if (!entity) {
             return formatToolResult({
               found: false,
               message: `No ${args.entityType.slice(0, -1)} found with ID: ${args.id}`,
@@ -173,7 +178,7 @@ export function registerLookupTools(server: McpServer, client: DimensionsClient)
 
           return formatToolResult({
             found: true,
-            entity: entities[0],
+            entity: attachProfileUrl(args.entityType, entity),
             entityType: args.entityType,
           });
         } catch (error) {

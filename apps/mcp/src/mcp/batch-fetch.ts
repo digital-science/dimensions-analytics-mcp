@@ -14,6 +14,7 @@ import {
   type StructuredEntityType,
 } from "../dsl/index.js";
 import { type ExportFormat, formatRowsForExport } from "./export-format.js";
+import { attachProfileUrls } from "./profile-urls.js";
 
 /** Sidecar metadata written beside export files. */
 export interface BatchExportMeta {
@@ -210,7 +211,7 @@ export async function runFileFetch(
       totalCount = parsed.totalCount;
     }
 
-    const rows = parsed.data as Record<string, unknown>[];
+    const rows = attachProfileUrls(entityType, parsed.data as Record<string, unknown>[]);
     const { text, columns } = formatRowsForExport(rows, options.format, {
       columns: csvColumns,
       preferredFields: options.preferredFields,

@@ -1,5 +1,11 @@
 # Changelog
 
+## 1.4.0
+
+### Minor Changes
+
+- Always return canonical profile URLs plus identity fields (`id`, and `doi` for publications) so agents can open and cite records without inventing broken Dimensions links.
+
 ## 1.3.1
 
 ### Patch Changes

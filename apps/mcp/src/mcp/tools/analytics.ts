@@ -15,6 +15,7 @@ import {
   SUPPORTED_CURRENCIES,
 } from "../../dsl/index.js";
 import { resolveFacetFieldName, withFieldAliases } from "../middleware/field-aliases.js";
+import { attachFacetProfileUrls } from "../profile-urls.js";
 import type { SchemaStore } from "../schema/index.js";
 import { registerTrackedTool } from "../usage-tracking.js";
 import { formatErrorResult, formatToolResult, READ_ONLY_API_ANNOTATIONS } from "../utils.js";
@@ -200,11 +201,12 @@ export function registerAnalyticsTools(
             includeRaw: false,
           });
           const facets = parsed.facets[facetField];
+          const buckets = attachFacetProfileUrls(facetField, facets.buckets);
           return formatToolResult({
             entityType: args.entityType,
             facetField,
-            totalBuckets: facets.buckets.length,
-            buckets: facets.buckets,
+            totalBuckets: buckets.length,
+            buckets,
           });
         } catch (error) {
           return formatErrorResult(error);
@@ -308,12 +310,13 @@ export function registerAnalyticsTools(
             includeRaw: false,
           });
           const facets = parsed.facets[facetField];
+          const buckets = attachFacetProfileUrls(facetField, facets.buckets);
           return formatToolResult({
             entityType: args.entityType,
             facetField,
             indicators: args.indicators,
-            totalBuckets: facets.buckets.length,
-            buckets: facets.buckets,
+            totalBuckets: buckets.length,
+            buckets,
           });
         } catch (error) {
           return formatErrorResult(error);

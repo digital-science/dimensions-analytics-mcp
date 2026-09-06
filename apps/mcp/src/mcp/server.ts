@@ -24,6 +24,7 @@ import { registerAnalyticsTools } from "./tools/analytics.js";
 import { registerFetchSearchPagesTools } from "./tools/fetch-search-pages.js";
 import { registerFunctionTools } from "./tools/functions.js";
 import { registerLookupTools } from "./tools/lookup.js";
+import { registerProfileUrlTool } from "./tools/profile-url.js";
 import { registerQueryTools } from "./tools/query.js";
 import { registerSchemaTools, validateFieldAliases } from "./tools/schema.js";
 import { registerSearchTools } from "./tools/search.js";
@@ -107,7 +108,9 @@ export function buildServerInstructions(schemaStore: SchemaStore): string {
       "search_source_titles for journals / ISSN lookup (not articles); search_reports for technical reports;",
       "search_funder_groups / search_research_org_groups for curated group name → member GRID ids;",
       "similar_documents finds concept-similar publications/grants from prose (not embeddings); for a known ID, get_by_id then pass abstract/description as text;",
-      "facet_query supports yearFrom/yearTo for year-scoped facets.",
+      "facet_query supports yearFrom/yearTo for year-scoped facets;",
+      "never invent Dimensions web URLs — use profile_url from results or construct_profile_url (see dimensions://schema/profile-urls); researcher profiles are /details/entities/publication/author/{id}, not /discover/researcher/{id}; org profiles are /details/organization/{id};",
+      "search_* / get_by_* / similar_documents always include id (and doi for publications) even if fields omits them.",
     ].join(" "),
     [
       "Query construction:",
@@ -139,6 +142,7 @@ function registerAllTools(
     registerFetchSearchPagesTools(server, client, schemaStore);
   }
   registerLookupTools(server, client);
+  registerProfileUrlTool(server);
   registerQueryTools(server, client, schemaStore);
   registerFunctionTools(server, client);
   registerSimilarDocumentsTool(server, client);

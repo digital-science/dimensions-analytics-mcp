@@ -54,6 +54,29 @@ describe("analytics tools", () => {
       expect(dsl).toContain("journal");
     });
 
+    it("attaches profile_url on researcher facet buckets", async () => {
+      client.rawQuery.mockResolvedValue({
+        researchers: [{ id: "ur.01222634304.39", count: 12 }],
+      });
+
+      const result = await callTool(handlers, "facet_query", {
+        entityType: "publications",
+        facetField: "researchers",
+        query: "marine ecology",
+        limit: 5,
+      });
+      const parsed = parseToolResult(result);
+
+      expect(parsed.buckets).toEqual([
+        {
+          id: "ur.01222634304.39",
+          count: 12,
+          profile_url:
+            "https://app.dimensions.ai/details/entities/publication/author/ur.01222634304.39",
+        },
+      ]);
+    });
+
     it("formats buckets result", async () => {
       const mockBuckets = [
         { id: "1", name: "Nature", count: 42 },
@@ -171,7 +194,14 @@ describe("analytics tools", () => {
       expect(parsed.facetField).toBe("funder_orgs");
       expect(parsed.indicators).toEqual(["count"]);
       expect(parsed.totalBuckets).toBe(1);
-      expect(parsed.buckets).toEqual(mockBuckets);
+      expect(parsed.buckets).toEqual([
+        {
+          id: "1",
+          name: "NIH",
+          count: 100,
+          profile_url: "https://app.dimensions.ai/details/organization/1",
+        },
+      ]);
     });
 
     it("resolves indicator aliases", async () => {

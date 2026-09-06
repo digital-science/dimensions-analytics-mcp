@@ -45,7 +45,7 @@ export const SHARED_SEARCH_INPUT = {
     .array(z.string())
     .optional()
     .describe(
-      "Fields to return. Accepts aliases or DSL names. Use dimensions://fields/{entity} for the full list.",
+      "Fields to return. Accepts aliases or DSL names. id is always included; publications also always include doi. Use dimensions://fields/{entity} for the full list.",
     ),
   filters: z
     .array(ExtendedWhereFilterSchema)

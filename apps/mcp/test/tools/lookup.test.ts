@@ -57,7 +57,7 @@ describe("lookup tools", () => {
       });
 
       const dsl = client.rawQuery.mock.calls[0][0] as string;
-      expect(dsl).toContain("publications[id+title]");
+      expect(dsl).toContain("publications[id+doi+title]");
     });
 
     it("returns found publication when match exists", async () => {
@@ -68,7 +68,10 @@ describe("lookup tools", () => {
       const data = parseToolResult(result);
 
       expect(data.found).toBe(true);
-      expect(data.publication).toEqual(pub);
+      expect(data.publication).toEqual({
+        ...pub,
+        profile_url: `https://app.dimensions.ai/details/publication/${pub.id}`,
+      });
     });
 
     it("returns not-found when no publication matches", async () => {
@@ -134,7 +137,10 @@ describe("lookup tools", () => {
       const data = parseToolResult(result);
 
       expect(data.found).toBe(true);
-      expect(data.publication).toEqual(pub);
+      expect(data.publication).toEqual({
+        ...pub,
+        profile_url: `https://app.dimensions.ai/details/publication/${pub.id}`,
+      });
     });
 
     it("returns not-found for unknown PMID", async () => {
@@ -158,7 +164,7 @@ describe("lookup tools", () => {
       });
 
       const dsl = client.rawQuery.mock.calls[0][0] as string;
-      expect(dsl).toContain("publications[id+title+times_cited]");
+      expect(dsl).toContain("publications[id+doi+title+times_cited]");
     });
 
     it("rejects invalid field names", async () => {
@@ -211,7 +217,10 @@ describe("lookup tools", () => {
       const data = parseToolResult(result);
 
       expect(data.found).toBe(true);
-      expect(data.entity).toEqual(entity);
+      expect(data.entity).toEqual({
+        ...entity,
+        profile_url: "https://app.dimensions.ai/details/patent/pat.789",
+      });
       expect(data.entityType).toBe("patents");
     });
 

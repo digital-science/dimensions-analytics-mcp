@@ -17,7 +17,9 @@ import {
   searchResultKey,
   validateSearchPaginationPolicy,
 } from "../../dsl/index.js";
+import { mergeIdentityFields } from "../identity-fields.js";
 import { withFieldAliases } from "../middleware/field-aliases.js";
+import { attachProfileUrls } from "../profile-urls.js";
 import { registerTrackedTool } from "../usage-tracking.js";
 import {
   formatErrorResult,
@@ -67,10 +69,7 @@ export function buildSimilarDocumentsDsl(
     applyFilters(builder, filters);
   }
 
-  const fields = args.fields as string[] | undefined;
-  if (fields?.length) {
-    builder.fields(fields);
-  }
+  builder.fields(mergeIdentityFields(entityType, args.fields as string[] | undefined));
 
   const sortBy = typeof args.sortBy === "string" ? args.sortBy : "score";
   builder.sort(sortBy, "desc");
@@ -205,7 +204,7 @@ export function registerSimilarDocumentsTool(server: McpServer, client: Dimensio
           });
           const response = (await client.rawQuery(dsl)) as Record<string, unknown>;
           const parsed = parseEntityResponse(response, entityType as StructuredEntityType);
-          const rows = parsed.data as Record<string, unknown>[];
+          const rows = attachProfileUrls(entityType, parsed.data as Record<string, unknown>[]);
           const resultKey = searchResultKey(entityType as StructuredEntityType);
 
           return formatToolResult(

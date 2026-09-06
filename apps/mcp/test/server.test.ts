@@ -64,6 +64,10 @@ describe("createMcpServerAsync", () => {
     expect(instructions).toContain("similar_documents");
     expect(instructions).toContain("fetch_search_pages");
     expect(instructions).toContain("dimensions://schema/policy");
+    expect(instructions).toContain("construct_profile_url");
+    expect(instructions).toContain("/details/entities/publication/author/");
+    expect(instructions).toContain("dimensions://schema/profile-urls");
+    expect(instructions).toContain("doi for publications");
   });
 });
 
@@ -137,6 +141,7 @@ describe("MCP protocol", () => {
     expect(toolNames).toContain("search_publications");
     expect(toolNames).toContain("fetch_search_pages");
     expect(toolNames).toContain("similar_documents");
+    expect(toolNames).toContain("construct_profile_url");
     expect(toolNames).toContain("execute_dsl");
     expect(toolNames).not.toContain("validate_dsl");
 

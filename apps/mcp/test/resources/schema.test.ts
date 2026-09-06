@@ -25,6 +25,7 @@ describe("registerSchemaResources", () => {
     expect(resources.some((r) => r.name === "schema-full")).toBe(true);
     expect(resources.some((r) => r.name === "schema-limits")).toBe(true);
     expect(resources.some((r) => r.name === "schema-policy")).toBe(true);
+    expect(resources.some((r) => r.name === "schema-profile-urls")).toBe(true);
     expect(resources.some((r) => r.name === "dsl-examples")).toBe(true);
     expect(resources.some((r) => r.name === "dsl-examples-by-source")).toBe(true);
     expect(resources.some((r) => r.name === "fields")).toBe(true);

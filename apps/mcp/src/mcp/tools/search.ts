@@ -17,7 +17,9 @@ import {
   searchToolName,
   validateSearchPaginationPolicy,
 } from "../../dsl/index.js";
+import { mergeIdentityFields } from "../identity-fields.js";
 import { withFieldAliases } from "../middleware/field-aliases.js";
+import { attachProfileUrls } from "../profile-urls.js";
 import { registerTrackedTool } from "../usage-tracking.js";
 import {
   formatErrorResult,
@@ -58,10 +60,7 @@ export function buildStructuredSearchDsl(
     applyFilters(builder, filters);
   }
 
-  const fields = args.fields as string[] | undefined;
-  if (fields?.length) {
-    builder.fields(fields);
-  }
+  builder.fields(mergeIdentityFields(source, args.fields as string[] | undefined));
 
   if (typeof args.sortBy === "string") {
     builder.sort(args.sortBy, "desc");
@@ -144,7 +143,7 @@ export function registerSearchTools(
             const dsl = buildStructuredSearchDsl(client, source, record);
             const response = (await client.rawQuery(dsl)) as Record<string, unknown>;
             const parsed = parseEntityResponse(response, source);
-            const rows = parsed.data as Record<string, unknown>[];
+            const rows = attachProfileUrls(source, parsed.data as Record<string, unknown>[]);
 
             return formatToolResult(
               withSearchPagination(
