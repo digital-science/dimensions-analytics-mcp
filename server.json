@@ -1,0 +1,52 @@
+{
+  "$schema": "https://static.modelcontextprotocol.io/schemas/2025-12-11/server.schema.json",
+  "name": "ai.dimensions/analytics-mcp",
+  "title": "Dimensions Analytics",
+  "description": "Search and analyze Dimensions research data: publications, grants, researchers, patents, trials",
+  "repository": {
+    "url": "https://github.com/digital-science/dimensions-analytics-mcp",
+    "source": "github",
+    "subfolder": "apps/mcp"
+  },
+  "websiteUrl": "https://github.com/digital-science/dimensions-analytics-mcp#readme",
+  "version": "1.4.2",
+  "packages": [
+    {
+      "registryType": "npm",
+      "registryBaseUrl": "https://registry.npmjs.org",
+      "identifier": "@digital-science-dsl/dimensions-analytics-mcp",
+      "version": "1.4.2",
+      "transport": {
+        "type": "stdio"
+      },
+      "environmentVariables": [
+        {
+          "name": "DIMENSIONS_API_KEY",
+          "description": "Dimensions API key (same key as the Dimensions DSL API)",
+          "isRequired": true,
+          "isSecret": true,
+          "format": "string"
+        },
+        {
+          "name": "DIMENSIONS_BASE_URL",
+          "description": "Dimensions API base URL. Required for custom instances, e.g. https://your-instance.dimensions.ai",
+          "isRequired": false,
+          "format": "string"
+        }
+      ]
+    }
+  ],
+  "_meta": {
+    "io.modelcontextprotocol.registry/publisher-provided": {
+      "tags": [
+        "research",
+        "publications",
+        "grants",
+        "patents",
+        "clinical-trials",
+        "bibliometrics",
+        "analytics"
+      ]
+    }
+  }
+}

@@ -1,7 +1,17 @@
 {
   "name": "@digital-science-dsl/dimensions-analytics-mcp",
   "version": "1.4.1",
+  "mcpName": "ai.dimensions/analytics-mcp",
   "description": "Dimensions Analytics MCP server for Dimensions DSL querying",
+  "keywords": [
+    "mcp",
+    "dimensions",
+    "research",
+    "publications",
+    "grants",
+    "bibliometrics",
+    "scholarly"
+  ],
   "type": "module",
   "main": "./dist/index.js",
   "types": "./dist/index.d.ts",
