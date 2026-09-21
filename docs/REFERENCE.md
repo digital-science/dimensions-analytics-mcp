@@ -8,6 +8,7 @@ Quick lookup for names, paths, and stdio configuration. **You won’t need most 
 |------|--------|
 | Product name | **Dimensions Analytics MCP** |
 | npm package | `@digital-science-dsl/dimensions-analytics-mcp` |
+| MCP Registry name | `ai.dimensions/analytics-mcp` |
 | stdio CLI | `dimensions-analytics-mcp` |
 | MCP client config key | `dimensions` (under `mcpServers` or `servers`) |
 | Guided install directory | `~/.dimensions-analytics-mcp` |
