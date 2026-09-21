@@ -1,5 +1,13 @@
 # Changelog
 
+## 1.4.2
+
+### Patch Changes
+
+- [#2](https://github.com/digital-science/dimensions-analytics-mcp/pull/2) [`c2e163a`](https://github.com/digital-science/dimensions-analytics-mcp/commit/c2e163ad5c7644bfa5349367c56a707c2af525bd) Thanks [@akovari](https://github.com/akovari)! - Add the `mcpName` ownership marker and npm keywords so the package can back a record in the official MCP Registry under `ai.dimensions/analytics-mcp`.
+
+- [#2](https://github.com/digital-science/dimensions-analytics-mcp/pull/2) [`c2e163a`](https://github.com/digital-science/dimensions-analytics-mcp/commit/c2e163ad5c7644bfa5349367c56a707c2af525bd) Thanks [@akovari](https://github.com/akovari)! - Replace non-null assertions with typed public/internal client config, and bump `@types/node` to 24 and `fast-check` to 4.9.
+
 ## 1.4.1
 
 ### Patch Changes
