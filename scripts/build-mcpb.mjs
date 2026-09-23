@@ -11,8 +11,7 @@ import {
   rmSync,
   writeFileSync,
 } from "node:fs";
-import { tmpdir } from "node:os";
-import { join, resolve } from "node:path";
+import { join, relative, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
 
 const root = resolve(fileURLToPath(new URL("..", import.meta.url)));
@@ -26,7 +25,9 @@ if (!existsSync(join(root, "apps/mcp/dist/main.js"))) {
   throw new Error("Build the MCP package before building its desktop extension");
 }
 
-const temp = mkdtempSync(join(tmpdir(), "dimensions-mcpb-"));
+// Keep staging on the checkout's drive and pass pnpm a path relative to the
+// workspace root. Absolute Windows drive paths break pnpm deploy's link step.
+const temp = mkdtempSync(join(root, ".mcpb-staging-"));
 const deployed = join(temp, "deployed");
 const bundle = join(temp, "bundle");
 const server = join(bundle, "server");
@@ -45,6 +46,9 @@ function run(command, args, cwd = root) {
 function copyDependencies(source, target) {
   for (const entry of readdirSync(source, { withFileTypes: true })) {
     if (entry.name.startsWith(".")) continue;
+    if (entry.name === "dimensions-analytics-mcp" && source.endsWith("@digital-science-dsl")) {
+      continue;
+    }
     const from = join(source, entry.name);
     const to = join(target, entry.name);
     if (entry.name.startsWith("@") && entry.isDirectory()) {
@@ -62,7 +66,7 @@ try {
     packageName,
     "deploy",
     "--prod",
-    deployed,
+    relative(root, deployed),
   ]);
   mkdirSync(server, { recursive: true });
   for (const name of ["bin", "dist"]) {
