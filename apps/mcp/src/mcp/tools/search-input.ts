@@ -32,7 +32,10 @@ export const PAGINATION_INPUT_SCHEMA = {
 export const SHARED_SEARCH_INPUT = {
   query: z
     .string()
-    .describe("Search query terms (omit with filters-only search if the API allows)"),
+    .optional()
+    .describe(
+      "Free-text search terms. Optional — omit for a filters-only search that relies solely on `filters` and/or the entity-specific convenience filters (e.g. yearFrom/yearTo).",
+    ),
   limit: z
     .number()
     .int()
@@ -50,7 +53,11 @@ export const SHARED_SEARCH_INPUT = {
   filters: z
     .array(ExtendedWhereFilterSchema)
     .optional()
-    .describe("Additional where-clause filters"),
+    .describe(
+      "Additional where-clause filters. Each item needs field, operator, and (except for is_empty/is_not_empty) value, " +
+        'e.g. {"field": "researchers.id", "operator": "=", "value": "ur.01343614074.49"}. ' +
+        "Supported operators: =, !=, >, <, >=, <=, in, is_empty, is_not_empty.",
+    ),
   confirmLargeFetch: z
     .boolean()
     .optional()

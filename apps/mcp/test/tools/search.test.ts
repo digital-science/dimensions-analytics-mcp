@@ -407,6 +407,25 @@ describe("search tools", () => {
       const dsl = client.rawQuery.mock.calls[0][0] as string;
       expect(dsl).toContain("is empty");
     });
+
+    it("supports a filters-only search with no query", async () => {
+      client.rawQuery.mockResolvedValue(
+        apiRows("publications", [{ id: "pub1", title: "Filters-only Paper" }], 1),
+      );
+
+      const result = await callTool(handlers, "search_publications", {
+        filters: [{ field: "researchers.id", operator: "=", value: "ur.014403456555.45" }],
+        sortBy: "year",
+        limit: 100,
+      });
+
+      expect(result.isError).toBeFalsy();
+      const dsl = client.rawQuery.mock.calls[0][0] as string;
+      expect(dsl).toContain("search publications");
+      expect(dsl).not.toContain(" for ");
+      expect(dsl).toContain("researchers.id");
+      expect(parseToolResult(result).publications).toHaveLength(1);
+    });
   });
 
   describe("pagination", () => {

@@ -1,5 +1,11 @@
 # Changelog
 
+## 1.4.4
+
+### Patch Changes
+
+- Allow `search_*` tools to omit `query` for filters-only searches. The shared input schema previously required a free-text `query` string even though the description already said it could be omitted and the DSL query builder already supported filter-only searches, causing tool calls with only `filters` to fail validation. Also clarified the `filters` field description with the required `field`/`operator`/`value` shape and supported operators.
+
 ## 1.4.3
 
 ### Patch Changes
