@@ -7,6 +7,25 @@ on:
     branches: [main]
 
 jobs:
+  desktop-extension:
+    name: Desktop extension (${{ matrix.os }})
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [macos-latest, windows-latest]
+    steps:
+      - uses: actions/checkout@v6
+      - uses: pnpm/action-setup@v5
+      - uses: actions/setup-node@v6
+        with:
+          node-version: "22"
+          cache: pnpm
+      - run: pnpm install --frozen-lockfile
+      - run: pnpm run build
+      - run: pnpm run build:mcpb
+      - run: pnpm run test:mcpb
+
   test:
     runs-on: ubuntu-latest
 

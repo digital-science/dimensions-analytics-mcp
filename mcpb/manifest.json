@@ -1,0 +1,55 @@
+{
+  "manifest_version": "0.3",
+  "name": "dimensions-analytics-mcp",
+  "display_name": "Dimensions Analytics",
+  "version": "0.0.0",
+  "description": "Search and analyze Dimensions research data with your Analytics API subscription.",
+  "author": {
+    "name": "Digital Science",
+    "url": "https://www.dimensions.ai/"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/digital-science/dimensions-analytics-mcp"
+  },
+  "homepage": "https://www.dimensions.ai/",
+  "documentation": "https://docs.dimensions.ai/dsl/mcp.html",
+  "support": "https://github.com/digital-science/dimensions-analytics-mcp/issues",
+  "license": "MIT",
+  "tools_generated": true,
+  "privacy_policies": ["https://www.dimensions.ai/privacy/"],
+  "server": {
+    "type": "node",
+    "entry_point": "server/bin/dimensions-analytics-mcp.js",
+    "mcp_config": {
+      "command": "node",
+      "args": ["${__dirname}/server/bin/dimensions-analytics-mcp.js"],
+      "env": {
+        "DIMENSIONS_API_KEY": "${user_config.api_key}",
+        "DIMENSIONS_BASE_URL": "${user_config.base_url}",
+        "DIMENSIONS_MCP_UPDATE_CHECK": "0",
+        "DIMENSIONS_MCP_AUTO_UPDATE": "0"
+      }
+    }
+  },
+  "user_config": {
+    "base_url": {
+      "type": "string",
+      "title": "Dimensions instance URL",
+      "description": "The Dimensions host for your account. Change this only if your organization uses a custom instance.",
+      "default": "https://app.dimensions.ai",
+      "required": false
+    },
+    "api_key": {
+      "type": "string",
+      "title": "Dimensions API key",
+      "description": "API key for an account with Dimensions Analytics API access.",
+      "sensitive": true,
+      "required": true
+    }
+  },
+  "compatibility": {
+    "platforms": ["darwin", "win32"],
+    "runtimes": { "node": ">=20.0.0" }
+  }
+}

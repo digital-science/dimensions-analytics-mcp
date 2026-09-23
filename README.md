@@ -8,12 +8,16 @@ After a short install, you configure your MCP client once, restart the app, and 
 
 ## Prerequisites
 
-- **[Node.js 20+](https://nodejs.org/)** — required for the local stdio server (the installer can help you install it)
+- **[Node.js 20+](https://nodejs.org/)** — required for the guided installer and manual setup; Claude Desktop supplies its own Node runtime for the extension
 - **[Dimensions API key](https://app.dimensions.ai/account/settings/general)** — from your [Dimensions](https://www.dimensions.ai/) account (same key as the [Dimensions DSL API](https://docs.dimensions.ai/dsl/))
 
 Don’t have an API key yet? [Request a demo or quote here](https://www.dimensions.ai/request-a-demo-or-quote/).
 
 ## Quick install
+
+**Claude Desktop (macOS or Windows):** [download the latest extension](https://github.com/digital-science/dimensions-analytics-mcp/releases/latest/download/dimensions-analytics-mcp.mcpb), then open **Settings → Extensions → Advanced settings → Install Extension…** and select the file. Enter your API key in the extension settings. See [installation details](./docs/INSTALLATION.md#install-in-claude-desktop).
+
+**Other MCP clients:** use the guided installer below.
 
 **Mac / Linux** — paste in Terminal:
 

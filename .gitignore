@@ -1,6 +1,7 @@
 node_modules/
 .pnpm-store/
 dist/
+*.mcpb
 .env
 .env.*
 !.env.example

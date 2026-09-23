@@ -1,5 +1,11 @@
 # Changelog
 
+## 1.4.3
+
+### Patch Changes
+
+- Package the existing local server as a Claude Desktop extension and publish it with each release.
+
 ## 1.4.2
 
 ### Patch Changes
