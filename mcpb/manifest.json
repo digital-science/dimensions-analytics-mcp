@@ -36,8 +36,7 @@
     "base_url": {
       "type": "string",
       "title": "Dimensions instance URL",
-      "description": "The Dimensions host for your account. Change this only if your organization uses a custom instance.",
-      "default": "https://app.dimensions.ai",
+      "description": "Leave empty for app.dimensions.ai. If you log in elsewhere (for example trial.dimensions.ai or eu.dimensions.ai), enter that host.",
       "required": false
     },
     "api_key": {

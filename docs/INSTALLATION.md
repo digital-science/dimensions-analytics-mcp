@@ -4,7 +4,7 @@
 
 1. [Download the latest Dimensions Analytics extension](https://github.com/digital-science/dimensions-analytics-mcp/releases/latest/download/dimensions-analytics-mcp.mcpb).
 2. In Claude Desktop, open **Settings → Extensions → Advanced settings → Install Extension…** and select the downloaded `.mcpb` file.
-3. Enter your Dimensions Analytics API key when prompted. If your account uses a custom Dimensions instance, also set its URL. Then ask Claude, for example, “Find the 20 most-cited publications on CRISPR gene editing since 2020.”
+3. Enter your Dimensions Analytics API key when prompted. If you log in somewhere other than `app.dimensions.ai` (for example `trial.dimensions.ai` or `eu.dimensions.ai`), enter that host as the instance URL; leave it empty otherwise. You can change it later in the extension settings. Then ask Claude, for example, “Find the 20 most-cited publications on CRISPR gene editing since 2020.”
 
 This extension contains the local MCP server and its dependencies. Claude Desktop supplies the Node runtime and stores the API key as sensitive extension configuration. An Analytics API subscription is required. The extension works on macOS and Windows.
 

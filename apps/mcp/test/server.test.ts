@@ -44,6 +44,29 @@ describe("createMcpServerAsync", () => {
     expect(server).toBeDefined();
   });
 
+  it.each([
+    ["trial.dimensions.ai", "https://trial.dimensions.ai"],
+    ["https://eu.dimensions.ai/", "https://eu.dimensions.ai"],
+    ["", "https://app.dimensions.ai"],
+    ["${user_config.base_url}", "https://app.dimensions.ai"],
+  ])("accepts DIMENSIONS_BASE_URL %j from a Claude Desktop extension", async (raw, expected) => {
+    const original = process.env.DIMENSIONS_BASE_URL;
+    process.env.DIMENSIONS_BASE_URL = raw;
+    try {
+      const { client } = await createMcpServerAsync({
+        apiKey: "test-key",
+        schemaStore: testSchemaStore(),
+      });
+      expect((client as unknown as { config: { baseUrl: string } }).config.baseUrl).toBe(expected);
+    } finally {
+      if (original !== undefined) {
+        process.env.DIMENSIONS_BASE_URL = original;
+      } else {
+        delete process.env.DIMENSIONS_BASE_URL;
+      }
+    }
+  });
+
   it("returns a configured McpServer instance", async () => {
     const { server } = await createMcpServerAsync({
       apiKey: "test-key",

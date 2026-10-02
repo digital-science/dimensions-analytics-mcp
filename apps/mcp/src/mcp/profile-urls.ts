@@ -44,13 +44,40 @@ const FACET_FIELD_PROFILE_ENTITY: Readonly<Record<string, ProfileEntityType>> = 
 };
 
 /**
- * Strips trailing slashes from an instance base URL.
+ * Normalizes a user-supplied instance URL, or returns `undefined` when unset.
+ *
+ * Claude Desktop extensions pass `user_config` values through verbatim: an empty
+ * field arrives as `""` and an unset optional field without a default keeps the
+ * literal `${user_config.base_url}` placeholder. Users also type bare hosts
+ * (`trial.dimensions.ai`) or paste a page URL. All of these must resolve to an
+ * origin (WEBAPPDEV-14080).
+ * @param raw - Raw instance URL
+ * @returns Origin with scheme and no trailing slash, or `undefined` when unset
+ */
+export function parseInstanceBaseUrl(raw?: string): string | undefined {
+  let value = raw?.trim();
+  if (!value || /^\$\{[^}]*\}$/.test(value)) return undefined;
+  if (!/^[a-z][a-z\d+.-]*:\/\//i.test(value)) {
+    value = `https://${value}`;
+  }
+  try {
+    return new URL(value).origin;
+  } catch {
+    return value.replace(/\/+$/, "");
+  }
+}
+
+/**
+ * Resolves the instance base URL from the argument, `DIMENSIONS_BASE_URL`, or the default.
  * @param baseUrl - Raw instance URL
  * @returns Normalized origin with no trailing slash
  */
 export function normalizeInstanceBaseUrl(baseUrl?: string): string {
-  const raw = (baseUrl ?? process.env.DIMENSIONS_BASE_URL ?? DEFAULT_INSTANCE_BASE_URL).trim();
-  return raw.replace(/\/+$/, "") || DEFAULT_INSTANCE_BASE_URL;
+  return (
+    parseInstanceBaseUrl(baseUrl) ??
+    parseInstanceBaseUrl(process.env.DIMENSIONS_BASE_URL) ??
+    DEFAULT_INSTANCE_BASE_URL
+  );
 }
 
 /**

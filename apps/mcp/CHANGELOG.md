@@ -1,5 +1,11 @@
 # Changelog
 
+## 1.4.5
+
+### Patch Changes
+
+- Fix the Claude Desktop extension ignoring a custom instance URL (WEBAPPDEV-14080). The server now accepts a bare host such as `trial.dimensions.ai`, a trailing slash, or a pasted page URL in `DIMENSIONS_BASE_URL`, and resolves each to the instance origin. An empty value or an unset extension placeholder falls back to `app.dimensions.ai`. Before, any of these failed URL validation at startup. The extension's instance URL field no longer has a prefilled default, so it holds exactly what the user enters.
+
 ## 1.4.4
 
 ### Patch Changes

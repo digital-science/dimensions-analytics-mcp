@@ -17,6 +17,7 @@ import {
   loadSchema,
   type SchemaStore,
 } from "../dsl/schema/index.js";
+import { normalizeInstanceBaseUrl } from "./profile-urls.js";
 import { registerSchemaResources } from "./resources/schema.js";
 import type { SchemaContext } from "./schema/context.js";
 import { getSharedSchemaStore } from "./shared-schema.js";
@@ -196,7 +197,7 @@ export async function createMcpServerAsync(config: McpServerConfig = {}): Promis
     apiKey: config.apiKey ?? process.env.DIMENSIONS_API_KEY,
     userEmail: config.userEmail,
     clientIp: config.clientIp,
-    baseUrl: config.baseUrl ?? process.env.DIMENSIONS_BASE_URL,
+    baseUrl: normalizeInstanceBaseUrl(config.baseUrl),
     maxRetries: readIntEnv(process.env.DIMENSIONS_MAX_RETRIES, 3, 0),
     retryDelay: readIntEnv(process.env.DIMENSIONS_RETRY_DELAY_MS, 1000, 1),
     rateLimitPerMinute: readIntEnv(process.env.DIMENSIONS_RATE_LIMIT_PER_MINUTE, 30, 1),

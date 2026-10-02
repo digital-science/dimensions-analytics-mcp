@@ -3,14 +3,16 @@
  * @module test/profile-urls
  */
 
-import { describe, expect, it } from "vitest";
+import { afterEach, describe, expect, it } from "vitest";
 import {
   attachFacetProfileUrls,
   attachProfileUrl,
   attachProfileUrls,
   buildProfileUrl,
   isProfileEntityType,
+  normalizeInstanceBaseUrl,
   PROFILE_ENTITY_TYPES,
+  parseInstanceBaseUrl,
   profileEntityForFacetField,
   profileUrlCatalog,
 } from "../src/mcp/profile-urls.js";
@@ -147,5 +149,41 @@ describe("profileUrlCatalog", () => {
     expect(catalog.templates.find((t) => t.entityType === "organizations")?.path).toBe(
       "/details/organization/{id}",
     );
+  });
+});
+
+describe("parseInstanceBaseUrl", () => {
+  it.each([
+    ["trial.dimensions.ai", "https://trial.dimensions.ai"],
+    ["  eu.dimensions.ai/ ", "https://eu.dimensions.ai"],
+    ["https://app.dimensions.ai", "https://app.dimensions.ai"],
+    ["https://trial.dimensions.ai/discover/publication", "https://trial.dimensions.ai"],
+    ["http://localhost:8080/", "http://localhost:8080"],
+  ])("normalizes %j to %j", (raw, expected) => {
+    expect(parseInstanceBaseUrl(raw)).toBe(expected);
+  });
+
+  it.each([undefined, "", "   ", "${user_config.base_url}"])("treats %j as unset", (raw) => {
+    expect(parseInstanceBaseUrl(raw)).toBeUndefined();
+  });
+});
+
+describe("normalizeInstanceBaseUrl", () => {
+  const original = process.env.DIMENSIONS_BASE_URL;
+
+  afterEach(() => {
+    if (original !== undefined) {
+      process.env.DIMENSIONS_BASE_URL = original;
+    } else {
+      delete process.env.DIMENSIONS_BASE_URL;
+    }
+  });
+
+  it("falls back to DIMENSIONS_BASE_URL, then the default instance", () => {
+    process.env.DIMENSIONS_BASE_URL = "trial.dimensions.ai";
+    expect(normalizeInstanceBaseUrl()).toBe("https://trial.dimensions.ai");
+    process.env.DIMENSIONS_BASE_URL = "${user_config.base_url}";
+    expect(normalizeInstanceBaseUrl()).toBe("https://app.dimensions.ai");
+    expect(normalizeInstanceBaseUrl("eu.dimensions.ai")).toBe("https://eu.dimensions.ai");
   });
 });
