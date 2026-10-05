@@ -13,8 +13,10 @@ import { createBootstrapDimensionsClient, createDimensionsClient } from "../dsl/
 import type { DimensionsClient } from "../dsl/index.js";
 import {
   clearSchemaCache,
-  getOrLoadSchema,
+  defaultSchemaCachePath,
+  type ImmediateSchema,
   loadSchema,
+  loadSchemaImmediately,
   type SchemaStore,
 } from "../dsl/schema/index.js";
 import { normalizeInstanceBaseUrl } from "./profile-urls.js";
@@ -155,14 +157,17 @@ async function loadSchemaForServer(
   client: DimensionsClient,
   config: McpServerConfig,
   deploymentMode: "local" | "hosted",
-): Promise<SchemaStore> {
+  cachePath: string,
+): Promise<ImmediateSchema> {
   if (config.schemaStore) {
-    return config.schemaStore;
+    return { store: config.schemaStore };
   }
   if (deploymentMode === "hosted") {
-    return getSharedSchemaStore(client);
+    return { store: await getSharedSchemaStore(client) };
   }
-  return getOrLoadSchema(client, process.env.SCHEMA_CACHE_PATH);
+  // Local stdio clients (Claude Desktop) time out `initialize` after ~10s, so never
+  // block startup on auth + describe; refresh in the background instead.
+  return loadSchemaImmediately(client, { cachePath });
 }
 
 /**
@@ -191,25 +196,42 @@ export async function createMcpServerAsync(config: McpServerConfig = {}): Promis
     sessionId: config.mcpSessionId,
   });
 
+  const baseUrl = normalizeInstanceBaseUrl(config.baseUrl);
   const client = createDimensionsClient({
     mode,
     hosted: hosted ?? config.hosted,
     apiKey: config.apiKey ?? process.env.DIMENSIONS_API_KEY,
     userEmail: config.userEmail,
     clientIp: config.clientIp,
-    baseUrl: normalizeInstanceBaseUrl(config.baseUrl),
+    baseUrl,
     maxRetries: readIntEnv(process.env.DIMENSIONS_MAX_RETRIES, 3, 0),
     retryDelay: readIntEnv(process.env.DIMENSIONS_RETRY_DELAY_MS, 1000, 1),
     rateLimitPerMinute: readIntEnv(process.env.DIMENSIONS_RATE_LIMIT_PER_MINUTE, 30, 1),
   });
 
-  const schemaStore = await loadSchemaForServer(client, config, mode);
+  const startedAt = Date.now();
+  const cachePath = process.env.SCHEMA_CACHE_PATH || defaultSchemaCachePath(baseUrl);
+  const { store: schemaStore, refresh } = await loadSchemaForServer(
+    client,
+    config,
+    mode,
+    cachePath,
+  );
   client.attachSchemaStore(schemaStore);
 
-  const schemaContext: SchemaContext = { store: schemaStore };
+  const schemaContext: SchemaContext = { store: schemaStore, cachePath };
   validateFieldAliases(schemaStore);
+  refresh?.then(
+    (store) => {
+      schemaContext.store = store;
+      client.attachSchemaStore(store);
+    },
+    (error: unknown) => {
+      const message = error instanceof Error ? error.message : String(error);
+      console.error(`[schema] background refresh failed: ${message}`);
+    },
+  );
 
-  const startedAt = Date.now();
   console.error(
     `Schema loaded: ${schemaStore.stats().sourceCount} sources, ${schemaStore.stats().entityCount} entities` +
       (schemaStore.version ? `, DSL ${schemaStore.version}` : "") +

@@ -115,10 +115,11 @@ export function registerSchemaTools(
     async () => {
       try {
         const store = await loadSchema(client, {
-          cachePath: process.env.SCHEMA_CACHE_PATH,
+          cachePath: context.cachePath ?? process.env.SCHEMA_CACHE_PATH,
           forceRefresh: true,
         });
         context.store = store;
+        client.attachSchemaStore(store);
         return formatToolResult({ refreshed: true, stats: store.stats() });
       } catch (error) {
         return formatErrorResult(error);

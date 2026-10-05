@@ -1,5 +1,11 @@
 # Changelog
 
+## 1.4.6
+
+### Patch Changes
+
+- Answer MCP `initialize` immediately in local stdio mode (WEBAPPDEV-14080 follow-up). Startup used to wait for JWT auth plus `describe schema` before replying, which could take 6–12 seconds. Claude Desktop gives up after about 10 seconds and reports a failed connection even when the URL and key are valid. The server now starts from the on-disk schema cache, or from a schema snapshot bundled with the package on first launch, and refreshes from the API in the background. Local servers now cache the schema by default in the OS user cache directory, one file per instance host (`SCHEMA_CACHE_PATH` still overrides this). `refresh_schema` now also updates query validation. Maintainers can refresh the bundled snapshot with `pnpm run schema:snapshot`.
+
 ## 1.4.5
 
 ### Patch Changes

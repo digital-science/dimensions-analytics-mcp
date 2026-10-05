@@ -3,7 +3,9 @@
  * @module schema/cache
  */
 
-import { readFile, writeFile } from "node:fs/promises";
+import { mkdir, readFile, writeFile } from "node:fs/promises";
+import { homedir } from "node:os";
+import { dirname, join } from "node:path";
 import { extractDescribeSchema } from "./extract.js";
 import type { DescribeSchemaResponse } from "./types.js";
 
@@ -96,6 +98,7 @@ export async function writeSchemaCacheFile(
     ...(version != null ? { version } : {}),
     schema: response,
   };
+  await mkdir(dirname(cachePath), { recursive: true });
   await writeFile(cachePath, JSON.stringify(envelope), "utf8");
 }
 
@@ -116,4 +119,25 @@ export function resolveCacheTtlMs(overrideMs?: number): number {
     }
   }
   return DEFAULT_SCHEMA_CACHE_TTL_MS;
+}
+
+/**
+ * Default per-user schema cache file for local stdio servers.
+ *
+ * Keyed by instance host because entitlements, and therefore `describe schema`,
+ * can differ between instances (app, trial, eu, custom).
+ * @param baseUrl - Instance origin, e.g. `https://trial.dimensions.ai`
+ * @returns Absolute cache file path in the OS user cache directory
+ */
+export function defaultSchemaCachePath(baseUrl: string): string {
+  const host = new URL(baseUrl).host.replace(/[^a-z0-9.-]/gi, "_");
+  return join(userCacheDir(), "dimensions-analytics-mcp", `schema-${host}.json`);
+}
+
+function userCacheDir(): string {
+  if (process.platform === "darwin") return join(homedir(), "Library", "Caches");
+  if (process.platform === "win32") {
+    return process.env.LOCALAPPDATA ?? join(homedir(), "AppData", "Local");
+  }
+  return process.env.XDG_CACHE_HOME || join(homedir(), ".cache");
 }

@@ -11,6 +11,7 @@
     "test:watch": "vitest",
     "test:coverage": "vitest run --coverage",
     "test:integration": "vitest run --config vitest.integration.config.ts",
+    "schema:snapshot": "node --import tsx apps/mcp/scripts/update-schema-snapshot.ts",
     "integration:smoke": "node --import tsx apps/mcp/test/integration/run.ts",
     "integration:hosted": "node --import tsx apps/mcp/test/integration/hosted-run.ts",
     "typecheck": "tsc --build",

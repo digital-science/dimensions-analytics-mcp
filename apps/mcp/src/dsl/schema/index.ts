@@ -5,6 +5,7 @@
 
 export {
   DEFAULT_SCHEMA_CACHE_TTL_MS,
+  defaultSchemaCachePath,
   isCacheFresh,
   parseCachePayload,
   type SchemaCacheEntry,
@@ -15,8 +16,10 @@ export {
   clearSchemaCache,
   getCachedSchemaStore,
   getOrLoadSchema,
+  type ImmediateSchema,
   type LoadSchemaOptions,
   loadSchema,
+  loadSchemaImmediately,
 } from "./load.js";
 export {
   createSchemaStoreFromResponse,

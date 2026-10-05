@@ -8,7 +8,7 @@ import { buildSchemaSummary, type SchemaSummary } from "./summary.js";
 import type { DescribeSchemaResponse, EntityDescribe, SourceDescribe } from "./types.js";
 
 /** How the schema store was populated. */
-export type SchemaLoadSource = "api" | "cache";
+export type SchemaLoadSource = "api" | "cache" | "snapshot";
 
 /** Optional metadata when constructing a {@link SchemaStore}. */
 export type SchemaStoreMetadata = {

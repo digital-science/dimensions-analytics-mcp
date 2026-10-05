@@ -6,11 +6,13 @@
 import type { DimensionsClient } from "../client.js";
 import {
   isCacheFresh,
+  parseCachePayload,
   readSchemaCacheFile,
   resolveCacheTtlMs,
   writeSchemaCacheFile,
 } from "./cache.js";
 import { extractDescribeSchema, extractDescribeVersion } from "./extract.js";
+import snapshot from "./snapshot.json" with { type: "json" };
 import { createSchemaStoreFromResponse, type SchemaStore } from "./store.js";
 
 let moduleCache: SchemaStore | undefined;
@@ -123,6 +125,60 @@ export async function loadSchema(
     }
     throw error;
   }
+}
+
+/** Schema available immediately, plus an optional background refresh from the API. */
+export type ImmediateSchema = {
+  readonly store: SchemaStore;
+  /** Resolves to the live schema; `undefined` when the immediate store is a fresh cache. */
+  readonly refresh?: Promise<SchemaStore>;
+};
+
+/**
+ * Returns a schema without waiting on the network, so a stdio server can answer
+ * `initialize` right away (WEBAPPDEV-14080: Claude Desktop gives up after ~10s,
+ * while auth plus `describe schema` can take longer).
+ *
+ * Uses the disk cache when present (any age), else the schema snapshot bundled
+ * with the package. Unless the cache is fresh, also starts an API refresh that
+ * rewrites the cache.
+ * @param client - Dimensions client used for the background refresh
+ * @param options - Cache path, TTL, and logging options
+ * @returns Immediate store and optional refresh promise
+ */
+export async function loadSchemaImmediately(
+  client: DimensionsClient,
+  options: LoadSchemaOptions = {},
+): Promise<ImmediateSchema> {
+  const cachePath = options.cachePath ?? process.env.SCHEMA_CACHE_PATH;
+  const log = options.log ?? true;
+  const cached = cachePath ? await readSchemaCacheFile(cachePath) : undefined;
+
+  if (cached && isCacheFresh(cached.cachedAt, resolveCacheTtlMs(options.cacheTtlMs))) {
+    const store = createSchemaStoreFromResponse(cached.response, cached.version, new Date(), {
+      loadSource: "cache",
+      stale: false,
+      cachedAt: cached.cachedAt,
+    });
+    moduleCache = store;
+    if (log) logSchemaLoaded(store, "cache (fresh)");
+    return { store };
+  }
+
+  const fallback = cached ?? parseCachePayload(snapshot);
+  if (!fallback) {
+    throw new Error("Bundled schema snapshot is invalid");
+  }
+  const store = createSchemaStoreFromResponse(fallback.response, fallback.version, new Date(), {
+    loadSource: cached ? "cache" : "snapshot",
+    stale: true,
+    cachedAt: fallback.cachedAt,
+  });
+  moduleCache = store;
+  if (log) logSchemaLoaded(store, cached ? "cache (refreshing)" : "snapshot (refreshing)");
+
+  const refresh = loadSchema(client, { ...options, cachePath, forceRefresh: true });
+  return { store, refresh };
 }
 
 /**

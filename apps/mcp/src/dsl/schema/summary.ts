@@ -3,7 +3,7 @@
  * @module schema/summary
  */
 
-import { SCHEMA_LIMITS, type SchemaStore } from "./store.js";
+import { SCHEMA_LIMITS, type SchemaLoadSource, type SchemaStore } from "./store.js";
 
 /** MCP resource URIs for drilling into the full schema. */
 export const SCHEMA_RESOURCE_URIS = {
@@ -34,7 +34,7 @@ export type SchemaSummary = {
   readonly loadedAt: string;
   readonly cachedAt: string | undefined;
   readonly stale: boolean;
-  readonly loadSource: "api" | "cache";
+  readonly loadSource: SchemaLoadSource;
   readonly limits: typeof SCHEMA_LIMITS;
   readonly stats: {
     readonly sourceCount: number;
