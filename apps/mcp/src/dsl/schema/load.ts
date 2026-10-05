@@ -89,7 +89,11 @@ export async function loadSchema(
     const version = versionRaw ? extractDescribeVersion(versionRaw) : undefined;
 
     if (cachePath) {
-      await writeSchemaCacheFile(cachePath, response, version);
+      // A read-only or missing cache directory must not fail the schema load.
+      await writeSchemaCacheFile(cachePath, response, version).catch((error: unknown) => {
+        const message = error instanceof Error ? error.message : String(error);
+        console.error(`[schema] could not write cache ${cachePath}: ${message}`);
+      });
     }
 
     const store = createSchemaStoreFromResponse(response, version, new Date(), {

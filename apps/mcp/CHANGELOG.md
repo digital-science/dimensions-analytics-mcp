@@ -1,5 +1,11 @@
 # Changelog
 
+## 1.4.7
+
+### Patch Changes
+
+- Hosted HTTP servers no longer write a schema cache file to the container user's home directory when `SCHEMA_CACHE_PATH` is unset. 1.4.6 applied the local stdio default cache path in every mode. A failed cache write is now logged instead of failing the schema load or `refresh_schema`.
+
 ## 1.4.6
 
 ### Patch Changes

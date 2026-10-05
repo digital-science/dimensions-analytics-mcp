@@ -157,7 +157,7 @@ async function loadSchemaForServer(
   client: DimensionsClient,
   config: McpServerConfig,
   deploymentMode: "local" | "hosted",
-  cachePath: string,
+  cachePath: string | undefined,
 ): Promise<ImmediateSchema> {
   if (config.schemaStore) {
     return { store: config.schemaStore };
@@ -210,7 +210,10 @@ export async function createMcpServerAsync(config: McpServerConfig = {}): Promis
   });
 
   const startedAt = Date.now();
-  const cachePath = process.env.SCHEMA_CACHE_PATH || defaultSchemaCachePath(baseUrl);
+  // Hosted containers opt in via SCHEMA_CACHE_PATH; only local stdio defaults to a user cache.
+  const cachePath =
+    process.env.SCHEMA_CACHE_PATH ||
+    (mode === "local" ? defaultSchemaCachePath(baseUrl) : undefined);
   const { store: schemaStore, refresh } = await loadSchemaForServer(
     client,
     config,

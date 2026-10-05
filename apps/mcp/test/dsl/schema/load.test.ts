@@ -69,6 +69,21 @@ describe("loadSchema", () => {
     expect(onDisk?.version).toBe("2.15.0");
   });
 
+  it("still returns the API schema when the cache cannot be written", async () => {
+    const blocker = join(cacheDir, "not-a-dir");
+    await writeFile(blocker, "");
+    const client = createMockClient({
+      schema: async () => liveSchema,
+      version: async () => ({ version: "2.15.0" }),
+    });
+    const errors = vi.spyOn(console, "error").mockImplementation(() => {});
+
+    const store = await loadSchema(client, { cachePath: join(blocker, "schema.json"), log: false });
+    expect(store.loadSource).toBe("api");
+    expect(errors).toHaveBeenCalledWith(expect.stringContaining("could not write cache"));
+    errors.mockRestore();
+  });
+
   it("uses fresh cache without calling the API", async () => {
     const seedClient = createMockClient({
       schema: async () => liveSchema,

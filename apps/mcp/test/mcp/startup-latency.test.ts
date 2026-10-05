@@ -12,6 +12,7 @@ import { Client, InMemoryTransport } from "@modelcontextprotocol/client";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { defaultSchemaCachePath } from "../../src/dsl/schema/index.js";
 import { createMcpServerAsync } from "../../src/mcp/server.js";
+import { testSchemaStore } from "../helpers/schema-fixture.js";
 
 const fixture = JSON.parse(
   readFileSync(new URL("../fixtures/describe-schema.json", import.meta.url), "utf8"),
@@ -143,6 +144,36 @@ describe("local stdio startup", () => {
     expect(schemaStore.stale).toBe(false);
     await new Promise((resolve) => setTimeout(resolve, 50));
     expect(requests).toEqual([]);
+  });
+});
+
+describe("hosted startup", () => {
+  it("does not default to a user cache file when SCHEMA_CACHE_PATH is unset", async () => {
+    const saved = process.env.SCHEMA_CACHE_PATH;
+    delete process.env.SCHEMA_CACHE_PATH;
+    try {
+      const { schemaContext } = await createMcpServerAsync({
+        deploymentMode: "hosted",
+        hosted: {
+          deploymentMode: "hosted",
+          radarAuthUrl: "https://app.example.com",
+          internal: {
+            serviceUrl: "https://dsl.example.com",
+            username: "svc",
+            password: "secret",
+            dslSchema: "external",
+            host: "app.example.com",
+            variant: "standard",
+          },
+          httpPort: 8080,
+        },
+        userEmail: "user@example.com",
+        schemaStore: testSchemaStore(),
+      });
+      expect(schemaContext.cachePath).toBeUndefined();
+    } finally {
+      if (saved !== undefined) process.env.SCHEMA_CACHE_PATH = saved;
+    }
   });
 });
 
