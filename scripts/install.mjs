@@ -16,11 +16,16 @@ import {
 import { homedir, platform } from "node:os";
 import { dirname, join } from "node:path";
 import { createInterface } from "node:readline";
+import { Readable } from "node:stream";
 import {
+  buildHostedServerEntry,
   buildServerEntry,
+  HOSTED_CLIENTS,
   hasServerEntry,
+  hostedMcpUrl,
   isClaudeDesktopRunning,
   mergeServerEntry,
+  probeHostedEndpoint,
 } from "./install-config.mjs";
 
 const REPO = "digital-science/dimensions-analytics-mcp";
@@ -65,8 +70,18 @@ const CLIENTS = {
   vscode: {
     label: "VS Code (GitHub Copilot MCP)",
     configKey: "servers",
+    // User-profile config ("MCP: Open User Configuration"). ~/.vscode/mcp.json is only
+    // read when the home directory itself is the open workspace.
     configPath() {
-      return join(homedir(), ".vscode", "mcp.json");
+      if (platform() === "win32") {
+        const appData = process.env.APPDATA;
+        if (!appData) throw new Error("APPDATA is not set");
+        return join(appData, "Code", "User", "mcp.json");
+      }
+      if (platform() === "darwin") {
+        return join(homedir(), "Library", "Application Support", "Code", "User", "mcp.json");
+      }
+      return join(homedir(), ".config", "Code", "User", "mcp.json");
     },
   },
   windsurf: {
@@ -83,6 +98,7 @@ function parseArgs(argv) {
     apiKey: process.env.DIMENSIONS_API_KEY,
     baseUrl: process.env.DIMENSIONS_BASE_URL,
     clients: null,
+    mode: null,
     yes: false,
     help: false,
   };
@@ -92,6 +108,7 @@ function parseArgs(argv) {
     else if (arg === "--yes" || arg === "-y") opts.yes = true;
     else if (arg === "--api-key") opts.apiKey = argv[++i];
     else if (arg === "--base-url") opts.baseUrl = argv[++i];
+    else if (arg === "--mode") opts.mode = argv[++i]?.trim().toLowerCase();
     else if (arg === "--clients") {
       opts.clients = argv[++i]
         ?.split(",")
@@ -119,6 +136,10 @@ Options:
   --api-key <key>           Dimensions API key (or DIMENSIONS_API_KEY env)
   --base-url <url>          Custom instance URL (or DIMENSIONS_BASE_URL env)
   --clients <list>          Comma-separated: claude-desktop,cursor,vscode,windsurf
+  --mode <local|hosted>     local (default): run the server on this machine.
+                            hosted: connect ${HOSTED_CLIENTS.join(", ")} to the hosted
+                            endpoint (<instance>/mcp) instead. Claude Desktop always
+                            uses the local server.
   --yes, -y                 Skip confirmation prompts
   --help, -h                Show this help
 
@@ -167,8 +188,10 @@ function getInteractiveInput() {
   }
 }
 
-function createPrompt() {
-  const input = getInteractiveInput();
+function createPrompt({ yes = false } = {}) {
+  let input = getInteractiveInput();
+  // --yes needs no answers, so it also works without a terminal (CI, scripts).
+  if (!input && yes) input = Readable.from([]);
   if (!input) {
     console.error(`Non-interactive stdin. Re-run from a terminal, or use:
   node install.mjs --yes --api-key <key> --clients claude-desktop,cursor
@@ -291,6 +314,58 @@ Which AI apps should we configure?
   return selected.length ? selected : ["claude-desktop"];
 }
 
+async function promptMode(rl, opts, clientIds, baseUrl) {
+  if (opts.mode != null && opts.mode !== "local" && opts.mode !== "hosted") {
+    console.error(`Unknown --mode "${opts.mode}". Use local or hosted.`);
+    process.exit(1);
+  }
+  if (opts.mode === "local") return "local";
+
+  const hostedCapable = clientIds.filter((id) => HOSTED_CLIENTS.includes(id));
+  if (!hostedCapable.length) {
+    if (opts.mode === "hosted") {
+      console.log(
+        `\nHosted mode applies to ${HOSTED_CLIENTS.map((id) => CLIENTS[id].label).join(", ")}; ` +
+          "the selected apps will use the local server.",
+      );
+    }
+    return "local";
+  }
+  if (opts.mode === "hosted") return "hosted";
+  if (opts.yes) return "local";
+
+  const url = hostedMcpUrl(baseUrl);
+  if ((await probeHostedEndpoint(url)) === "unavailable") return "local";
+
+  console.log(`
+How should ${hostedCapable.map((id) => CLIENTS[id].label).join(", ")} connect?
+  1) Local server — installed on this computer and kept up to date automatically.
+     Supports every tool, including fetch_search_pages exports to local files.
+  2) Hosted — connect to ${url}. Nothing is installed or updated locally;
+     fetch_search_pages is not available.
+${clientIds.includes("claude-desktop") ? "Claude Desktop always uses the local server.\n" : ""}`);
+  const answer = await ask(rl, "Enter 1 or 2", { defaultValue: "1" });
+  return answer.trim() === "2" ? "hosted" : "local";
+}
+
+async function verifyHostedKey(url, apiKey) {
+  console.log(`\nChecking your API key against ${url} ...`);
+  const status = await probeHostedEndpoint(url, apiKey);
+  if (status === "ok") {
+    console.log("  API key accepted.");
+    return;
+  }
+  if (status === "unauthorized") {
+    console.error(`The hosted endpoint rejected your API key.
+Check the key, and that it belongs to this Dimensions instance (a key from a custom
+instance only works there). Your account needs Analytics API access.`);
+  } else {
+    console.error(`No hosted endpoint is available at ${url}.
+Re-run the installer with the local server (--mode local).`);
+  }
+  process.exit(1);
+}
+
 function runNpmInstall() {
   mkdirSync(INSTALL_DIR, { recursive: true });
   console.log(`\nInstalling ${PACKAGE} from npm to ${INSTALL_DIR} ...`);
@@ -381,21 +456,13 @@ ${quitHint}
   console.log("  Claude Desktop quit — continuing.\n");
 }
 
-async function configureClient(
-  rl,
-  clientId,
-  apiKey,
-  mainJs,
-  baseUrl,
-  { nonInteractive = false } = {},
-) {
+async function configureClient(rl, clientId, entry, { nonInteractive = false } = {}) {
   const client = CLIENTS[clientId];
   const configPath = client.configPath();
   if (client.requiresQuitBeforeWrite) {
     await waitForClaudeDesktopQuit(rl, { nonInteractive });
   }
 
-  const entry = buildServerEntry(apiKey, mainJs, baseUrl);
   let doc;
   try {
     doc = mergeServerEntry(readJson(configPath), client.configKey, SERVER_NAME, entry);
@@ -429,31 +496,43 @@ async function main() {
 
   assertNodeVersion();
 
-  const rl = createPrompt();
+  const rl = createPrompt(opts);
   console.log("Dimensions Analytics MCP — setup wizard\n");
   try {
     const apiKey = await promptApiKey(rl, opts);
     const baseUrl = await promptBaseUrl(rl, opts);
     const clientIds = await promptClients(rl, opts);
+    const mode = await promptMode(rl, opts, clientIds, baseUrl);
+    const hostedUrl = hostedMcpUrl(baseUrl);
+    const isHosted = (id) => mode === "hosted" && HOSTED_CLIENTS.includes(id);
+    if (mode === "hosted") {
+      await verifyHostedKey(hostedUrl, apiKey);
+    }
 
     if (!opts.yes) {
-      const confirm = await ask(
-        rl,
-        `Install and configure ${clientIds.map((id) => CLIENTS[id].label).join(", ")}?`,
-        { defaultValue: "y" },
+      const labels = clientIds.map(
+        (id) => `${CLIENTS[id].label} (${isHosted(id) ? "hosted" : "local"})`,
       );
+      const confirm = await ask(rl, `Configure ${labels.join(", ")}?`, { defaultValue: "y" });
       if (!/^y(es)?$/i.test(confirm)) {
         console.log("Cancelled.");
         return;
       }
     }
 
-    runNpmInstall();
-    const mainJs = resolveMainJs();
+    const needsLocal = clientIds.some((id) => !isHosted(id));
+    let mainJs = null;
+    if (needsLocal) {
+      runNpmInstall();
+      mainJs = resolveMainJs();
+    }
 
     console.log("\nConfiguring MCP clients...");
     for (const clientId of clientIds) {
-      await configureClient(rl, clientId, apiKey, mainJs, baseUrl, { nonInteractive: opts.yes });
+      const entry = isHosted(clientId)
+        ? buildHostedServerEntry(clientId, apiKey, hostedUrl)
+        : buildServerEntry(apiKey, mainJs, baseUrl);
+      await configureClient(rl, clientId, entry, { nonInteractive: opts.yes });
     }
 
     console.log(`
@@ -464,14 +543,20 @@ Next steps:
      For Claude Desktop: open Chat (not Cowork) and look for "dimensions".
   2. Look for "dimensions" in the app's MCP / integrations list.
   3. Try a prompt — ${REPO_URL}/blob/main/docs/USAGE.md
-
-This prefix install checks npm about once a day and applies same-major updates automatically.
+`);
+    if (mode === "hosted") {
+      console.log(`Hosted apps connect to ${hostedUrl} — nothing to update on this computer.
+`);
+    }
+    if (needsLocal) {
+      console.log(`The local server checks npm about once a day and applies same-major updates automatically.
 To force an update, run this installer again. To disable auto-install, set
 DIMENSIONS_MCP_AUTO_UPDATE=0 in the MCP env. If a newer version cannot be applied,
 the server logs a warning with upgrade steps.
 
 Installed server: ${mainJs}
 `);
+    }
   } finally {
     rl.close();
   }

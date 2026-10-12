@@ -8,7 +8,7 @@ After a short install, you configure your MCP client once, restart the app, and 
 
 ## Prerequisites
 
-- **[Node.js 20+](https://nodejs.org/)** — required for the guided installer and manual setup; Claude Desktop supplies its own Node runtime for the extension
+- **[Node.js 20+](https://nodejs.org/)** — required for the guided installer and the local server; Claude Desktop supplies its own Node runtime for the extension, and the [hosted server](./docs/INSTALLATION.md#hosted-server) needs none
 - **[Dimensions API key](https://app.dimensions.ai/account/settings/general)** — from your [Dimensions](https://www.dimensions.ai/) account (same key as the [Dimensions DSL API](https://docs.dimensions.ai/dsl/))
 
 Don’t have an API key yet? [Request a demo or quote here](https://www.dimensions.ai/request-a-demo-or-quote/).
@@ -18,6 +18,8 @@ Don’t have an API key yet? [Request a demo or quote here](https://www.dimensio
 **Claude Desktop (macOS or Windows):** [download the latest extension](https://github.com/digital-science/dimensions-analytics-mcp/releases/latest/download/dimensions-analytics-mcp.mcpb), then open **Settings → Extensions → Advanced settings → Install Extension…** and select the file. Enter your API key in the extension settings. See [installation details](./docs/INSTALLATION.md#install-in-claude-desktop).
 
 **Other MCP clients:** use the guided installer below.
+
+**Hosted server (no install):** clients that can send an `Authorization` header — Cursor, VS Code, Windsurf, Claude Code, Codex CLI — can connect straight to `https://app.dimensions.ai/mcp` with `Authorization: Bearer <your API key>`. The guided installer offers this too. See [Hosted server](./docs/INSTALLATION.md#hosted-server).
 
 **Mac / Linux** — paste in Terminal:
 
@@ -54,7 +56,7 @@ Tool reference: [docs/USAGE.md](./docs/USAGE.md#all-mcp-tools).
 
 ## More documentation
 
-- [Installation](./docs/INSTALLATION.md) — guided installer and manual setup
+- [Installation](./docs/INSTALLATION.md) — guided installer, manual setup, and the hosted server
 - [Usage guide](./docs/USAGE.md) — workflows for AI assistants
 - [Reference](./docs/REFERENCE.md) — names, env vars, rate limits, schema cache
 - [MCP field aliases](./docs/MCP_FIELD_ALIASES.md) — field name shortcuts accepted by search tools

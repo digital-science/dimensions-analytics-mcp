@@ -1,5 +1,10 @@
 # Installation
 
+There are two ways to connect an AI app to Dimensions:
+
+- **Local server** — runs on your computer (Claude Desktop extension, guided installer, or manual setup). Works with every MCP client and every Dimensions instance, and supports all tools.
+- **[Hosted server](#hosted-server)** — connect your app to `https://app.dimensions.ai/mcp` with your API key. No Node.js and nothing to update. Available on the standard instance for clients that can send an `Authorization` header (Cursor, VS Code, Windsurf, Claude Code, Codex CLI, …).
+
 ## Install in Claude Desktop
 
 1. [Download the latest Dimensions Analytics extension](https://github.com/digital-science/dimensions-analytics-mcp/releases/latest/download/dimensions-analytics-mcp.mcpb).
@@ -41,8 +46,9 @@ Install [Node.js 20+](https://nodejs.org/) first if prompted (the script can ins
 1. Asks for your **Dimensions API key** — same key as the [Dimensions DSL API](https://docs.dimensions.ai/dsl/).
 2. Asks for a **custom instance URL** if you do not use `app.dimensions.ai` (optional; press Enter for the standard instance).
 3. Asks which apps to configure: **Claude Desktop**, **Cursor**, **VS Code (Copilot MCP)**, or **Windsurf**.
-4. Installs `@digital-science-dsl/dimensions-analytics-mcp` from npm to `~/.dimensions-analytics-mcp` and updates each app’s MCP config file.
-5. Backs up any existing config before changing it.
+4. For Cursor, VS Code, and Windsurf, offers the **[hosted server](#hosted-server)** as an alternative to the local one (only when your instance has a hosted endpoint). Choosing hosted checks your API key against the endpoint. Claude Desktop always uses the local server.
+5. Installs `@digital-science-dsl/dimensions-analytics-mcp` from npm to `~/.dimensions-analytics-mcp` (skipped when every app is hosted) and updates each app’s MCP config file.
+6. Backs up any existing config before changing it.
 
 No GitHub account or token is required.
 
@@ -74,12 +80,13 @@ npm install @digital-science-dsl/dimensions-analytics-mcp@latest --prefix ~/.dim
 
 Then reopen your AI app.
 
-**npx, global, source, and hosted** installs do not auto-install. When a newer version is on npm, the server logs a warning (stderr / MCP logs) with the command to run:
+**npx, global, and source** installs do not auto-install. When a newer version is on npm, the server logs a warning (stderr / MCP logs) with the command to run:
 
 - **npx** — set MCP `args` to `["-y", "@digital-science-dsl/dimensions-analytics-mcp@latest"]` (or clear the npx cache) and restart. Without `@latest`, npx keeps the cached tarball.
 - **global** — `npm install -g @digital-science-dsl/dimensions-analytics-mcp@latest`, then restart.
 - **source** — `git pull && pnpm install && pnpm run build`.
-- **hosted** — bump the deployed image / npm pin and redeploy.
+
+The [hosted server](#hosted-server) needs no updates on your side.
 
 Disable automatic installs with `DIMENSIONS_MCP_AUTO_UPDATE=0` in the MCP `env` block (version warnings still run). Disable checks entirely with `DIMENSIONS_MCP_UPDATE_CHECK=0`. Changelog: **[CHANGELOG.md](../apps/mcp/CHANGELOG.md)**.
 
@@ -98,6 +105,8 @@ export DIMENSIONS_API_KEY=...
 # Custom instance only, e.g. https://your-instance.dimensions.ai
 # export DIMENSIONS_BASE_URL=https://your-instance.dimensions.ai
 node /tmp/install.mjs --clients claude-desktop,cursor --yes
+# Hosted server for Cursor / VS Code / Windsurf instead of the local one:
+# node /tmp/install.mjs --clients cursor,vscode --mode hosted --yes
 ```
 
 ### Run from a git clone (developers)
@@ -175,7 +184,7 @@ Requires [Node.js 20+](https://nodejs.org/) on your PATH (including for GUI apps
 
 `-y` lets `npx` download the package without prompting. The first start may be slower while npm fetches the package; later starts use the npm cache and **will not pick up new releases** unless you pin `@latest` (see [Updating](#updating)).
 
-If `npx` is not found when the app launches, use the [guided installer](#quick-setup-recommended) (installs under `~/.dimensions-analytics-mcp` with an explicit `node` path) or Option B below.
+If `npx` is not found when the app launches, use the [guided installer](#guided-setup-for-other-mcp-clients) (installs under `~/.dimensions-analytics-mcp` with an explicit `node` path) or Option B below.
 
 **Option B — global npm install**
 
@@ -201,7 +210,7 @@ Pass your Dimensions API key in `env` (and `DIMENSIONS_BASE_URL` on a custom ins
 | **Cursor** | `~/.cursor/mcp.json` or `.cursor/mcp.json` |
 | **Claude Desktop** (macOS) | `~/Library/Application Support/Claude/claude_desktop_config.json` |
 | **Claude Desktop** (Windows) | `%APPDATA%\Claude\claude_desktop_config.json` |
-| **VS Code** (Copilot MCP) | `~/.vscode/mcp.json` — Command Palette: *MCP: Open User Configuration* |
+| **VS Code** (Copilot MCP) | User profile `mcp.json` — Command Palette: *MCP: Open User Configuration* (macOS: `~/Library/Application Support/Code/User/mcp.json`, Windows: `%APPDATA%\Code\User\mcp.json`, Linux: `~/.config/Code/User/mcp.json`). A workspace can also use `.vscode/mcp.json`. |
 | **Windsurf** | `~/.codeium/windsurf/mcp_config.json` |
 
 **Cursor / Claude Desktop / Windsurf** — key `mcpServers`:
@@ -268,8 +277,93 @@ Names, env vars, and tuning: [REFERENCE.md](./REFERENCE.md).
 
 ---
 
-## Hosted Dimensions Analytics MCP (coming soon)
+## Hosted server
 
-A **hosted** option — connect from your AI app via URL and Bearer token, with no Node.js install — is **not available yet**. We will announce it in the near future on [dimensions.ai](https://www.dimensions.ai/) and in this repository.
+The hosted Dimensions Analytics MCP server runs the same tools without anything installed on your computer:
 
-When it launches, setup will be documented here. For now, use the [quick setup](#quick-setup-recommended) above (local stdio).
+| | |
+|-|-|
+| **URL** | `https://app.dimensions.ai/mcp` (Streamable HTTP) |
+| **Authentication** | `Authorization: Bearer <your Dimensions API key>` — the same key as the DSL API |
+| **Instances** | Standard instance (`app.dimensions.ai`) only. For a custom instance, use the local server with `DIMENSIONS_BASE_URL`. |
+| **Differences** | No Node.js and no updates on your side. `fetch_search_pages` (exports results to local files) is not available; every other tool is. |
+
+The [guided installer](#guided-setup-for-other-mcp-clients) can write these entries for Cursor, VS Code, and Windsurf (choose **Hosted** when asked, or pass `--mode hosted`). To configure it yourself:
+
+**Cursor** — `~/.cursor/mcp.json`:
+
+```json
+{
+  "mcpServers": {
+    "dimensions": {
+      "url": "https://app.dimensions.ai/mcp",
+      "headers": {
+        "Authorization": "Bearer your-api-key"
+      }
+    }
+  }
+}
+```
+
+**VS Code** — user `mcp.json` (*MCP: Open User Configuration*). This version prompts for the key once and stores it in VS Code's secret storage instead of the file:
+
+```json
+{
+  "inputs": [
+    {
+      "type": "promptString",
+      "id": "dimensions-api-key",
+      "description": "Dimensions API key",
+      "password": true
+    }
+  ],
+  "servers": {
+    "dimensions": {
+      "type": "http",
+      "url": "https://app.dimensions.ai/mcp",
+      "headers": {
+        "Authorization": "Bearer ${input:dimensions-api-key}"
+      }
+    }
+  }
+}
+```
+
+**Windsurf** — `~/.codeium/windsurf/mcp_config.json`:
+
+```json
+{
+  "mcpServers": {
+    "dimensions": {
+      "serverUrl": "https://app.dimensions.ai/mcp",
+      "headers": {
+        "Authorization": "Bearer your-api-key"
+      }
+    }
+  }
+}
+```
+
+**Claude Code (CLI):**
+
+```bash
+claude mcp add --transport http dimensions https://app.dimensions.ai/mcp \
+  --header "Authorization: Bearer your-api-key"
+```
+
+**Codex CLI** — reads the key from an environment variable:
+
+```bash
+codex mcp add dimensions --url https://app.dimensions.ai/mcp --bearer-token-env-var DIMENSIONS_API_KEY
+```
+
+Other clients: use the URL above with an `Authorization: Bearer` header.
+
+### Apps that cannot use the hosted server yet
+
+The hosted server authenticates with your API key. Apps that only offer OAuth sign-in for remote servers cannot send it:
+
+- **ChatGPT** — custom MCP servers support OAuth or no authentication only.
+- **Claude Desktop / claude.ai custom connectors** — use the [Claude Desktop extension](#install-in-claude-desktop) instead. Fixed request headers are a limited beta, and on Team and Enterprise plans one connector (and its key) is shared by the whole organization.
+
+Treat the key in these configs like a password: the files are not encrypted.

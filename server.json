@@ -9,13 +9,13 @@
     "subfolder": "apps/mcp"
   },
   "websiteUrl": "https://github.com/digital-science/dimensions-analytics-mcp#readme",
-  "version": "1.4.2",
+  "version": "1.4.7",
   "packages": [
     {
       "registryType": "npm",
       "registryBaseUrl": "https://registry.npmjs.org",
       "identifier": "@digital-science-dsl/dimensions-analytics-mcp",
-      "version": "1.4.2",
+      "version": "1.4.7",
       "transport": {
         "type": "stdio"
       },
@@ -32,6 +32,28 @@
           "description": "Dimensions API base URL. Required for custom instances, e.g. https://your-instance.dimensions.ai",
           "isRequired": false,
           "format": "string"
+        }
+      ]
+    }
+  ],
+  "remotes": [
+    {
+      "type": "streamable-http",
+      "url": "https://app.dimensions.ai/mcp",
+      "headers": [
+        {
+          "name": "Authorization",
+          "description": "Dimensions API key as a Bearer token (same key as the Dimensions DSL API). Standard instance (app.dimensions.ai) only.",
+          "isRequired": true,
+          "isSecret": true,
+          "value": "Bearer {api_key}",
+          "variables": {
+            "api_key": {
+              "description": "Dimensions API key",
+              "isRequired": true,
+              "isSecret": true
+            }
+          }
         }
       ]
     }
