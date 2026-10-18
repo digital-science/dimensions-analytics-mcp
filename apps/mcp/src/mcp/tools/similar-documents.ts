@@ -99,6 +99,7 @@ export function registerSimilarDocumentsTool(server: McpServer, client: Dimensio
     server,
     "similar_documents",
     {
+      title: "Find similar documents",
       description:
         "Find publications or grants with similar research topics based on abstract/description text. " +
         "Uses Dimensions concept extraction and weighted concepts search (not vector embeddings). " +

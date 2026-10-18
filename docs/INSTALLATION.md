@@ -364,6 +364,8 @@ Other clients: use the URL above with an `Authorization: Bearer` header.
 The hosted server authenticates with your API key. Apps that only offer OAuth sign-in for remote servers cannot send it:
 
 - **ChatGPT** — custom MCP servers support OAuth or no authentication only.
-- **Claude Desktop / claude.ai custom connectors** — use the [Claude Desktop extension](#install-in-claude-desktop) instead. Fixed request headers are a limited beta, and on Team and Enterprise plans one connector (and its key) is shared by the whole organization.
+- **claude.ai custom connectors** — not supported yet. Fixed request headers are a limited beta, and on Team and Enterprise plans one connector (and its key) is shared by the whole organization. To use Dimensions with Claude, install the [Claude Desktop extension](#install-in-claude-desktop) in the Claude Desktop app.
+
+**Claude Desktop** is supported: connect it with the [Claude Desktop extension](#install-in-claude-desktop), which runs the server locally with your API key.
 
 Treat the key in these configs like a password: the files are not encrypted.

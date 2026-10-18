@@ -63,6 +63,12 @@ Tool reference: [docs/USAGE.md](./docs/USAGE.md#all-mcp-tools).
 
 Package: [`@digital-science-dsl/dimensions-analytics-mcp`](https://www.npmjs.com/package/@digital-science-dsl/dimensions-analytics-mcp) on npm.
 
+## Privacy Policy
+
+This extension runs on your computer. It sends your API key and your queries only to the Dimensions API at the instance you configure (app.dimensions.ai by default). With each request it also sends usage metadata: the tool name, the extension version, the MCP client name, and a random session ID created when the server starts. Digital Science uses this metadata to monitor and improve the service. The extension doesn't send data to any other service, and the Claude Desktop extension doesn't check npm for updates.
+
+How Digital Science collects, uses, stores, shares, and retains this data, and how to contact us, is described in the [Dimensions privacy policy](https://www.dimensions.ai/privacy/). Questions: supportapi@dimensions.ai.
+
 ## License
 
 MIT

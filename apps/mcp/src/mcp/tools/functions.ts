@@ -19,6 +19,7 @@ export function registerFunctionTools(server: McpServer, client: DimensionsClien
     server,
     "extract_affiliations",
     {
+      title: "Match affiliations",
       description:
         "Resolve and disambiguate organization affiliations using Dimensions entity resolution. " +
         "Takes freetext affiliation strings or structured organization data and returns matched " +
@@ -66,6 +67,7 @@ export function registerFunctionTools(server: McpServer, client: DimensionsClien
     server,
     "extract_grants",
     {
+      title: "Match grant numbers",
       description:
         "Resolve grant numbers to Dimensions grant records. " +
         "Takes a grant number and optional funder information to find matching grants " +

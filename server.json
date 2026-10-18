@@ -9,13 +9,13 @@
     "subfolder": "apps/mcp"
   },
   "websiteUrl": "https://github.com/digital-science/dimensions-analytics-mcp#readme",
-  "version": "1.4.7",
+  "version": "1.4.8",
   "packages": [
     {
       "registryType": "npm",
       "registryBaseUrl": "https://registry.npmjs.org",
       "identifier": "@digital-science-dsl/dimensions-analytics-mcp",
-      "version": "1.4.7",
+      "version": "1.4.8",
       "transport": {
         "type": "stdio"
       },

@@ -89,6 +89,7 @@ export function registerFetchSearchPagesTools(
     server,
     "fetch_search_pages",
     {
+      title: "Fetch more results",
       description:
         `Fetch paginated search results with rate-limit-aware batching (max ${SCHEMA_LIMITS.maxLimit}/page, ` +
         `${SCHEMA_LIMITS.maxPages} pages, ${SCHEMA_LIMITS.maxOffset} records total). ` +

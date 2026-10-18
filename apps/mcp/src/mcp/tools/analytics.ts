@@ -129,6 +129,7 @@ export function registerAnalyticsTools(
     server,
     "facet_query",
     {
+      title: "Break down results",
       description:
         "Distribution analysis across entity dimensions. Returns facet buckets showing how records " +
         "are distributed across a categorical field. Example: 'What journals publish the most CRISPR research?'",
@@ -220,6 +221,7 @@ export function registerAnalyticsTools(
     server,
     "aggregate_query",
     {
+      title: "Compare metrics",
       description:
         "Metric aggregation on facet buckets. Returns facet buckets enriched with aggregated indicator " +
         "values. Example: 'Which funders have the highest average citation ratio?'",
@@ -330,6 +332,7 @@ export function registerAnalyticsTools(
     server,
     "citation_trend",
     {
+      title: "Citation trend",
       description:
         "Year-by-year citation counts for a topic. Returns annual citation totals for publications " +
         "matching the query over the specified year range.",
@@ -393,6 +396,7 @@ export function registerAnalyticsTools(
     server,
     "funding_trend",
     {
+      title: "Funding trend",
       description:
         "Year-by-year funding totals for a topic. Returns annual grant funding amounts for grants " +
         "matching the query over the specified year range.",

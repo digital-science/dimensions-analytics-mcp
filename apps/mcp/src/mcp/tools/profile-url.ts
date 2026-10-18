@@ -20,6 +20,7 @@ export function registerProfileUrlTool(server: McpServer): void {
     server,
     "construct_profile_url",
     {
+      title: "Build Dimensions link",
       description:
         "Build a canonical Dimensions web profile URL from an entity type and Dimensions ID. " +
         "Use this instead of inventing paths — researcher profiles are " +

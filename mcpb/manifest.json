@@ -3,11 +3,13 @@
   "name": "dimensions-analytics-mcp",
   "display_name": "Dimensions Analytics",
   "version": "0.0.0",
-  "description": "Search and analyze Dimensions research data with your Analytics API subscription.",
+  "description": "Search and analyze Dimensions linked research data (publications, grants, patents, clinical trials, datasets, and policy documents) with your Dimensions Analytics API subscription.",
+  "long_description": "The Dimensions Analytics extension connects Claude to the Dimensions Analytics API, Digital Science's linked research database. It covers publications, grants, patents, clinical trials, datasets, policy documents, and technical reports, along with the researchers, organizations, funders, and journals connected to them. You ask in plain language, and Claude searches with filters, looks up records by DOI, PubMed ID, or Dimensions ID, finds documents similar to an abstract, and runs facets, aggregations, and year-by-year citation and funding trends. Results link to the matching Dimensions profile pages.\n\n**Use cases:** literature and landscape reviews; citation and research-impact analysis; funding intelligence, such as the top funders for a topic or funding trends over time; benchmarking institutions and research groups; expert and collaborator discovery; patent and clinical-trial landscaping; tracking which policy documents cite research; and enriching lists of DOIs, PubMed IDs, affiliations, or grant numbers with Dimensions metadata and identifiers. Advanced users can also run Dimensions Search Language (DSL) queries directly.\n\n**Authentication:** API key. After installing, select **Configure** and paste your Dimensions API key. It is the same key you use for the Dimensions DSL API ([how to get a key](https://docs.dimensions.ai/dsl/api.html#api-access)). Claude Desktop stores the key as sensitive configuration, and the extension sends it only to Dimensions. If you sign in to Dimensions somewhere other than app.dimensions.ai, also enter that instance URL.\n\n**Requirements:** a Dimensions account with an active Dimensions Analytics API subscription. No access yet? [Request a demo or quote](https://www.dimensions.ai/request-a-demo-or-quote/). Questions: supportapi@dimensions.ai.\n\n**Privacy:** the extension runs on your computer and sends your queries directly to the Dimensions API. Each request also carries usage metadata (tool name, extension version, client name, and a random session ID) that Digital Science uses to monitor and improve the service. See the [Dimensions privacy policy](https://www.dimensions.ai/privacy/).",
   "author": {
     "name": "Digital Science",
     "url": "https://www.dimensions.ai/"
   },
+  "icon": "icon.png",
   "repository": {
     "type": "git",
     "url": "https://github.com/digital-science/dimensions-analytics-mcp"
@@ -16,7 +18,131 @@
   "documentation": "https://docs.dimensions.ai/dsl/mcp.html",
   "support": "https://github.com/digital-science/dimensions-analytics-mcp/issues",
   "license": "MIT",
-  "tools_generated": true,
+  "tools": [
+    {
+      "name": "search_publications",
+      "description": "Search articles, preprints, books, and other scholarly works, with citation metrics, authors, and metadata."
+    },
+    {
+      "name": "search_grants",
+      "description": "Search research grants and funding awards, with amounts, funders, and recipient organizations."
+    },
+    {
+      "name": "search_patents",
+      "description": "Search patents, with titles, abstracts, assignees, and filing dates."
+    },
+    {
+      "name": "search_clinical_trials",
+      "description": "Search clinical trials, with phases, conditions studied, and status."
+    },
+    {
+      "name": "search_datasets",
+      "description": "Search research datasets, with descriptions, repositories, and linked publications."
+    },
+    {
+      "name": "search_policy_documents",
+      "description": "Search policy briefs, reports, and government documents that cite research."
+    },
+    {
+      "name": "search_reports",
+      "description": "Search technical reports, with responsible organizations and funders."
+    },
+    {
+      "name": "search_researchers",
+      "description": "Find researcher profiles by name."
+    },
+    {
+      "name": "search_organizations",
+      "description": "Find universities, institutes, hospitals, and companies with research output."
+    },
+    {
+      "name": "search_source_titles",
+      "description": "Look up journals, preprint servers, book series, and proceedings by name or ISSN."
+    },
+    {
+      "name": "search_funder_groups",
+      "description": "Look up curated funder groups and their member organizations."
+    },
+    {
+      "name": "search_research_org_groups",
+      "description": "Look up curated research-organization groups and their member institutions."
+    },
+    {
+      "name": "fetch_search_pages",
+      "description": "Retrieve further pages of results for a large search."
+    },
+    {
+      "name": "get_by_doi",
+      "description": "Fetch a publication record by its DOI."
+    },
+    {
+      "name": "get_by_pmid",
+      "description": "Fetch a publication record by its PubMed ID."
+    },
+    {
+      "name": "get_by_id",
+      "description": "Fetch any Dimensions record by its Dimensions ID."
+    },
+    {
+      "name": "similar_documents",
+      "description": "Find publications or grants that are similar to a passage of text, such as an abstract."
+    },
+    {
+      "name": "extract_affiliations",
+      "description": "Match free-text affiliation strings to Dimensions organizations, with GRID and ROR IDs and confidence scores."
+    },
+    {
+      "name": "extract_grants",
+      "description": "Match a grant number to its Dimensions grant record."
+    },
+    {
+      "name": "facet_query",
+      "description": "Show how results are distributed across a field, such as the top journals, funders, or institutions for a topic."
+    },
+    {
+      "name": "aggregate_query",
+      "description": "Compare indicators such as citations or funding across groups, for example the average citation ratio by funder."
+    },
+    {
+      "name": "citation_trend",
+      "description": "Year-by-year citation totals for publications on a topic."
+    },
+    {
+      "name": "funding_trend",
+      "description": "Year-by-year grant funding totals for a topic."
+    },
+    {
+      "name": "construct_profile_url",
+      "description": "Build a link to the Dimensions web page for a record."
+    },
+    {
+      "name": "describe_schema",
+      "description": "List the record types, fields, and filters available in Dimensions."
+    },
+    {
+      "name": "refresh_schema",
+      "description": "Reload the Dimensions schema from the API."
+    },
+    {
+      "name": "execute_dsl",
+      "description": "Run a Dimensions Search Language (DSL) query directly, for advanced use."
+    }
+  ],
+  "tools_generated": false,
+  "keywords": [
+    "research",
+    "scholarly",
+    "publications",
+    "citations",
+    "grants",
+    "funding",
+    "patents",
+    "clinical trials",
+    "bibliometrics",
+    "research analytics",
+    "Dimensions",
+    "Digital Science"
+  ],
   "privacy_policies": ["https://www.dimensions.ai/privacy/"],
   "server": {
     "type": "node",

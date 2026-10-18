@@ -30,6 +30,7 @@ export function registerQueryTools(
     server,
     "execute_dsl",
     {
+      title: "Run DSL query",
       description: `Execute a raw Dimensions DSL query. Read dimensions://schema/policy and dimensions://examples first. Official docs: https://docs.dimensions.ai/dsl/
 
 Prefer search_* tools for keyword search with yearFrom/yearTo and sortBy — they build valid DSL automatically.

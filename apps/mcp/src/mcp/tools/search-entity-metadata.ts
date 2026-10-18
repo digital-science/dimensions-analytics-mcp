@@ -16,6 +16,7 @@ export type ConvenienceFilterApplier = (
 /** Static configuration for one structured search entity. */
 export interface SearchEntityMetadata {
   readonly source: StructuredEntityType;
+  readonly title: string;
   readonly description: string;
   readonly applyConvenienceFilters: ConvenienceFilterApplier;
   readonly extraInputSchema: Record<string, z.ZodTypeAny>;
@@ -40,6 +41,7 @@ function yearRange(fromKey: string, toKey: string, field: string): ConvenienceFi
 export const SEARCH_ENTITY_METADATA: readonly SearchEntityMetadata[] = [
   {
     source: "publications",
+    title: "Search publications",
     description:
       "Search research publications in the Dimensions database. Returns articles, preprints, books, and other scholarly works with citation metrics, author information, and metadata.",
     applyConvenienceFilters: (builder, args) => {
@@ -84,6 +86,7 @@ export const SEARCH_ENTITY_METADATA: readonly SearchEntityMetadata[] = [
   },
   {
     source: "grants",
+    title: "Search grants",
     description:
       "Search research grants and funding awards in the Dimensions database. Returns grant information including funding amounts, funders, and research organizations. " +
       "funderOrgName must match an exact Dimensions funder name (acronyms like NCI and NSF are resolved automatically). " +
@@ -129,6 +132,7 @@ export const SEARCH_ENTITY_METADATA: readonly SearchEntityMetadata[] = [
   },
   {
     source: "researchers",
+    title: "Search researchers",
     description:
       "Search researcher profiles by name in the Dimensions database. The query matches researcher names, not research topics — " +
       "for topic→researcher discovery use facet_query with entityType publications and facetField researchers. " +
@@ -143,6 +147,7 @@ export const SEARCH_ENTITY_METADATA: readonly SearchEntityMetadata[] = [
   },
   {
     source: "patents",
+    title: "Search patents",
     description:
       "Search patents in the Dimensions database. Returns patent information including titles, abstracts, assignees, and filing dates.",
     applyConvenienceFilters: (builder, args) => {
@@ -167,6 +172,7 @@ export const SEARCH_ENTITY_METADATA: readonly SearchEntityMetadata[] = [
   },
   {
     source: "clinical_trials",
+    title: "Search clinical trials",
     description:
       "Search clinical trials in the Dimensions database. Returns trial information including phases, conditions studied, and status.",
     applyConvenienceFilters: (builder, args) => {
@@ -199,6 +205,7 @@ export const SEARCH_ENTITY_METADATA: readonly SearchEntityMetadata[] = [
   },
   {
     source: "datasets",
+    title: "Search datasets",
     description:
       "Search research datasets in the Dimensions database. Returns dataset information including descriptions, repositories, and associated publications.",
     applyConvenienceFilters: (builder, args) => {
@@ -216,6 +223,7 @@ export const SEARCH_ENTITY_METADATA: readonly SearchEntityMetadata[] = [
   },
   {
     source: "policy_documents",
+    title: "Search policy documents",
     description:
       "Search policy documents in the Dimensions database. Returns policy briefs, reports, and government documents that cite research.",
     applyConvenienceFilters: (builder, args) => {
@@ -229,6 +237,7 @@ export const SEARCH_ENTITY_METADATA: readonly SearchEntityMetadata[] = [
   },
   {
     source: "organizations",
+    title: "Search organizations",
     description:
       "Search research organizations in the Dimensions database. Returns universities, research institutes, hospitals, and companies with research output. " +
       "Each result includes profile_url (canonical /details/organization/{id}).",
@@ -254,6 +263,7 @@ export const SEARCH_ENTITY_METADATA: readonly SearchEntityMetadata[] = [
   },
   {
     source: "reports",
+    title: "Search reports",
     description:
       "Search technical reports in the Dimensions database. Returns report titles, abstracts, responsible organizations, funders, and related metadata.",
     applyConvenienceFilters: (builder, args) => {
@@ -267,6 +277,7 @@ export const SEARCH_ENTITY_METADATA: readonly SearchEntityMetadata[] = [
   },
   {
     source: "source_titles",
+    title: "Search journals and sources",
     description:
       "Search publication source titles (journals, preprint platforms, book series, proceedings) in the Dimensions database. " +
       "Use for journal / ISSN lookup — not for searching articles (use search_publications).",
@@ -288,6 +299,7 @@ export const SEARCH_ENTITY_METADATA: readonly SearchEntityMetadata[] = [
   },
   {
     source: "funder_groups",
+    title: "Search funder groups",
     description:
       "Search curated funder groups in the Dimensions database. Returns group name and member organization GRID IDs. " +
       "Query matches group names (search index: name).",
@@ -296,6 +308,7 @@ export const SEARCH_ENTITY_METADATA: readonly SearchEntityMetadata[] = [
   },
   {
     source: "research_org_groups",
+    title: "Search organization groups",
     description:
       "Search curated research organization groups in the Dimensions database. Returns group name and member organization GRID IDs. " +
       "Query matches group names (search index: name).",

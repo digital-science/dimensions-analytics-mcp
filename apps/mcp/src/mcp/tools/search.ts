@@ -102,6 +102,7 @@ export function registerSearchTools(
       server,
       toolName,
       {
+        title: meta.title,
         description: meta.description,
         inputSchema: z.object({
           ...SHARED_SEARCH_INPUT,

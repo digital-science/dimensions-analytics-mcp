@@ -28,6 +28,7 @@ export function registerLookupTools(server: McpServer, client: DimensionsClient)
     server,
     "get_by_doi",
     {
+      title: "Get publication by DOI",
       description:
         "Retrieve a publication by its Digital Object Identifier (DOI). Returns full publication details including abstract, citations, and authors.",
       inputSchema: z.object({
@@ -83,6 +84,7 @@ export function registerLookupTools(server: McpServer, client: DimensionsClient)
     server,
     "get_by_pmid",
     {
+      title: "Get publication by PubMed ID",
       description:
         "Retrieve a publication by its PubMed ID (PMID). Returns full publication details from Dimensions.",
       inputSchema: z.object({
@@ -138,6 +140,7 @@ export function registerLookupTools(server: McpServer, client: DimensionsClient)
     server,
     "get_by_id",
     {
+      title: "Get record by Dimensions ID",
       description:
         "Retrieve any entity by its Dimensions ID. Supports publications, grants, patents, clinical trials, datasets, policy documents, researchers, organizations, reports, source titles, funder groups, and research org groups.",
       inputSchema: z.object({

@@ -149,6 +149,26 @@ describe("startMcpServer", () => {
 });
 
 describe("MCP protocol", () => {
+  it("gives every tool a title and a read-only hint", async () => {
+    const [clientTransport, serverTransport] = InMemoryTransport.createLinkedPair();
+    const handle = await startMcpServer(serverTransport, {
+      apiKey: "test-key",
+      schemaStore: testSchemaStore(),
+    });
+    const client = new Client({ name: "test-client", version: "1.0.0" });
+    await client.connect(clientTransport);
+
+    const { tools } = await client.listTools();
+    expect(tools).toHaveLength(27);
+    for (const tool of tools) {
+      expect(tool.title?.trim(), `${tool.name} title`).toBeTruthy();
+      expect(tool.annotations?.readOnlyHint, `${tool.name} readOnlyHint`).toBe(true);
+    }
+
+    await client.close();
+    await handle.close();
+  });
+
   it("lists DSL tools and schema resources over in-memory transport", async () => {
     const [clientTransport, serverTransport] = InMemoryTransport.createLinkedPair();
     const handle = await startMcpServer(serverTransport, {

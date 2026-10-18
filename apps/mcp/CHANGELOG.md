@@ -1,5 +1,14 @@
 # Changelog
 
+## 1.4.8
+
+### Patch Changes
+
+- Every tool now returns an MCP `title` alongside its read-only annotations.
+- The Claude Desktop extension page shows the Dimensions logo, a full description (use cases, authentication, requirements, privacy), keywords, and a static list of all 27 tools. A test fails if the manifest's tool list drifts from the tools the stdio server registers.
+- The READMEs gain a Privacy Policy section describing the usage metadata sent with each request.
+- The hosted-server notes no longer list Claude Desktop as unsupported or point claude.ai users to the desktop extension.
+
 ## 1.4.7
 
 ### Patch Changes

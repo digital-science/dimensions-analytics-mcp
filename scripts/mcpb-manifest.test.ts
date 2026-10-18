@@ -34,3 +34,13 @@ describe("mcpb manifest base_url", () => {
     expect(await resolvedBaseUrl(userConfig)).toBe(expected);
   });
 });
+
+// WEBAPPDEV-14090: the extension page lists tools from the manifest, so it must match the server.
+describe("mcpb manifest tools", () => {
+  it("declares a static tool list with a description for every tool", () => {
+    expect(manifest.tools_generated).toBe(false);
+    for (const tool of manifest.tools) {
+      expect(tool.description?.trim(), `${tool.name} description`).toBeTruthy();
+    }
+  });
+});

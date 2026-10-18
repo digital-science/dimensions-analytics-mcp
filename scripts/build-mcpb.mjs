@@ -80,6 +80,7 @@ try {
   manifest.version = pkg.version;
   writeFileSync(join(bundle, "manifest.json"), `${JSON.stringify(manifest, null, 2)}\n`);
   writeFileSync(join(bundle, "README.md"), readFileSync(join(root, "mcpb/README.md")));
+  cpSync(join(root, "mcpb/icon.png"), join(bundle, "icon.png"));
 
   const cli = join(root, "node_modules/@anthropic-ai/mcpb/dist/cli/cli.js");
   run(process.execPath, [cli, "validate", bundle]);

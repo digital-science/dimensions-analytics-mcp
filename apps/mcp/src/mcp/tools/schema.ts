@@ -26,6 +26,7 @@ export function registerSchemaTools(
     server,
     "describe_schema",
     {
+      title: "Describe schema",
       description:
         "Return Dimensions DSL schema metadata loaded at server startup. " +
         "Default: compact summary with source/entity counts and resource URIs. " +
@@ -103,6 +104,7 @@ export function registerSchemaTools(
     server,
     "refresh_schema",
     {
+      title: "Refresh schema",
       description:
         "Re-fetch describe schema from the Dimensions API, rebuild in-memory schema, and re-register MCP resources.",
       inputSchema: z.object({}),
