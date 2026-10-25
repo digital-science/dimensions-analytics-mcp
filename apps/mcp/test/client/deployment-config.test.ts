@@ -65,6 +65,25 @@ describe("loadDeploymentConfig", () => {
     });
   });
 
+  it("treats service credentials as optional", () => {
+    Object.assign(process.env, HOSTED_ENV);
+    delete process.env.DSL_SERVICE_USERNAME;
+    delete process.env.DSL_SERVICE_PASSWORD;
+
+    const config = loadDeploymentConfig();
+    expect(config).toMatchObject({ deploymentMode: "hosted" });
+    if (config.deploymentMode !== "hosted") throw new Error("expected hosted");
+    expect(config.internal.username).toBeUndefined();
+    expect(config.internal.password).toBeUndefined();
+  });
+
+  it("rejects a username without a password", () => {
+    Object.assign(process.env, HOSTED_ENV);
+    delete process.env.DSL_SERVICE_PASSWORD;
+
+    expect(() => loadDeploymentConfig()).toThrow("must be set together");
+  });
+
   it("throws when hosted mode is missing required variables", () => {
     process.env.DEPLOYMENT_MODE = "hosted";
     process.env.DSL_SERVICE_URL = "https://dsl.example.com";

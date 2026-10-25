@@ -81,9 +81,13 @@ export class InternalDslClient {
     const headers: Record<string, string> = {
       "Content-Type": "application/json",
       "X-DIMENSIONS-USER": this.userEmail,
-      Authorization: `Basic ${Buffer.from(`${this.config.username}:${this.config.password}`).toString("base64")}`,
       ...usageHeaders,
     };
+
+    const { username, password } = this.config;
+    if (username && password) {
+      headers.Authorization = `Basic ${Buffer.from(`${username}:${password}`).toString("base64")}`;
+    }
 
     if (session) {
       headers["User-Agent"] = buildMcpUserAgent(session.version, session.client);

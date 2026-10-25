@@ -85,6 +85,21 @@ describe("InternalDslClient", () => {
     );
   });
 
+  it("omits the Authorization header when no service credentials are configured", async () => {
+    const mock = mockFetchJson({ publications: [] });
+    const { username: _u, password: _p, ...noAuthConfig } = CONFIG;
+
+    const client = new InternalDslClient({
+      config: noAuthConfig,
+      userEmail: "user@example.com",
+    });
+    await client.query("search publications return publications limit 1");
+
+    const headers = (mock.mock.calls[0][1] as { headers: Record<string, string> }).headers;
+    expect(headers).not.toHaveProperty("Authorization");
+    expect(headers["X-DIMENSIONS-USER"]).toBe("user@example.com");
+  });
+
   it("maps 400 responses to QuerySyntaxError", async () => {
     mockFetchJson({ error: "syntax error" }, { ok: false, status: 400 });
 

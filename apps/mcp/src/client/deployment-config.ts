@@ -12,8 +12,9 @@ export type DeploymentMode = "local" | "hosted";
 
 export const InternalDslEnvSchema = z.object({
   serviceUrl: z.string().url(),
-  username: z.string().min(1),
-  password: z.string().min(1),
+  /** Basic-auth credentials for dsl-service; both set or both omitted. */
+  username: z.string().min(1).optional(),
+  password: z.string().min(1).optional(),
   dslSchema: z.string().min(1),
   host: z.string().min(1),
   variant: z.string().min(1),
@@ -73,8 +74,6 @@ export function loadDeploymentConfig(): AppDeploymentConfig {
 
   const missing: string[] = [];
   if (!serviceUrl) missing.push("DSL_SERVICE_URL");
-  if (!username) missing.push("DSL_SERVICE_USERNAME");
-  if (!password) missing.push("DSL_SERVICE_PASSWORD");
   if (!dslSchema) missing.push("DSL_SCHEMA");
   if (!host) missing.push("DSL_HOST");
   if (!variant) missing.push("DSL_VARIANT");
@@ -84,12 +83,18 @@ export function loadDeploymentConfig(): AppDeploymentConfig {
     throw new Error(`Hosted deployment requires: ${missing.join(", ")}`);
   }
 
+  if (Boolean(username) !== Boolean(password)) {
+    throw new Error(
+      "DSL_SERVICE_USERNAME and DSL_SERVICE_PASSWORD must be set together or both omitted",
+    );
+  }
+
   const hosted = InternalDslEnvSchema.extend({
     radarAuthUrl: z.string().url(),
   }).parse({
     serviceUrl,
-    username,
-    password,
+    username: username || undefined,
+    password: password || undefined,
     dslSchema,
     host,
     variant,
