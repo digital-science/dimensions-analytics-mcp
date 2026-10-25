@@ -1,5 +1,11 @@
 # Changelog
 
+## 1.5.0
+
+### Minor Changes
+
+- `DSL_SERVICE_USERNAME` and `DSL_SERVICE_PASSWORD` are now optional for the hosted deployment. When both are omitted, requests to dsl-service are sent without a basic-auth header; setting only one of them is a configuration error.
+
 ## 1.4.8
 
 ### Patch Changes
