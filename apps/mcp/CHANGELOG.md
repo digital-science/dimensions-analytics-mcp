@@ -1,5 +1,19 @@
 # Changelog
 
+## 1.6.0
+
+### Minor Changes
+
+- Add an optional `searchIn` parameter to the `search_*`, `fetch_search_pages`, `facet_query`, `aggregate_query`, `citation_trend` and `funding_trend` tools. Set it to `title_abstract_only` (or `title_only`, `full_data_exact`, …) to match the query against titles and abstracts instead of full text, so rankings and counts reflect work that is about the topic. Omitting it keeps today's full-text search. An index the entity does not support, or `searchIn` without `query`, returns a validation error naming the valid indexes and sends no API request (WEBAPPDEV-14092).
+- The hosted HTTP server no longer exits when dsl-service is not reachable at startup (`Failed to start HTTP server: Network error: fetch failed`). It starts listening right away and retries the schema load with exponential backoff (1 s up to 30 s). Until the schema loads, `GET /health` returns 503 `{"status":"starting"}` with the last load error, and `POST /mcp` returns 503 with `Retry-After: 5` (WEBAPPDEV-14210).
+- Rate-limited requests (HTTP 429) now honour the server's `Retry-After` header and retry at most once, and only when the wait is 10 seconds or less. Otherwise the tool returns `Rate limit exceeded — retry after N seconds` (with `retryAfter` in the error payload) instead of retrying up to three times or hanging the tool call. Applies to the hosted DSL proxy and the public API client (WEBAPPDEV-14210).
+- Hosted requests to dsl-service now send the deployment's identity in `additional_logging_info` (`mcp_instance`: the `DSL_HOST`, `mcp_deployment_user`: `mcp@<DSL_HOST>`), so dsl usage logs can be grouped per instance. The end user's email from the validated API key stays in `X-DIMENSIONS-USER`. The header contract is documented in `docs/USAGE_TRACKING_ROLLOUT.md` (WEBAPPDEV-14210).
+
+### Patch Changes
+
+- Hosted deployments now build `profile_url` links (publications, grants, patents, clinical trials, datasets, policy documents, researchers, organizations) on the instance's own `DSL_HOST` instead of app.dimensions.ai when `DIMENSIONS_BASE_URL` is unset, so private-instance users get links they can open (WEBAPPDEV-14210).
+- Name the VS Code client "GitHub Copilot in VS Code" in the docs and installer so it is not mistaken for Microsoft 365 Copilot or Copilot Studio, which are not supported (WEBAPPDEV-14208).
+
 ## 1.5.0
 
 ### Minor Changes

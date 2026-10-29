@@ -1,6 +1,6 @@
 {
   "name": "@digital-science-dsl/dimensions-analytics-mcp",
-  "version": "1.5.0",
+  "version": "1.6.0",
   "mcpName": "ai.dimensions/analytics-mcp",
   "description": "Dimensions Analytics MCP server for Dimensions DSL querying",
   "keywords": [
