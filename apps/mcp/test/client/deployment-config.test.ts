@@ -4,7 +4,11 @@
  */
 
 import { afterEach, beforeEach, describe, expect, it } from "vitest";
-import { hostedBootstrapUser, loadDeploymentConfig } from "../../src/client/deployment-config.js";
+import {
+  hostedBootstrapUser,
+  hostedDeploymentLogInfo,
+  loadDeploymentConfig,
+} from "../../src/client/deployment-config.js";
 
 const HOSTED_ENV = {
   DEPLOYMENT_MODE: "hosted",
@@ -95,5 +99,14 @@ describe("loadDeploymentConfig", () => {
 describe("hostedBootstrapUser", () => {
   it("derives mcp@host from DSL_HOST", () => {
     expect(hostedBootstrapUser("app.dimensions.ai")).toBe("mcp@app.dimensions.ai");
+  });
+});
+
+describe("hostedDeploymentLogInfo", () => {
+  it("identifies the hosted deployment with an email-shaped user", () => {
+    expect(hostedDeploymentLogInfo("nsf.dimensions.ai")).toEqual({
+      mcp_instance: "nsf.dimensions.ai",
+      mcp_deployment_user: "mcp@nsf.dimensions.ai",
+    });
   });
 });

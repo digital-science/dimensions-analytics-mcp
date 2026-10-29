@@ -14,9 +14,18 @@ Step-by-step plan to deploy header-based usage metadata (MCP → dsl-service →
 | `X-Dimensions-MCP-Version` | `1.0.4` | `mcp_version` |
 | `X-Dimensions-MCP-Deployment` | `hosted` | `deployment_mode` |
 
+`X-DIMENSIONS-USER` is the **end user**: the `sub` claim (email) of the JWT returned when the hosted MCP validates the caller's API key against `RADAR_AUTH_URL/api/auth.json`. Internal service keys (`JWT_API_KEY_*`) are rejected. The only exception is the startup `describe schema` warm-up, which sends the synthetic `mcp@<DSL_HOST>`.
+
 When `X-Dimensions-Channel: mcp`, dsl-service derives `dimensions_user`, `mcp_user`, and `source` server-side from `X-DIMENSIONS-USER`.
 
-Non-identity JSON body fields (e.g. `radar_version`) remain supported via `additional_log_info` / `additional_logging_info`.
+The JSON body also carries the **per-deployment identity** in `additional_logging_info`, so per-instance usage and rate-limit reports can group by deployment (WEBAPPDEV-14210):
+
+| Body field | Example | Log field |
+|------------|---------|-----------|
+| `additional_logging_info.mcp_instance` | `nsf.dimensions.ai` (`DSL_HOST`) | `mcp_instance` |
+| `additional_logging_info.mcp_deployment_user` | `mcp@nsf.dimensions.ai` | `mcp_deployment_user` |
+
+Other non-identity JSON body fields (e.g. `radar_version`) remain supported via `additional_log_info` / `additional_logging_info`. dsl-service drops body keys that collide with the server-owned fields above (`user`, `channel`, `mcp_*` from headers, `source`, …).
 
 ---
 

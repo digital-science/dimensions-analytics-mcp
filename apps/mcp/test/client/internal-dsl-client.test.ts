@@ -80,6 +80,10 @@ describe("InternalDslClient", () => {
           dsl_schema: "external",
           host: "app.example.com",
           variant: "standard",
+          additional_logging_info: {
+            mcp_instance: "app.example.com",
+            mcp_deployment_user: "mcp@app.example.com",
+          },
         }),
       }),
     );

@@ -57,6 +57,18 @@ export function hostedBootstrapUser(host: string): string {
 }
 
 /**
+ * Per-deployment identity for dsl-service `additional_logging_info` (WEBAPPDEV-14210).
+ * The end user stays in `X-DIMENSIONS-USER`; these fields say which hosted MCP
+ * deployment the request came through, for per-instance usage and rate-limit reports.
+ */
+export function hostedDeploymentLogInfo(host: string): Record<string, string> {
+  return {
+    mcp_instance: host,
+    mcp_deployment_user: hostedBootstrapUser(host),
+  };
+}
+
+/**
  * Loads deployment configuration from environment variables.
  * @throws {Error} When hosted mode is enabled but required vars are missing
  */

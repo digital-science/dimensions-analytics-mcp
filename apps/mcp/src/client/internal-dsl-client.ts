@@ -1,10 +1,11 @@
 /**
  * dsl-service adapter for hosted deployment (POST /query).
- * Usage metadata is sent via X-Dimensions-* headers (see usage-headers.ts), not JSON body.
+ * Usage metadata is sent via X-Dimensions-* headers (see usage-headers.ts); the JSON body
+ * carries only the per-deployment identity in `additional_logging_info`.
  * @module client/internal-dsl-client
  */
 
-import type { InternalDslEnvConfig } from "./deployment-config.js";
+import { hostedDeploymentLogInfo, type InternalDslEnvConfig } from "./deployment-config.js";
 import {
   AuthenticationError,
   DimensionsError,
@@ -101,6 +102,7 @@ export class InternalDslClient {
       dsl_schema: this.config.dslSchema,
       host: this.config.host,
       variant: this.config.variant,
+      additional_logging_info: hostedDeploymentLogInfo(this.config.host),
     };
 
     try {
