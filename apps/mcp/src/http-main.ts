@@ -16,14 +16,20 @@ if (deployment.deploymentMode !== "hosted") {
 
 maybeWarnStaleHostedVersion();
 
-const { close, ready } = startHostedHttpServer({
+const { close, ready, schemaReady } = startHostedHttpServer({
   hosted: deployment,
   port: deployment.httpPort,
 });
 
+void schemaReady.then(() => {
+  console.error("Dimensions schema loaded; accepting MCP requests");
+});
+
 ready
   .then((port) => {
-    console.error(`Dimensions Analytics MCP HTTP server listening on port ${port}`);
+    console.error(
+      `Dimensions Analytics MCP HTTP server listening on port ${port} (not ready until the schema loads)`,
+    );
   })
   .catch((error: unknown) => {
     const message = error instanceof Error ? error.message : String(error);

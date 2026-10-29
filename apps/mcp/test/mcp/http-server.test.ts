@@ -7,6 +7,7 @@ import { afterEach, describe, expect, it, vi } from "vitest";
 import type { HostedEnvConfig } from "../../src/client/deployment-config.js";
 import { AuthenticationError } from "../../src/client/errors.js";
 import { startHostedHttpServer } from "../../src/mcp/http-server.js";
+import { warmHostedSchemaCache } from "../../src/mcp/server.js";
 
 const HOSTED: HostedEnvConfig = {
   deploymentMode: "hosted",
@@ -59,6 +60,7 @@ describe("startHostedHttpServer", () => {
   it("serves GET /health", async () => {
     handle = startHostedHttpServer({ hosted: HOSTED, port: 0 });
     const port = await handle.ready;
+    await handle.schemaReady;
 
     const response = await fetch(`http://127.0.0.1:${port}/health`);
     expect(response.status).toBe(200);
@@ -68,6 +70,7 @@ describe("startHostedHttpServer", () => {
   it("returns 401 when Authorization header is missing", async () => {
     handle = startHostedHttpServer({ hosted: HOSTED, port: 0 });
     const port = await handle.ready;
+    await handle.schemaReady;
 
     const response = await fetch(`http://127.0.0.1:${port}/mcp`, {
       method: "POST",
@@ -76,5 +79,88 @@ describe("startHostedHttpServer", () => {
     });
 
     expect(response.status).toBe(401);
+  });
+
+  describe("startup before dsl-service is reachable", () => {
+    const FAST_RETRY = { initialDelayMs: 5, maxDelayMs: 20 };
+
+    it("keeps listening and retries the schema load instead of exiting", async () => {
+      const warm = vi.mocked(warmHostedSchemaCache);
+      warm.mockClear();
+      warm
+        .mockRejectedValueOnce(new Error("Network error: fetch failed"))
+        .mockRejectedValueOnce(new Error("Network error: fetch failed"));
+      const errorSpy = vi.spyOn(console, "error").mockImplementation(() => {});
+
+      handle = startHostedHttpServer({ hosted: HOSTED, port: 0, schemaWarmupRetry: FAST_RETRY });
+      const port = await handle.ready;
+      await handle.schemaReady;
+
+      expect(warm).toHaveBeenCalledTimes(3);
+      const response = await fetch(`http://127.0.0.1:${port}/health`);
+      expect(response.status).toBe(200);
+      errorSpy.mockRestore();
+    });
+
+    it("reports not ready on /health and /mcp until the schema loads", async () => {
+      let finishWarmup: (() => void) | undefined;
+      vi.mocked(warmHostedSchemaCache).mockImplementationOnce(
+        () =>
+          new Promise((resolve) => {
+            finishWarmup = () => resolve({} as never);
+          }),
+      );
+
+      handle = startHostedHttpServer({ hosted: HOSTED, port: 0, schemaWarmupRetry: FAST_RETRY });
+      const port = await handle.ready;
+
+      const health = await fetch(`http://127.0.0.1:${port}/health`);
+      expect(health.status).toBe(503);
+      expect(await health.json()).toMatchObject({ status: "starting" });
+
+      const mcp = await fetch(`http://127.0.0.1:${port}/mcp`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json", Authorization: "Bearer key" },
+        body: JSON.stringify({ jsonrpc: "2.0", method: "initialize", id: 1, params: {} }),
+      });
+      expect(mcp.status).toBe(503);
+      expect(mcp.headers.get("retry-after")).toBe("5");
+      const body = (await mcp.json()) as { error: { message: string } };
+      expect(body.error.message).toContain("schema not loaded yet");
+
+      finishWarmup?.();
+      await handle.schemaReady;
+      expect((await fetch(`http://127.0.0.1:${port}/health`)).status).toBe(200);
+    });
+
+    it("includes the last load error in /health while retrying", async () => {
+      vi.mocked(warmHostedSchemaCache).mockRejectedValue(new Error("Network error: fetch failed"));
+      const errorSpy = vi.spyOn(console, "error").mockImplementation(() => {});
+
+      handle = startHostedHttpServer({
+        hosted: HOSTED,
+        port: 0,
+        schemaWarmupRetry: { initialDelayMs: 60_000, maxDelayMs: 60_000 },
+      });
+      const port = await handle.ready;
+      await vi.waitFor(() => expect(errorSpy).toHaveBeenCalled());
+
+      const health = await fetch(`http://127.0.0.1:${port}/health`);
+      expect(health.status).toBe(503);
+      expect(await health.json()).toEqual({
+        status: "starting",
+        reason: "Schema not loaded yet: Network error: fetch failed",
+      });
+
+      // close() must stop the retry loop without waiting for the 60s backoff.
+      const { schemaReady } = handle;
+      await handle.close();
+      handle = undefined;
+      await schemaReady;
+      vi.mocked(warmHostedSchemaCache)
+        .mockReset()
+        .mockResolvedValue({} as never);
+      errorSpy.mockRestore();
+    });
   });
 });

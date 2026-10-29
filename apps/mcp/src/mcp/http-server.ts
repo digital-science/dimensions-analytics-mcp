@@ -14,15 +14,35 @@ import { parseBearerToken, resolveUserFromApiKey } from "../client/resolve-api-k
 import { createMcpServerAsync, warmHostedSchemaCache } from "./server.js";
 import { mcpClientFromUserAgent } from "./usage-tracking.js";
 
+/** Backoff for retrying the startup schema load while dsl-service is unreachable. */
+export interface SchemaWarmupRetryOptions {
+  readonly initialDelayMs: number;
+  readonly maxDelayMs: number;
+}
+
+const DEFAULT_SCHEMA_WARMUP_RETRY: SchemaWarmupRetryOptions = {
+  initialDelayMs: 1000,
+  maxDelayMs: 30_000,
+};
+
+/** Seconds a client should wait before retrying while the schema is still loading. */
+const NOT_READY_RETRY_AFTER_SECONDS = 5;
+
 export interface HostedHttpServerOptions {
   readonly hosted: HostedEnvConfig;
   readonly port: number;
   readonly bindHost?: string;
+  readonly schemaWarmupRetry?: SchemaWarmupRetryOptions;
 }
 
 export interface HostedHttpServerHandle {
   /** Resolves to the bound TCP port once the server is listening. */
   readonly ready: Promise<number>;
+  /**
+   * Resolves once the describe schema is loaded and /mcp accepts requests.
+   * Never rejects: failed loads are retried with backoff until {@link close}.
+   */
+  readonly schemaReady: Promise<void>;
   readonly close: () => Promise<void>;
 }
 
@@ -42,13 +62,45 @@ function clientIpFromRequest(req: IncomingMessage): string | undefined {
  */
 export function startHostedHttpServer(options: HostedHttpServerOptions): HostedHttpServerHandle {
   const bindHost = options.bindHost ?? "0.0.0.0";
+  const retry = options.schemaWarmupRetry ?? DEFAULT_SCHEMA_WARMUP_RETRY;
   const app = createMcpExpressApp({ host: bindHost });
 
+  let schemaLoaded = false;
+  let lastSchemaError: string | undefined;
+  let closed = false;
+  let retryTimer: NodeJS.Timeout | undefined;
+  let wakeRetry: (() => void) | undefined;
+
+  // Not ready until the schema loads: dsl-service may still be starting next to us (WEBAPPDEV-14210).
   app.get("/health", (_req: Request, res: Response) => {
-    res.status(200).json({ status: "ok" });
+    if (schemaLoaded) {
+      res.status(200).json({ status: "ok" });
+      return;
+    }
+    res.status(503).json({
+      status: "starting",
+      reason: lastSchemaError
+        ? `Schema not loaded yet: ${lastSchemaError}`
+        : "Schema not loaded yet",
+    });
   });
 
   app.post("/mcp", async (req: Request, res: Response) => {
+    if (!schemaLoaded) {
+      res
+        .status(503)
+        .set("Retry-After", String(NOT_READY_RETRY_AFTER_SECONDS))
+        .json({
+          jsonrpc: "2.0",
+          error: {
+            code: -32000,
+            message: `Server is starting (Dimensions schema not loaded yet). Retry in ${NOT_READY_RETRY_AFTER_SECONDS} seconds.`,
+          },
+          id: null,
+        });
+      return;
+    }
+
     try {
       const apiKey = parseBearerToken(req.headers.authorization);
       const clientIp = clientIpFromRequest(req);
@@ -125,23 +177,45 @@ export function startHostedHttpServer(options: HostedHttpServerOptions): HostedH
 
   let httpServer: Server | undefined;
 
-  const ready = warmHostedSchemaCache(options.hosted).then(
-    () =>
-      new Promise<number>((resolve, reject) => {
-        const server = app.listen(options.port, bindHost);
-        httpServer = server;
-        server.once("error", reject);
-        server.once("listening", () => {
-          const address = server.address();
-          const port = address != null && typeof address === "object" ? address.port : options.port;
-          resolve(port);
+  const ready = new Promise<number>((resolve, reject) => {
+    const server = app.listen(options.port, bindHost);
+    httpServer = server;
+    server.once("error", reject);
+    server.once("listening", () => {
+      const address = server.address();
+      const port = address != null && typeof address === "object" ? address.port : options.port;
+      resolve(port);
+    });
+  });
+
+  const schemaReady = (async () => {
+    for (let attempt = 0; !closed; attempt++) {
+      try {
+        await warmHostedSchemaCache(options.hosted);
+        schemaLoaded = true;
+        lastSchemaError = undefined;
+        return;
+      } catch (error) {
+        lastSchemaError = error instanceof Error ? error.message : String(error);
+        const delayMs = Math.min(retry.initialDelayMs * 2 ** attempt, retry.maxDelayMs);
+        console.error(
+          `[schema] startup load failed (attempt ${attempt + 1}): ${lastSchemaError}; retrying in ${delayMs}ms`,
+        );
+        await new Promise<void>((resolve) => {
+          wakeRetry = resolve;
+          retryTimer = setTimeout(resolve, delayMs);
         });
-      }),
-  );
+      }
+    }
+  })();
 
   return {
     ready,
+    schemaReady,
     close: async () => {
+      closed = true;
+      clearTimeout(retryTimer);
+      wakeRetry?.();
       await new Promise<void>((resolve, reject) => {
         if (!httpServer) {
           resolve();

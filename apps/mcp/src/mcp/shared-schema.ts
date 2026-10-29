@@ -18,10 +18,17 @@ export async function getSharedSchemaStore(client: DimensionsClient): Promise<Sc
   }
 
   if (!sharedSchemaPromise) {
-    sharedSchemaPromise = getOrLoadSchema(client, process.env.SCHEMA_CACHE_PATH).then((store) => {
-      sharedSchemaStore = store;
-      return store;
-    });
+    sharedSchemaPromise = getOrLoadSchema(client, process.env.SCHEMA_CACHE_PATH).then(
+      (store) => {
+        sharedSchemaStore = store;
+        return store;
+      },
+      (error: unknown) => {
+        // Let the next caller retry instead of replaying a startup failure forever.
+        sharedSchemaPromise = undefined;
+        throw error;
+      },
+    );
   }
 
   return sharedSchemaPromise;
