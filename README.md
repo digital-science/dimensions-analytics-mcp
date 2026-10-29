@@ -33,7 +33,7 @@ bash -c "$(curl -fsSL https://raw.githubusercontent.com/digital-science/dimensio
 irm https://raw.githubusercontent.com/digital-science/dimensions-analytics-mcp/main/scripts/install.ps1 | iex
 ```
 
-The installer checks Node.js, downloads Dimensions Analytics MCP, asks for your API key **and, if needed, a custom instance URL**, and configures Claude Desktop, Cursor, VS Code (Copilot), or Windsurf. Full details: **[Installation](./docs/INSTALLATION.md)**.
+The installer checks Node.js, downloads Dimensions Analytics MCP, asks for your API key **and, if needed, a custom instance URL**, and configures Claude Desktop, Cursor, GitHub Copilot in VS Code, or Windsurf. Full details: **[Installation](./docs/INSTALLATION.md)**.
 
 No GitHub token is required. The installer downloads `@digital-science-dsl/dimensions-analytics-mcp` from npm.
 

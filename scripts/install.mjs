@@ -68,7 +68,7 @@ const CLIENTS = {
     },
   },
   vscode: {
-    label: "VS Code (GitHub Copilot MCP)",
+    label: "GitHub Copilot in VS Code",
     configKey: "servers",
     // User-profile config ("MCP: Open User Configuration"). ~/.vscode/mcp.json is only
     // read when the home directory itself is the open workspace.
@@ -286,7 +286,7 @@ async function promptClients(rl, opts) {
 Which AI apps should we configure?
   1) Claude Desktop
   2) Cursor
-  3) VS Code (Copilot MCP)
+  3) GitHub Copilot in VS Code
   4) Windsurf
   5) All of the above
 `);

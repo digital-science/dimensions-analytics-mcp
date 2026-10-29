@@ -45,7 +45,7 @@ Install [Node.js 20+](https://nodejs.org/) first if prompted (the script can ins
 
 1. Asks for your **Dimensions API key** — same key as the [Dimensions DSL API](https://docs.dimensions.ai/dsl/).
 2. Asks for a **custom instance URL** if you do not use `app.dimensions.ai` (optional; press Enter for the standard instance).
-3. Asks which apps to configure: **Claude Desktop**, **Cursor**, **VS Code (Copilot MCP)**, or **Windsurf**.
+3. Asks which apps to configure: **Claude Desktop**, **Cursor**, **GitHub Copilot in VS Code**, or **Windsurf**.
 4. For Cursor, VS Code, and Windsurf, offers the **[hosted server](#hosted-server)** as an alternative to the local one (only when your instance has a hosted endpoint). Choosing hosted checks your API key against the endpoint. Claude Desktop always uses the local server.
 5. Installs `@digital-science-dsl/dimensions-analytics-mcp` from npm to `~/.dimensions-analytics-mcp` (skipped when every app is hosted) and updates each app’s MCP config file.
 6. Backs up any existing config before changing it.
@@ -210,7 +210,7 @@ Pass your Dimensions API key in `env` (and `DIMENSIONS_BASE_URL` on a custom ins
 | **Cursor** | `~/.cursor/mcp.json` or `.cursor/mcp.json` |
 | **Claude Desktop** (macOS) | `~/Library/Application Support/Claude/claude_desktop_config.json` |
 | **Claude Desktop** (Windows) | `%APPDATA%\Claude\claude_desktop_config.json` |
-| **VS Code** (Copilot MCP) | User profile `mcp.json` — Command Palette: *MCP: Open User Configuration* (macOS: `~/Library/Application Support/Code/User/mcp.json`, Windows: `%APPDATA%\Code\User\mcp.json`, Linux: `~/.config/Code/User/mcp.json`). A workspace can also use `.vscode/mcp.json`. |
+| **GitHub Copilot in VS Code** | User profile `mcp.json` — Command Palette: *MCP: Open User Configuration* (macOS: `~/Library/Application Support/Code/User/mcp.json`, Windows: `%APPDATA%\Code\User\mcp.json`, Linux: `~/.config/Code/User/mcp.json`). A workspace can also use `.vscode/mcp.json`. |
 | **Windsurf** | `~/.codeium/windsurf/mcp_config.json` |
 
 **Cursor / Claude Desktop / Windsurf** — key `mcpServers`:
