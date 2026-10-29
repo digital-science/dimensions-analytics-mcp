@@ -11,14 +11,13 @@ import {
   NetworkError,
   NotFoundError,
   QuerySyntaxError,
-  RateLimitError,
   ServerError,
   sanitizeErrorMessage,
   TimeoutError,
   UnprocessableEntityError,
 } from "./errors.js";
 import type { RateLimiter } from "./rate-limiter.js";
-import { executeRequestWithRetry } from "./request-retry.js";
+import { executeRequestWithRetry, rateLimitErrorFromResponse } from "./request-retry.js";
 import { getMcpUsageSession } from "./usage-context.js";
 import { buildMcpUsageHeaders, buildMcpUserAgent } from "./usage-headers.js";
 
@@ -241,18 +240,8 @@ export class HttpClient {
         return new UnprocessableEntityError(message, details);
       }
 
-      case 429: {
-        const retryAfterMs = this.rateLimiter?.getRetryDelayMs() ?? 2000;
-        const clientRateLimit = {
-          remaining: this.rateLimiter?.getRemainingRequests() ?? 0,
-          retryAfterMs,
-        };
-        return new RateLimitError(
-          "Rate limit exceeded — wait before retrying",
-          Math.ceil(retryAfterMs / 1000),
-          clientRateLimit,
-        );
-      }
+      case 429:
+        return rateLimitErrorFromResponse(response, this.rateLimiter);
 
       default:
         if (status >= 500) {

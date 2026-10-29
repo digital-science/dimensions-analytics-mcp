@@ -4,7 +4,7 @@
  */
 
 import { afterEach, describe, expect, it, vi } from "vitest";
-import { QuerySyntaxError } from "../../src/client/errors.js";
+import { QuerySyntaxError, RateLimitError } from "../../src/client/errors.js";
 import { InternalDslClient } from "../../src/client/internal-dsl-client.js";
 import * as requestRetry from "../../src/client/request-retry.js";
 import { runWithMcpTool, setMcpUsageSession } from "../../src/client/usage-context.js";
@@ -139,6 +139,36 @@ describe("InternalDslClient", () => {
     const result = await client.query("search publications return publications limit 1");
     expect(result).toEqual({ publications: [] });
     expect(mockFetch).toHaveBeenCalledTimes(2);
+  });
+
+  it("returns a clear retry-after error when the DSL proxy keeps rate limiting", async () => {
+    requestRetry.setRequestRetryDelayFn(async () => {});
+
+    const mockFetch = vi.fn().mockResolvedValue({
+      ok: false,
+      status: 429,
+      statusText: "Too Many Requests",
+      headers: new Headers({ "Retry-After": "30" }),
+      json: () => Promise.reject(new Error("nginx HTML body")),
+    });
+    globalThis.fetch = mockFetch;
+
+    const client = new InternalDslClient({
+      config: CONFIG,
+      userEmail: "user@example.com",
+      maxRetries: 3,
+      retryDelay: 10,
+    });
+
+    const error = await client
+      .query("search publications return publications limit 1")
+      .catch((e: unknown) => e);
+
+    expect(error).toBeInstanceOf(RateLimitError);
+    expect((error as RateLimitError).message).toBe("Rate limit exceeded — retry after 30 seconds");
+    expect((error as RateLimitError).retryAfter).toBe(30);
+    // 30s exceeds the in-request wait cap: fail fast instead of hanging the tool call.
+    expect(mockFetch).toHaveBeenCalledTimes(1);
   });
 
   it("does not set X-Forwarded-For when clientIp is omitted", async () => {

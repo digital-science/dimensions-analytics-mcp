@@ -10,13 +10,12 @@ import {
   DimensionsError,
   NetworkError,
   QuerySyntaxError,
-  RateLimitError,
   ServerError,
   sanitizeErrorMessage,
   TimeoutError,
 } from "./errors.js";
 import type { RateLimiter } from "./rate-limiter.js";
-import { executeRequestWithRetry } from "./request-retry.js";
+import { executeRequestWithRetry, rateLimitErrorFromResponse } from "./request-retry.js";
 import type { DslResponse, QueryExecutorOptions } from "./types.js";
 import { getMcpUsageSession } from "./usage-context.js";
 import { buildMcpUsageHeaders, buildMcpUserAgent } from "./usage-headers.js";
@@ -151,17 +150,8 @@ export class InternalDslClient {
         return new AuthenticationError(message);
       case 400:
         return new QuerySyntaxError(message);
-      case 429: {
-        const retryAfterMs = this.rateLimiter?.getRetryDelayMs() ?? 2000;
-        return new RateLimitError(
-          "Rate limit exceeded — wait before retrying",
-          Math.ceil(retryAfterMs / 1000),
-          {
-            remaining: this.rateLimiter?.getRemainingRequests() ?? 0,
-            retryAfterMs,
-          },
-        );
-      }
+      case 429:
+        return rateLimitErrorFromResponse(response, this.rateLimiter);
       default:
         if (response.status >= 500) {
           return new ServerError(message, response.status);

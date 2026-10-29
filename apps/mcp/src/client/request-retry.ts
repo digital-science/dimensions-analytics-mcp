@@ -10,6 +10,57 @@ export interface RequestRetryOptions {
   readonly maxRetries: number;
   readonly retryDelay: number;
   readonly rateLimiter?: RateLimiter;
+  /** Retries allowed for 429 responses, within maxRetries (default 1). */
+  readonly maxRateLimitRetries?: number;
+}
+
+/**
+ * Longest 429 wait retried inside a request. Longer waits fail fast so the AI client
+ * sees "retry after N seconds" instead of a tool call that hangs (WEBAPPDEV-14210).
+ */
+export const MAX_RATE_LIMIT_RETRY_WAIT_MS = 10_000;
+
+/**
+ * Parses an HTTP `Retry-After` header (delta-seconds or HTTP-date).
+ * @param value - Header value
+ * @param now - Current time in ms (for HTTP-date values)
+ * @returns Wait in milliseconds, or `undefined` when absent or unparseable
+ */
+export function parseRetryAfterMs(
+  value: string | null | undefined,
+  now: number = Date.now(),
+): number | undefined {
+  const trimmed = value?.trim();
+  if (!trimmed) return undefined;
+  if (/^\d+$/.test(trimmed)) {
+    return Number.parseInt(trimmed, 10) * 1000;
+  }
+  const date = Date.parse(trimmed);
+  return Number.isNaN(date) ? undefined : Math.max(0, date - now);
+}
+
+/**
+ * Builds the error for a 429 response, preferring the server's `Retry-After` over
+ * the client-side throttling estimate.
+ * @param response - The 429 response
+ * @param rateLimiter - Client-side rate limiter, when configured
+ */
+export function rateLimitErrorFromResponse(
+  response: Pick<Response, "headers">,
+  rateLimiter?: RateLimiter,
+): RateLimitError {
+  const clientRetryAfterMs = rateLimiter?.getRetryDelayMs() ?? 2000;
+  const serverRetryAfterMs = parseRetryAfterMs(response.headers?.get("retry-after"));
+  const retryAfterSeconds = Math.ceil((serverRetryAfterMs ?? clientRetryAfterMs) / 1000);
+  return new RateLimitError(
+    `Rate limit exceeded — retry after ${retryAfterSeconds} seconds`,
+    retryAfterSeconds,
+    {
+      remaining: rateLimiter?.getRemainingRequests() ?? 0,
+      retryAfterMs: clientRetryAfterMs,
+    },
+    serverRetryAfterMs,
+  );
 }
 
 type DelayFn = (ms: number) => Promise<void>;
@@ -70,6 +121,7 @@ export function calculateRequestRetryDelay(
 
   if (error instanceof RateLimitError) {
     const delay =
+      error.serverRetryAfterMs ??
       error.clientRateLimit?.retryAfterMs ??
       options.rateLimiter?.getRetryDelayMs() ??
       2000 * 2 ** attempt;
@@ -88,6 +140,8 @@ export async function executeRequestWithRetry<T>(
   options: RequestRetryOptions,
 ): Promise<T> {
   let lastError: Error | null = null;
+  const maxRateLimitRetries = options.maxRateLimitRetries ?? 1;
+  let rateLimitRetries = 0;
 
   for (let attempt = 0; attempt <= options.maxRetries; attempt++) {
     await options.rateLimiter?.waitIfNeeded();
@@ -107,6 +161,12 @@ export async function executeRequestWithRetry<T>(
       }
 
       const retryDelay = calculateRequestRetryDelay(error, attempt, options);
+      if (error instanceof RateLimitError) {
+        if (rateLimitRetries >= maxRateLimitRetries || retryDelay > MAX_RATE_LIMIT_RETRY_WAIT_MS) {
+          throw error;
+        }
+        rateLimitRetries++;
+      }
       await requestRetryDelay(retryDelay);
     }
   }

@@ -240,8 +240,33 @@ describe("HttpClient", () => {
       expect(result).toEqual({ _stats: { total_count: 0 } });
     });
 
-    it("exhausts retries and throws RateLimitError", async () => {
-      requestRetry.setRequestRetryDelayFn(async () => {});
+    it("retries a 429 once, then throws RateLimitError with the server's Retry-After", async () => {
+      const delays: number[] = [];
+      requestRetry.setRequestRetryDelayFn(async (ms) => {
+        delays.push(ms);
+      });
+
+      const mockFetch = vi.fn().mockResolvedValue({
+        ok: false,
+        status: 429,
+        statusText: "Too Many Requests",
+        headers: new Headers({ "Retry-After": "3" }),
+      });
+      globalThis.fetch = mockFetch;
+
+      const error = await client.query("search publications").catch((e: unknown) => e);
+
+      expect(error).toBeInstanceOf(RateLimitError);
+      expect((error as RateLimitError).message).toBe("Rate limit exceeded — retry after 3 seconds");
+      expect((error as RateLimitError).retryAfter).toBe(3);
+      // Initial + one rate-limit retry, although maxRetries is 3
+      expect(mockFetch).toHaveBeenCalledTimes(2);
+      expect(delays).toEqual([3000]);
+    });
+
+    it("fails fast without retrying when Retry-After exceeds the in-request wait cap", async () => {
+      const delaySpy = vi.fn(async () => {});
+      requestRetry.setRequestRetryDelayFn(delaySpy);
 
       const mockFetch = vi.fn().mockResolvedValue({
         ok: false,
@@ -251,10 +276,14 @@ describe("HttpClient", () => {
       });
       globalThis.fetch = mockFetch;
 
-      await expect(client.query("search publications")).rejects.toThrow(RateLimitError);
+      const error = await client.query("search publications").catch((e: unknown) => e);
 
-      // Initial + 3 retries = 4 calls
-      expect(mockFetch).toHaveBeenCalledTimes(4);
+      expect(error).toBeInstanceOf(RateLimitError);
+      expect((error as RateLimitError).message).toBe(
+        "Rate limit exceeded — retry after 60 seconds",
+      );
+      expect(mockFetch).toHaveBeenCalledTimes(1);
+      expect(delaySpy).not.toHaveBeenCalled();
     });
 
     it("exhausts retries and throws ServerError", async () => {
@@ -371,7 +400,7 @@ describe("HttpClient", () => {
       expect(delaySpy.mock.calls[0][0] as number).toBeLessThanOrEqual(60000);
     });
 
-    it("caps rate-limit retry delay at 60 seconds", async () => {
+    it("fails fast when the client rate limiter wait exceeds the in-request cap", async () => {
       const rateLimiter = new RateLimiter({ maxRequests: 1, windowMs: 120_000 });
       rateLimiter.recordRequest();
       vi.spyOn(rateLimiter, "waitIfNeeded").mockResolvedValue(undefined);
@@ -403,10 +432,12 @@ describe("HttpClient", () => {
         });
       globalThis.fetch = mockFetch;
 
-      await limitedClient.query("search publications");
+      const error = await limitedClient.query("search publications").catch((e: unknown) => e);
 
-      expect(delays).toHaveLength(1);
-      expect(delays[0]).toBe(60_000);
+      expect(error).toBeInstanceOf(RateLimitError);
+      expect((error as RateLimitError).retryAfter).toBe(121);
+      expect(mockFetch).toHaveBeenCalledTimes(1);
+      expect(delays).toEqual([]);
     });
   });
 

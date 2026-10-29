@@ -48,7 +48,7 @@ export class AuthenticationError extends DimensionsError {
 
 /**
  * Client-side rate-limit state surfaced on 429 errors.
- * Dimensions does not send rate-limit response headers; this reflects local throttling.
+ * Reflects local throttling; a server `Retry-After` header is carried separately.
  */
 export interface ClientRateLimitInfo {
   /** Requests remaining in the client sliding window */
@@ -62,25 +62,30 @@ export interface ClientRateLimitInfo {
  * HTTP Status: 429 Too Many Requests
  */
 export class RateLimitError extends DimensionsError {
-  /** Suggested seconds to wait before retrying (from client-side throttling) */
+  /** Suggested seconds to wait before retrying (server `Retry-After`, else client throttling) */
   readonly retryAfter?: number;
   /** Client-side rate-limit state when a rate limiter is configured */
   readonly clientRateLimit?: ClientRateLimitInfo;
+  /** Wait requested by the server's `Retry-After` header, in milliseconds */
+  readonly serverRetryAfterMs?: number;
 
   /**
    * Creates a new RateLimitError.
    * @param message - Error description (defaults to "Rate limit exceeded")
    * @param retryAfterSeconds - Suggested seconds to wait before retrying
    * @param clientRateLimit - Optional client-side rate-limit snapshot
+   * @param serverRetryAfterMs - Wait from the server's `Retry-After` header
    */
   constructor(
     message: string = "Rate limit exceeded",
     retryAfterSeconds?: number,
     clientRateLimit?: ClientRateLimitInfo,
+    serverRetryAfterMs?: number,
   ) {
     super(message, 429);
     this.name = "RateLimitError";
     this.clientRateLimit = clientRateLimit;
+    this.serverRetryAfterMs = serverRetryAfterMs;
     this.retryAfter =
       retryAfterSeconds ??
       (clientRateLimit != null ? Math.ceil(clientRateLimit.retryAfterMs / 1000) : undefined);
@@ -90,6 +95,7 @@ export class RateLimitError extends DimensionsError {
     return {
       ...super.toJSON(),
       retryAfter: this.retryAfter,
+      serverRetryAfterMs: this.serverRetryAfterMs,
       clientRateLimit: this.clientRateLimit,
     };
   }

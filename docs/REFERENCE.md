@@ -31,7 +31,7 @@ Install from npm does not require a GitHub token — see [INSTALLATION.md](./INS
 | `DIMENSIONS_BASE_URL` | Dimensions API base URL. **Required for custom instances** (e.g. `https://your-instance.dimensions.ai`). Default `https://app.dimensions.ai`. Omit this variable on the standard instance. |
 | `SCHEMA_CACHE_PATH` | Read/write last-good `describe schema` JSON (envelope with `cachedAt`) |
 | `SCHEMA_CACHE_TTL_MS` | Max cache age before refresh from API (default `86400000` = 24h) |
-| `DIMENSIONS_MAX_RETRIES` | HTTP retry attempts for transient/rate-limit errors (default `3`) |
+| `DIMENSIONS_MAX_RETRIES` | HTTP retry attempts for transient errors (default `3`; 429s retry at most once) |
 | `DIMENSIONS_RETRY_DELAY_MS` | Base delay in ms for exponential backoff between retries (default `1000`) |
 | `DIMENSIONS_RATE_LIMIT_PER_MINUTE` | Client-side request cap per minute (default `30`, matching the API limit) |
 | `DIMENSIONS_MCP_AUTO_UPDATE` | Set to `0` / `false` / `off` to disable prefix auto-**install**. Version warnings still run. Default: on for guided prefix installs only |
@@ -68,13 +68,15 @@ Environment variables override file values where both are set.
 
 ## Retries and rate limits
 
-The Dimensions API enforces **30 requests per IP per minute** at the edge. It does not return `Retry-After` or `X-RateLimit-*` headers.
+The Dimensions API enforces **30 requests per IP per minute** at the edge. Hosted deployments go through a per-cluster DSL proxy that has its own limit.
 
-The client prevents most 429s with a **sliding-window rate limiter** (default 30 req/min). Before each request it waits for an available slot. On 429, it retries using the limiter's slot timing rather than parsing response headers.
+The client prevents most 429s with a **sliding-window rate limiter** (default 30 req/min). Before each request it waits for an available slot.
 
-Transient failures (429, 5xx, network, timeout) use exponential backoff with jitter. Configure via `DIMENSIONS_MAX_RETRIES` and `DIMENSIONS_RETRY_DELAY_MS`.
+On 429, the client waits for the server's `Retry-After` header when present, otherwise for the limiter's slot timing, and retries **once**. If the wait exceeds 10 seconds, or the retry is rate limited again, the tool fails immediately with `Rate limit exceeded — retry after N seconds` so the AI client does not hang on a tool call.
 
-On rate-limit errors surfaced to MCP tools, the payload includes `retryAfter` (seconds) and `clientRateLimit` (`remaining`, `retryAfterMs`) so agents know how long to wait.
+Other transient failures (5xx, network, timeout) use exponential backoff with jitter. Configure via `DIMENSIONS_MAX_RETRIES` (an upper bound that also covers the single 429 retry) and `DIMENSIONS_RETRY_DELAY_MS`.
+
+On rate-limit errors surfaced to MCP tools, the payload includes `retryAfter` (seconds), `serverRetryAfterMs` (from `Retry-After`, when sent), and `clientRateLimit` (`remaining`, `retryAfterMs`) so agents know how long to wait.
 
 ## Schema cache (cold-start)
 
