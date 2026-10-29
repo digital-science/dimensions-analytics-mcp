@@ -35,7 +35,8 @@ export interface LocalEnvConfig {
 
 export type AppDeploymentConfig = HostedEnvConfig | LocalEnvConfig;
 
-function readDeploymentMode(): DeploymentMode {
+/** Deployment mode from `DEPLOYMENT_MODE` (`hosted`, otherwise `local`). */
+export function readDeploymentMode(): DeploymentMode {
   const raw = process.env.DEPLOYMENT_MODE?.trim().toLowerCase();
   return raw === "hosted" ? "hosted" : "local";
 }

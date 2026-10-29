@@ -8,7 +8,9 @@
  * @module mcp/profile-urls
  */
 
-/** Default Dimensions web host when `DIMENSIONS_BASE_URL` is unset. */
+import { readDeploymentMode } from "../client/deployment-config.js";
+
+/** Default Dimensions web host when neither `DIMENSIONS_BASE_URL` nor a hosted `DSL_HOST` is set. */
 export const DEFAULT_INSTANCE_BASE_URL = "https://app.dimensions.ai";
 
 /**
@@ -68,7 +70,12 @@ export function parseInstanceBaseUrl(raw?: string): string | undefined {
 }
 
 /**
- * Resolves the instance base URL from the argument, `DIMENSIONS_BASE_URL`, or the default.
+ * Resolves the instance base URL from the argument, `DIMENSIONS_BASE_URL`, the hosted
+ * deployment's `DSL_HOST`, or the default.
+ *
+ * Hosted deployments serve one instance each and set `DSL_HOST` to its web hostname
+ * (e.g. `nsf.dimensions.ai`); private-instance users often cannot open app.dimensions.ai
+ * links (WEBAPPDEV-14210).
  * @param baseUrl - Raw instance URL
  * @returns Normalized origin with no trailing slash
  */
@@ -76,6 +83,7 @@ export function normalizeInstanceBaseUrl(baseUrl?: string): string {
   return (
     parseInstanceBaseUrl(baseUrl) ??
     parseInstanceBaseUrl(process.env.DIMENSIONS_BASE_URL) ??
+    (readDeploymentMode() === "hosted" ? parseInstanceBaseUrl(process.env.DSL_HOST) : undefined) ??
     DEFAULT_INSTANCE_BASE_URL
   );
 }

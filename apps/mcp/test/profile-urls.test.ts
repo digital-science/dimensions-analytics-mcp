@@ -3,7 +3,7 @@
  * @module test/profile-urls
  */
 
-import { afterEach, describe, expect, it } from "vitest";
+import { afterEach, describe, expect, it, vi } from "vitest";
 import {
   attachFacetProfileUrls,
   attachProfileUrl,
@@ -185,5 +185,39 @@ describe("normalizeInstanceBaseUrl", () => {
     process.env.DIMENSIONS_BASE_URL = "${user_config.base_url}";
     expect(normalizeInstanceBaseUrl()).toBe("https://app.dimensions.ai");
     expect(normalizeInstanceBaseUrl("eu.dimensions.ai")).toBe("https://eu.dimensions.ai");
+  });
+
+  describe("hosted deployment", () => {
+    afterEach(() => {
+      vi.unstubAllEnvs();
+    });
+
+    it("uses DSL_HOST when DIMENSIONS_BASE_URL is unset", () => {
+      delete process.env.DIMENSIONS_BASE_URL;
+      vi.stubEnv("DEPLOYMENT_MODE", "hosted");
+      vi.stubEnv("DSL_HOST", "nsf.dimensions.ai");
+      expect(normalizeInstanceBaseUrl()).toBe("https://nsf.dimensions.ai");
+      expect(buildProfileUrl("researchers", "ur.01222634304.39")).toBe(
+        "https://nsf.dimensions.ai/details/entities/publication/author/ur.01222634304.39",
+      );
+      expect(buildProfileUrl("grants", "grant.1")).toBe(
+        "https://nsf.dimensions.ai/details/grant/grant.1",
+      );
+      expect(profileUrlCatalog().instanceBaseUrl).toBe("https://nsf.dimensions.ai");
+    });
+
+    it("prefers DIMENSIONS_BASE_URL over DSL_HOST", () => {
+      vi.stubEnv("DEPLOYMENT_MODE", "hosted");
+      vi.stubEnv("DSL_HOST", "nsf.dimensions.ai");
+      vi.stubEnv("DIMENSIONS_BASE_URL", "https://dimensions.nsf.example");
+      expect(normalizeInstanceBaseUrl()).toBe("https://dimensions.nsf.example");
+    });
+
+    it("ignores DSL_HOST in local mode", () => {
+      delete process.env.DIMENSIONS_BASE_URL;
+      vi.stubEnv("DEPLOYMENT_MODE", "local");
+      vi.stubEnv("DSL_HOST", "nsf.dimensions.ai");
+      expect(normalizeInstanceBaseUrl()).toBe("https://app.dimensions.ai");
+    });
   });
 });
