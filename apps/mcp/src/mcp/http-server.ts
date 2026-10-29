@@ -39,10 +39,11 @@ export interface HostedHttpServerHandle {
   /** Resolves to the bound TCP port once the server is listening. */
   readonly ready: Promise<number>;
   /**
-   * Resolves once the describe schema is loaded and /mcp accepts requests.
-   * Never rejects: failed loads are retried with backoff until {@link close}.
+   * Resolves `true` once the describe schema is loaded and /mcp accepts requests,
+   * or `false` when {@link close} stops the retries first.
+   * Never rejects: failed loads are retried with backoff.
    */
-  readonly schemaReady: Promise<void>;
+  readonly schemaReady: Promise<boolean>;
   readonly close: () => Promise<void>;
 }
 
@@ -194,7 +195,7 @@ export function startHostedHttpServer(options: HostedHttpServerOptions): HostedH
         await warmHostedSchemaCache(options.hosted);
         schemaLoaded = true;
         lastSchemaError = undefined;
-        return;
+        return true;
       } catch (error) {
         lastSchemaError = error instanceof Error ? error.message : String(error);
         const delayMs = Math.min(retry.initialDelayMs * 2 ** attempt, retry.maxDelayMs);
@@ -207,6 +208,7 @@ export function startHostedHttpServer(options: HostedHttpServerOptions): HostedH
         });
       }
     }
+    return false;
   })();
 
   return {

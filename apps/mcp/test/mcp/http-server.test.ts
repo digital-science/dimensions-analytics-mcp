@@ -156,7 +156,7 @@ describe("startHostedHttpServer", () => {
       const { schemaReady } = handle;
       await handle.close();
       handle = undefined;
-      await schemaReady;
+      await expect(schemaReady).resolves.toBe(false);
       vi.mocked(warmHostedSchemaCache)
         .mockReset()
         .mockResolvedValue({} as never);

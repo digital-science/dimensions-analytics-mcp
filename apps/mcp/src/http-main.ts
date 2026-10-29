@@ -21,8 +21,10 @@ const { close, ready, schemaReady } = startHostedHttpServer({
   port: deployment.httpPort,
 });
 
-void schemaReady.then(() => {
-  console.error("Dimensions schema loaded; accepting MCP requests");
+void schemaReady.then((loaded) => {
+  if (loaded) {
+    console.error("Dimensions schema loaded; accepting MCP requests");
+  }
 });
 
 ready
