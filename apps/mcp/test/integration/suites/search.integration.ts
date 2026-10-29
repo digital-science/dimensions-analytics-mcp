@@ -35,6 +35,18 @@ export const searchSuite: EvalSuite = {
       assertions: [isSuccess(), arrayMinLength("publications", 1)],
     },
     {
+      name: "search publications in title and abstract only",
+      tool: "search_publications",
+      args: {
+        query: '"solid-state batteries"',
+        searchIn: "title_abstract_only",
+        yearFrom: 2016,
+        yearTo: 2025,
+        limit: 5,
+      },
+      assertions: [isSuccess(), fieldAtLeast("totalCount", 1), arrayMinLength("publications", 1)],
+    },
+    {
       name: "search grants for climate research",
       tool: "search_grants",
       args: { query: "climate change adaptation", limit: 5 },

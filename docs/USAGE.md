@@ -64,6 +64,7 @@ After Dimensions Analytics MCP is connected, you can ask in plain language. The 
 - **`search_publications` filters** — scope by organization with `research_orgs.id` (GRID id, e.g. `grid.168010.e` for Stanford University) or by researcher with `researchers.id` after a `search_researchers` lookup.
 - **`search_organizations`** — institution lookup by name; use GRID id from results when filtering publications or grants.
 - **`facet_query`** — supports `query`, `yearFrom` / `yearTo` (publications: `year`; grants: `start_year`), and `filters`. On grants, facet funding organizations with `facetField: "funder_orgs"`.
+- **`searchIn`** — `search_*`, `fetch_search_pages`, `facet_query`, `aggregate_query`, `citation_trend`, and `funding_trend` search full text by default. Set `searchIn: "title_abstract_only"` when ranking or counting work that is *about* a topic: full text also matches records that only mention the terms, so the most-cited "solid-state batteries" papers in full text include NumPy and DSM-5. Other common values are `title_only` and `full_data_exact`. Valid indexes differ by entity (`searchIndexes` in `dimensions://fields/{entityType}`), and `searchIn` requires `query`.
 - **`similar_documents`** — concept-based similarity (not embeddings) for **publications** or **grants** from abstract/description text. Prefer over hand-writing `similar_documents()` in `execute_dsl`. For a known record: `get_by_id` / `get_by_doi` first, then pass its abstract as `text`.
 - **`execute_dsl`** — use for boolean concept groups, `classify` / `extract_concepts`, and queries structured tools cannot express.
 
@@ -414,6 +415,22 @@ For highly cited recent work in a topic, use `search_publications` with `yearFro
 ```
 
 Tool: `facet_query` — optional `yearFrom` / `yearTo` and `filters` narrow results before faceting. Use `dimensions://fields/{entityType}` for valid facet fields; on grants, use `facetField: "funder_orgs"`.
+
+### Breakdown of work about a topic (title and abstract only)
+
+```json
+{
+  "entityType": "publications",
+  "facetField": "research_orgs",
+  "query": "\"solid-state batteries\"",
+  "searchIn": "title_abstract_only",
+  "yearFrom": 2016,
+  "yearTo": 2025,
+  "limit": 10
+}
+```
+
+Tool: `facet_query` — generates `search publications in title_abstract_only for "\"solid-state batteries\"" where year >= 2016 and year <= 2025 return research_orgs limit 10`. The same `searchIn` works on `search_*`, `aggregate_query`, `citation_trend`, and `funding_trend`.
 
 ### Aggregated metrics per bucket
 

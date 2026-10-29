@@ -56,6 +56,7 @@ type FetchSearchPagesArgs = {
   entityType: StructuredEntityType;
   mode?: "page" | "aggregate" | "file";
   query?: string;
+  searchIn?: string;
   skip?: number;
   page?: number;
   pageSize?: number;

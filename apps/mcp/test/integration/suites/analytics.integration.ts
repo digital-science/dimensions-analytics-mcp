@@ -48,6 +48,21 @@ export const analyticsSuite: EvalSuite = {
       timeout: 60_000,
     },
     {
+      name: "facet query: title-and-abstract search by research org",
+      tool: "facet_query",
+      args: {
+        entityType: "publications",
+        facetField: "research_orgs",
+        query: '"solid-state batteries"',
+        searchIn: "title_abstract_only",
+        yearFrom: 2016,
+        yearTo: 2025,
+        limit: 10,
+      },
+      assertions: [isSuccess(), arrayMinLength("buckets", 1)],
+      timeout: 60_000,
+    },
+    {
       name: "citation trend for COVID-19",
       tool: "citation_trend",
       args: {

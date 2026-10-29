@@ -28,6 +28,7 @@ import {
   withSearchPagination,
 } from "../utils.js";
 import { SEARCH_ENTITY_METADATA } from "./search-entity-metadata.js";
+import { applySearchIn } from "./search-index.js";
 import { PAGINATION_OUTPUT_SCHEMA, SHARED_SEARCH_INPUT } from "./search-input.js";
 
 const metadataBySource = new Map(
@@ -52,6 +53,7 @@ export function buildStructuredSearchDsl(
   if (typeof args.query === "string" && args.query.length > 0) {
     builder.for(args.query);
   }
+  applySearchIn(builder, args);
 
   meta?.applyConvenienceFilters(builder, args);
 

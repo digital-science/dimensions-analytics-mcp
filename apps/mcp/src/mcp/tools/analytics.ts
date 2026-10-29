@@ -20,6 +20,7 @@ import type { SchemaStore } from "../schema/index.js";
 import { registerTrackedTool } from "../usage-tracking.js";
 import { formatErrorResult, formatToolResult, READ_ONLY_API_ANNOTATIONS } from "../utils.js";
 import { applyAnalyticsFilters } from "./analytics-filters.js";
+import { applySearchIn, SEARCH_IN_INPUT } from "./search-index.js";
 
 /** API may return year→value map or an array; normalize for MCP output schemas. */
 function normalizeYearSeries(
@@ -146,6 +147,7 @@ export function registerAnalyticsTools(
           .describe(
             "Optional search query to filter records before faceting (e.g., 'CRISPR gene editing')",
           ),
+        ...SEARCH_IN_INPUT,
         limit: z
           .number()
           .int()
@@ -192,6 +194,7 @@ export function registerAnalyticsTools(
           if (args.query) {
             builder.for(args.query);
           }
+          applySearchIn(builder, args);
           applyAnalyticsFilters(builder, args.entityType as EntityType, args);
           builder.returnFacet(facetField, { limit: args.limit });
           const response = (await client.rawQuery(builder.build())) as Record<string, unknown>;
@@ -240,6 +243,7 @@ export function registerAnalyticsTools(
           .min(1)
           .optional()
           .describe("Optional search query to filter records before aggregating"),
+        ...SEARCH_IN_INPUT,
         sortBy: z
           .string()
           .optional()
@@ -298,6 +302,7 @@ export function registerAnalyticsTools(
           if (args.query) {
             builder.for(args.query);
           }
+          applySearchIn(builder, args);
           applyAnalyticsFilters(builder, args.entityType as EntityType, args);
           builder.returnAggregate(facetField, args.indicators, {
             sortBy: args.sortBy,
@@ -341,6 +346,7 @@ export function registerAnalyticsTools(
           .string()
           .min(1)
           .describe("Search query to identify publications (e.g., 'CRISPR gene editing')"),
+        ...SEARCH_IN_INPUT,
         startYear: z
           .number()
           .int()
@@ -372,12 +378,9 @@ export function registerAnalyticsTools(
             `startYear (${args.startYear}) must be ≤ endYear (${args.endYear})`,
           );
         }
-        const dsl = client
-          .createQueryBuilder()
-          .search("publications")
-          .for(args.query)
-          .returnCitationsPerYear(args.startYear, args.endYear)
-          .build();
+        const builder = client.createQueryBuilder().search("publications").for(args.query);
+        applySearchIn(builder, args);
+        const dsl = builder.returnCitationsPerYear(args.startYear, args.endYear).build();
         const response = await client.rawQuery(dsl);
         return formatToolResult({
           query: args.query,
@@ -405,6 +408,7 @@ export function registerAnalyticsTools(
           .string()
           .min(1)
           .describe("Search query to identify grants (e.g., 'cancer immunotherapy')"),
+        ...SEARCH_IN_INPUT,
         startYear: z
           .number()
           .int()
@@ -443,10 +447,9 @@ export function registerAnalyticsTools(
             `startYear (${args.startYear}) must be ≤ endYear (${args.endYear})`,
           );
         }
-        const dsl = client
-          .createQueryBuilder()
-          .search("grants")
-          .for(args.query)
+        const builder = client.createQueryBuilder().search("grants").for(args.query);
+        applySearchIn(builder, args);
+        const dsl = builder
           .returnFundingPerYear(args.startYear, args.endYear, args.currency as Currency)
           .build();
         const response = await client.rawQuery(dsl);

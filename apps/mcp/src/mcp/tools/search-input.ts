@@ -5,6 +5,7 @@
 
 import { z } from "zod";
 import { ExtendedWhereFilterSchema, SCHEMA_LIMITS } from "../../dsl/index.js";
+import { SEARCH_IN_INPUT } from "./search-index.js";
 
 /** Pagination parameters shared by search_* and fetch_search_pages. */
 export const PAGINATION_INPUT_SCHEMA = {
@@ -36,6 +37,7 @@ export const SHARED_SEARCH_INPUT = {
     .describe(
       "Free-text search terms. Optional — omit for a filters-only search that relies solely on `filters` and/or the entity-specific convenience filters (e.g. yearFrom/yearTo).",
     ),
+  ...SEARCH_IN_INPUT,
   limit: z
     .number()
     .int()
