@@ -7,6 +7,7 @@ import { USAGE_SCENARIOS } from "../../src/mcp/examples/usage-scenarios.js";
 import { registerAnalyticsTools } from "../../src/mcp/tools/analytics.js";
 import { registerLookupTools } from "../../src/mcp/tools/lookup.js";
 import { registerQueryTools } from "../../src/mcp/tools/query.js";
+import { registerResearcherProfileTool } from "../../src/mcp/tools/researcher-profile.js";
 import { registerSearchTools } from "../../src/mcp/tools/search.js";
 import { registerSimilarDocumentsTool } from "../../src/mcp/tools/similar-documents.js";
 import { testSchemaStore } from "../helpers/schema-fixture.js";
@@ -36,11 +37,12 @@ describe("usage-scenarios", () => {
     registerAnalyticsTools(server as never, client as never, schemaStore);
     registerQueryTools(server as never, client as never, schemaStore);
     registerSimilarDocumentsTool(server as never, client as never);
+    registerResearcherProfileTool(server as never, client as never, schemaStore);
   });
 
-  it("documents thirteen natural-language workflows", () => {
-    expect(USAGE_SCENARIOS).toHaveLength(13);
-    expect(new Set(USAGE_SCENARIOS.map((s) => s.id)).size).toBe(13);
+  it("documents fourteen natural-language workflows", () => {
+    expect(USAGE_SCENARIOS).toHaveLength(14);
+    expect(new Set(USAGE_SCENARIOS.map((s) => s.id)).size).toBe(14);
   });
 
   for (const scenario of USAGE_SCENARIOS) {
@@ -61,6 +63,14 @@ describe("usage-scenarios", () => {
       } else if (scenario.tool === "aggregate_query") {
         client.rawQuery.mockResolvedValue({
           funder_orgs: [{ id: "grid.123", name: "European Commission", count: 1, funding: 1000 }],
+        });
+      } else if (scenario.tool === "researcher_profile") {
+        client.rawQuery.mockImplementation(async (dsl: string) => {
+          if (dsl.startsWith("search researchers")) {
+            return apiRows("researchers", [{ id: "ur.01147702313.96" }]);
+          }
+          const facet = /return (\w+) limit \d+$/.exec(dsl)?.[1];
+          return facet ? { [facet]: [] } : {};
         });
       } else if (scenario.tool === "execute_dsl") {
         client.rawQuery.mockResolvedValue({

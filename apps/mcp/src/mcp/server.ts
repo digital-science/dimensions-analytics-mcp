@@ -29,6 +29,7 @@ import { registerFunctionTools } from "./tools/functions.js";
 import { registerLookupTools } from "./tools/lookup.js";
 import { registerProfileUrlTool } from "./tools/profile-url.js";
 import { registerQueryTools } from "./tools/query.js";
+import { registerResearcherProfileTool } from "./tools/researcher-profile.js";
 import { registerSchemaTools, validateFieldAliases } from "./tools/schema.js";
 import { registerSearchTools } from "./tools/search.js";
 import { registerSimilarDocumentsTool } from "./tools/similar-documents.js";
@@ -106,6 +107,7 @@ export function buildServerInstructions(schemaStore: SchemaStore): string {
     [
       "Routing:",
       "search_researchers matches names only — topic→researcher uses facet_query (entityType publications, facetField researchers);",
+      "researcher_profile for an overview of one researcher (outputs, fields of research, funders, collaborators, co-authors) in one call — prefer it over chaining search_* and facet_query;",
       "search_grants funderOrgName needs exact Dimensions names (NCI/NSF acronyms resolve; discover funders via facet_query/aggregate_query on facetField funder_orgs);",
       "search_organizations for institution lookup — prefer GRID id in filters when the name is ambiguous;",
       "search_source_titles for journals / ISSN lookup (not articles); search_reports for technical reports;",
@@ -150,6 +152,7 @@ function registerAllTools(
   registerFunctionTools(server, client);
   registerSimilarDocumentsTool(server, client);
   registerAnalyticsTools(server, client, schemaStore);
+  registerResearcherProfileTool(server, client, schemaStore);
   registerSchemaTools(server, client, schemaContext);
 }
 

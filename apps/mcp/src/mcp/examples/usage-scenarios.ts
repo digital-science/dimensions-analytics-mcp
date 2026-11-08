@@ -203,6 +203,27 @@ export const USAGE_SCENARIOS: readonly UsageScenario[] = [
     ],
   },
   {
+    id: "researcher-overview",
+    goal: "Researcher overview",
+    prompt:
+      "Tell me about Jennifer Doudna's research: outputs, fields, funders, and collaborators.",
+    tool: "researcher_profile",
+    args: {
+      name: "Jennifer Doudna",
+      publicationLimit: 10,
+      grantLimit: 5,
+      clinicalTrialLimit: 5,
+      patentLimit: 5,
+      facetLimit: 10,
+    },
+    dslContains: [
+      'search researchers for "Jennifer Doudna"',
+      'search publications where researchers.id = "ur.01147702313.96"',
+      "return category_for_2020",
+      "return researchers limit 11",
+    ],
+  },
+  {
     id: "build-complex-query",
     goal: "Build a complex query",
     prompt:

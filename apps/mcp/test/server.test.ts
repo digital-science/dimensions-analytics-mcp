@@ -159,7 +159,7 @@ describe("MCP protocol", () => {
     await client.connect(clientTransport);
 
     const { tools } = await client.listTools();
-    expect(tools).toHaveLength(27);
+    expect(tools).toHaveLength(28);
     for (const tool of tools) {
       expect(tool.title?.trim(), `${tool.name} title`).toBeTruthy();
       expect(tool.annotations?.readOnlyHint, `${tool.name} readOnlyHint`).toBe(true);

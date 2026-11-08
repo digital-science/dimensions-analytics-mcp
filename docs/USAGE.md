@@ -27,7 +27,7 @@ Structured tools accept [field aliases](./MCP_FIELD_ALIASES.md) (for example `to
    - Boolean concepts or NLP functions → execute_dsl
    - Full control → execute_dsl
 3. Refine with filters, facets, or citation_trend / funding_trend
-4. Drill down with get_by_* / search_* filters / facet_query
+4. Drill down with get_by_* / search_* filters / facet_query, or researcher_profile for one researcher
 ```
 
 For result sets larger than one page, see [Pagination, limits, and usage policy](#pagination-limits-and-usage-policy).
@@ -46,6 +46,7 @@ After Dimensions Analytics MCP is connected, you can ask in plain language. The 
 | Find researchers by name | “Search researchers named Jennifer Doudna, sort by publication count.” | `search_researchers` |
 | Known paper | “Look up DOI 10.1038/nature12373 and show title, citations, and journal.” | `get_by_doi` |
 | Researcher publications | “List recent publications by Jennifer Doudna.” | `search_publications` |
+| Researcher overview | “Tell me about Jennifer Doudna's research: outputs, fields, funders, and collaborators.” | `researcher_profile` |
 | Institution output | “Show highly cited publications from Stanford University.” | `search_publications` with `research_orgs.id` filter |
 | Topic breakdown (with year filter) | “Which journals publish the most machine learning research since 2020?” | `facet_query` |
 | Funding leaders | “Which funders have the most grant funding on climate adaptation?” | `aggregate_query` |
@@ -59,7 +60,8 @@ After Dimensions Analytics MCP is connected, you can ask in plain language. The 
 - **`search_publications`** — use `yearFrom`, `sortBy: "total_citations"` (alias), and `limit`; do not put `limit` before `sort` in raw DSL.
 - **`search_grants` / `funderOrgName`** — acronyms NCI, NSF, NEH resolve automatically; umbrella labels such as NIH may still match no grants. Discover institute names with **`aggregate_query`** or **`facet_query`** on `facetField: "funder_orgs"`.
 - **`search_researchers`** — matches **names** in the researcher index, not research topics. For topic → people, use **`facet_query`** with `entityType: "publications"` and `facetField: "researchers"`. Results include `profile_url` (canonical `/details/entities/publication/author/{id}` — never invent `/discover/researcher/{id}`).
-- **Profile URLs** — `search_*`, `get_by_*`, `similar_documents`, and researcher/org `facet_query` buckets attach `profile_url` for the configured instance (`DIMENSIONS_BASE_URL`; hosted deployments fall back to their `DSL_HOST`). Use `construct_profile_url` or `dimensions://schema/profile-urls` when you only have an ID. Organization profiles are `/details/organization/{id}`.
+- **`researcher_profile`** — one call for “tell me about this researcher”: recent publications, grants, clinical trials, and patents with totals, Fields of Research divisions, top funders, collaborating organizations, and co-authors. Prefer it over chaining `search_*` and `facet_query`. A `name` lookup profiles the best match and lists the others in `otherMatches`; pass `researcherId` to pick one.
+- **Profile URLs** — `search_*`, `get_by_*`, `similar_documents`, `researcher_profile`, and researcher/org `facet_query` buckets attach `profile_url` for the configured instance (`DIMENSIONS_BASE_URL`; hosted deployments fall back to their `DSL_HOST`). Use `construct_profile_url` or `dimensions://schema/profile-urls` when you only have an ID. Organization profiles are `/details/organization/{id}`.
 - **Identity fields** — `search_*`, `get_by_*`, and `similar_documents` always return `id` (and `doi` for publications), even when `fields` omits them. Default lists use the `basics` fieldset plus those identifiers.
 - **`search_publications` filters** — scope by organization with `research_orgs.id` (GRID id, e.g. `grid.168010.e` for Stanford University) or by researcher with `researchers.id` after a `search_researchers` lookup.
 - **`search_organizations`** — institution lookup by name; use GRID id from results when filtering publications or grants.
@@ -137,6 +139,16 @@ After Dimensions Analytics MCP is connected, you can ask in plain language. The 
   "sortBy": "funding",
   "sortOrder": "desc",
   "limit": 10
+}
+```
+
+**Researcher overview** — `researcher_profile`:
+
+```json
+{
+  "name": "Jennifer Doudna",
+  "publicationLimit": 10,
+  "facetLimit": 10
 }
 ```
 
@@ -475,9 +487,9 @@ Tool: `funding_trend`
 
 ---
 
-## Drill down (without profile tools)
+## Drill down
 
-Use structured search and lookup instead of dedicated profile aggregators.
+For a whole-researcher overview, use [`researcher_profile`](#researcher-profile-researcher_profile). For anything narrower, combine structured search and lookup:
 
 **Publications by researcher** — `search_publications`:
 
@@ -595,6 +607,42 @@ More patterns: MCP resource `dimensions://examples` and [DSL docs](https://docs.
 
 ---
 
+## Researcher profile (`researcher_profile`)
+
+Aggregates one researcher's output and network in a single call, using DSL queries only. Every section is scoped with `researchers.id`, and the queries run in parallel.
+
+| Parameter | Description |
+|-----------|-------------|
+| `researcherId` | Dimensions researcher ID (e.g. `ur.01147702313.96`) |
+| `orcid` | ORCID iD (e.g. `0000-0001-9161-999X`) |
+| `name` | Researcher name; profiles the best match and lists up to four others in `otherMatches` |
+| `publicationLimit` | Recent publications to return (default `20`, max `100`) |
+| `grantLimit` / `clinicalTrialLimit` / `patentLimit` | Recent records per section (default `10`, max `100`) |
+| `facetLimit` | Funders, collaborating organizations, and co-authors to return (default `10`, max `50`) |
+
+Provide at least one of `researcherId`, `orcid`, or `name`. When several are given, `researcherId` wins, then `orcid`.
+
+| Section | Content |
+|---------|---------|
+| `researcher` | Researcher record with `profile_url` |
+| `publications`, `grants`, `clinicalTrials`, `patents` | `totalCount`, `returnedCount`, and the most recent `items` (each with `profile_url`) |
+| `fieldsOfResearch` | 2-digit ANZSRC 2020 divisions (`category_for_2020`) on the researcher's publications, each with its own publication count. 4-digit groups are left out, not summed into their division. |
+| `funders` | Top funders of the researcher's publications |
+| `collaboratingOrgs` | Top organizations on the researcher's publications, with `profile_url` |
+| `coauthors` | Top co-authors by shared publications, excluding the researcher, with `profile_url`. Left out if that facet query fails; the rest of the profile is still returned. |
+
+No match returns `{ "found": false, "message": "..." }`.
+
+```json
+{
+  "orcid": "0000-0001-9161-999X",
+  "publicationLimit": 5,
+  "facetLimit": 5
+}
+```
+
+---
+
 ## Similar documents (`similar_documents`)
 
 Find publications or grants with similar research topics from abstract/description prose. Uses Dimensions concept extraction and weighted concepts search (**not** vector embeddings). Supported `entityType` values: `publications`, `grants`.
@@ -698,6 +746,7 @@ Classification and concept extraction remain available via **`execute_dsl`** usi
 | `extract_affiliations` | Resolve organization affiliations to GRID/ROR identifiers |
 | `extract_grants` | Resolve grant numbers to full grant records |
 | `similar_documents` | Find publications/grants with similar topics from abstract text (concept-based) |
+| `researcher_profile` | One-call researcher overview: outputs, fields of research, funders, collaborators, co-authors |
 | `execute_dsl` | Execute raw Dimensions DSL queries (classify, extract concepts, KWQ, and more) |
 | `describe_schema` | Summarize live describe schema (sources, entities, limits) |
 | `refresh_schema` | Reload describe schema from the API |
