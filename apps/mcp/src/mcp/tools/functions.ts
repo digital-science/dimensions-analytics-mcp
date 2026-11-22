@@ -6,6 +6,7 @@
 import type { McpServer } from "@modelcontextprotocol/server";
 import { z } from "zod";
 import type { DimensionsClient } from "../../dsl/index.js";
+import { withUntrustedResultNote } from "../untrusted-output.js";
 import { registerTrackedTool } from "../usage-tracking.js";
 import { formatErrorResult, formatToolResult, READ_ONLY_API_ANNOTATIONS } from "../utils.js";
 
@@ -20,10 +21,11 @@ export function registerFunctionTools(server: McpServer, client: DimensionsClien
     "extract_affiliations",
     {
       title: "Match affiliations",
-      description:
+      description: withUntrustedResultNote(
         "Resolve and disambiguate organization affiliations using Dimensions entity resolution. " +
-        "Takes freetext affiliation strings or structured organization data and returns matched " +
-        "organizations with GRID/ROR identifiers and confidence scores.",
+          "Takes freetext affiliation strings or structured organization data and returns matched " +
+          "organizations with GRID/ROR identifiers and confidence scores.",
+      ),
       inputSchema: z.object({
         affiliations: z
           .array(
@@ -68,10 +70,11 @@ export function registerFunctionTools(server: McpServer, client: DimensionsClien
     "extract_grants",
     {
       title: "Match grant numbers",
-      description:
+      description: withUntrustedResultNote(
         "Resolve grant numbers to Dimensions grant records. " +
-        "Takes a grant number and optional funder information to find matching grants " +
-        "with full metadata including funding amounts, dates, and funder details.",
+          "Takes a grant number and optional funder information to find matching grants " +
+          "with full metadata including funding amounts, dates, and funder details.",
+      ),
       inputSchema: z.object({
         grant_number: z.string().min(1).describe("Grant number to look up (e.g., 'R01HL117329')"),
         fundref: z

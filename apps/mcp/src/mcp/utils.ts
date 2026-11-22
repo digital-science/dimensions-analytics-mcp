@@ -10,6 +10,7 @@ import {
   type PaginationMetadata,
   POLICY_NOTICE,
 } from "../dsl/index.js";
+import { sanitizeToolOutput } from "./untrusted-output.js";
 
 /** Annotations for read-only tools that call external APIs. */
 export const READ_ONLY_API_ANNOTATIONS: ToolAnnotations = {
@@ -46,41 +47,45 @@ export interface ToolResult {
 /**
  * Formats a successful tool result.
  * Populates both `content` (text/JSON) and `structuredContent` for SDK output schema validation.
+ * Strips invisible and bidirectional characters from the payload first, so hidden instructions in
+ * third-party record text cannot reach the client through either channel (WEBAPPDEV-14248).
  * @param data - The data to return
  * @returns Formatted tool result
  */
 export function formatToolResult(data: unknown): ToolResult {
+  const safe = sanitizeToolOutput(data);
   return {
     content: [
       {
         type: "text",
-        text: JSON.stringify(data, null, 2),
+        text: JSON.stringify(safe, null, 2),
       },
     ],
-    structuredContent: data as Record<string, unknown>,
+    structuredContent: safe as Record<string, unknown>,
   };
 }
 
 /**
  * Builds a JSON-serializable error payload for MCP tool responses.
  * Surfaces Dimensions API metadata (status codes, client rate-limit hints) when available.
+ * Sanitized like success payloads, since upstream error messages can echo third-party text.
  * @param error - The error that occurred
  * @returns Error payload object
  */
 export function formatErrorPayload(error: unknown): Record<string, unknown> {
   if (error instanceof DimensionsError) {
     const json = error.toJSON();
-    return {
+    return sanitizeToolOutput({
       ...json,
       error: json.message,
       type: json.name,
-    };
+    });
   }
 
-  return {
+  return sanitizeToolOutput({
     error: error instanceof Error ? error.message : String(error),
     type: error instanceof Error ? error.name : "Error",
-  };
+  });
 }
 
 /**

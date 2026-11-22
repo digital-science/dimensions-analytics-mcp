@@ -24,6 +24,7 @@ import { queryHashFromDsl, runAggregateFetch, runFileFetch } from "../batch-fetc
 import { resolveExportFormat } from "../export-format.js";
 import { withFieldAliases } from "../middleware/field-aliases.js";
 import { attachProfileUrls } from "../profile-urls.js";
+import { withUntrustedResultNote } from "../untrusted-output.js";
 import { registerTrackedTool } from "../usage-tracking.js";
 import {
   formatErrorResult,
@@ -91,12 +92,13 @@ export function registerFetchSearchPagesTools(
     "fetch_search_pages",
     {
       title: "Fetch more results",
-      description:
+      description: withUntrustedResultNote(
         `Fetch paginated search results with rate-limit-aware batching (max ${SCHEMA_LIMITS.maxLimit}/page, ` +
-        `${SCHEMA_LIMITS.maxPages} pages, ${SCHEMA_LIMITS.maxOffset} records total). ` +
-        "Default mode returns one page. Use aggregate for ID counts/sums without full rows. " +
-        "Use file mode to stream JSONL or CSV locally — never for bulk mirroring of Dimensions data. " +
-        `Entities: ${entityList}.`,
+          `${SCHEMA_LIMITS.maxPages} pages, ${SCHEMA_LIMITS.maxOffset} records total). ` +
+          "Default mode returns one page. Use aggregate for ID counts/sums without full rows. " +
+          "Use file mode to stream JSONL or CSV locally — never for bulk mirroring of Dimensions data. " +
+          `Entities: ${entityList}.`,
+      ),
       inputSchema: z.object({
         entityType: z
           .enum(STRUCTURED_ENTITY_TYPES)

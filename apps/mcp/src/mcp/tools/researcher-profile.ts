@@ -13,6 +13,7 @@ import { parseEntityResponse, parseFacetResponse } from "../../dsl/index.js";
 import { mergeIdentityFields } from "../identity-fields.js";
 import { attachFacetProfileUrls, attachProfileUrls } from "../profile-urls.js";
 import type { SchemaStore } from "../schema/index.js";
+import { withUntrustedResultNote } from "../untrusted-output.js";
 import { registerTrackedTool } from "../usage-tracking.js";
 import { formatErrorResult, formatToolResult, READ_ONLY_API_ANNOTATIONS } from "../utils.js";
 
@@ -169,12 +170,13 @@ export function registerResearcherProfileTool(
     "researcher_profile",
     {
       title: "Researcher profile",
-      description:
+      description: withUntrustedResultNote(
         "One-call overview of a researcher: recent publications, grants, clinical trials, and " +
-        "patents (with total counts), Fields of Research divisions (ANZSRC 2020), top funders, " +
-        "top collaborating organizations, and top co-authors. Identify the researcher by " +
-        "researcherId, orcid, or name (name picks the best match and lists the others in " +
-        "otherMatches — pass researcherId to choose one).",
+          "patents (with total counts), Fields of Research divisions (ANZSRC 2020), top funders, " +
+          "top collaborating organizations, and top co-authors. Identify the researcher by " +
+          "researcherId, orcid, or name (name picks the best match and lists the others in " +
+          "otherMatches — pass researcherId to choose one).",
+      ),
       inputSchema: z.object({
         researcherId: z
           .string()

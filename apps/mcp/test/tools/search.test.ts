@@ -519,4 +519,24 @@ describe("search tools", () => {
       expect(dsl).toContain("field_citation_ratio");
     });
   });
+
+  describe("untrusted result text", () => {
+    it("strips invisible characters from both result channels", async () => {
+      client.rawQuery.mockResolvedValue(
+        apiRows("publications", [{ id: "pub.1", title: "Zero\u200Bwidth\u202Eoverride" }], 1),
+      );
+
+      const result = await callTool(handlers, "search_publications", { query: "test" });
+
+      expect(result.content[0].text).not.toContain("\u200B");
+      expect(result.content[0].text).not.toContain("\u202E");
+      const structured = JSON.stringify(result.structuredContent);
+      expect(structured).not.toContain("\u200B");
+      expect(structured).not.toContain("\u202E");
+
+      const data = parseToolResult(result);
+      const rows = data.publications as Array<Record<string, unknown>>;
+      expect(rows[0].title).toBe("Zerowidthoverride");
+    });
+  });
 });

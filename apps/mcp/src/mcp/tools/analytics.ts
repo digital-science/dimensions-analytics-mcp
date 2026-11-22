@@ -17,6 +17,7 @@ import {
 import { resolveFacetFieldName, withFieldAliases } from "../middleware/field-aliases.js";
 import { attachFacetProfileUrls } from "../profile-urls.js";
 import type { SchemaStore } from "../schema/index.js";
+import { withUntrustedResultNote } from "../untrusted-output.js";
 import { registerTrackedTool } from "../usage-tracking.js";
 import { formatErrorResult, formatToolResult, READ_ONLY_API_ANNOTATIONS } from "../utils.js";
 import { applyAnalyticsFilters } from "./analytics-filters.js";
@@ -131,9 +132,10 @@ export function registerAnalyticsTools(
     "facet_query",
     {
       title: "Break down results",
-      description:
+      description: withUntrustedResultNote(
         "Distribution analysis across entity dimensions. Returns facet buckets showing how records " +
-        "are distributed across a categorical field. Example: 'What journals publish the most CRISPR research?'",
+          "are distributed across a categorical field. Example: 'What journals publish the most CRISPR research?'",
+      ),
       inputSchema: z.object({
         entityType: entityTypeSchema,
         facetField: z
@@ -225,9 +227,10 @@ export function registerAnalyticsTools(
     "aggregate_query",
     {
       title: "Compare metrics",
-      description:
+      description: withUntrustedResultNote(
         "Metric aggregation on facet buckets. Returns facet buckets enriched with aggregated indicator " +
-        "values. Example: 'Which funders have the highest average citation ratio?'",
+          "values. Example: 'Which funders have the highest average citation ratio?'",
+      ),
       inputSchema: z.object({
         entityType: entityTypeSchema,
         facetField: z

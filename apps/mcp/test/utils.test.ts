@@ -4,7 +4,7 @@
 
 import { describe, expect, it } from "vitest";
 import { RateLimitError } from "../src/dsl/index.js";
-import { formatErrorPayload, formatErrorResult } from "../src/mcp/utils.js";
+import { formatErrorPayload, formatErrorResult, formatToolResult } from "../src/mcp/utils.js";
 
 describe("formatErrorPayload", () => {
   it("serializes RateLimitError with client rate-limit info", () => {
@@ -32,6 +32,11 @@ describe("formatErrorPayload", () => {
       type: "Error",
     });
   });
+
+  it("strips invisible characters from error messages", () => {
+    const payload = formatErrorPayload(new Error("boom\u202Edrop"));
+    expect(payload.error).toBe("boomdrop");
+  });
 });
 
 describe("formatErrorResult", () => {
@@ -41,5 +46,32 @@ describe("formatErrorResult", () => {
     const parsed = JSON.parse(result.content[0].text) as Record<string, unknown>;
     expect(parsed.name).toBe("RateLimitError");
     expect(parsed.retryAfter).toBe(5);
+  });
+});
+
+describe("formatToolResult", () => {
+  it("keeps both channels in agreement", () => {
+    const result = formatToolResult({ totalCount: 1, publications: [{ id: "pub.1" }] });
+    expect(JSON.parse(result.content[0].text)).toEqual(result.structuredContent);
+  });
+
+  it("strips invisible characters from both channels", () => {
+    const poisoned = {
+      publications: [{ title: "Normal\u200Btitle", abstract: "a\u202Eb" }],
+    };
+
+    const result = formatToolResult(poisoned);
+
+    expect(result.content[0].text).not.toContain("\u200B");
+    expect(result.content[0].text).not.toContain("\u202E");
+    const structured = JSON.stringify(result.structuredContent);
+    expect(structured).not.toContain("\u200B");
+    expect(structured).not.toContain("\u202E");
+    expect(result.content[0].text).toContain("Normaltitle");
+  });
+
+  it("passes a clean payload through by reference", () => {
+    const clean = { totalCount: 0, publications: [] };
+    expect(formatToolResult(clean).structuredContent).toBe(clean);
   });
 });

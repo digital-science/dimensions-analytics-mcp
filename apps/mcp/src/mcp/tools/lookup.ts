@@ -9,6 +9,7 @@ import { type DimensionsClient, EntitySchema, type EntityType } from "../../dsl/
 import { mergeIdentityFields } from "../identity-fields.js";
 import { withFieldAliases } from "../middleware/field-aliases.js";
 import { attachProfileUrl } from "../profile-urls.js";
+import { withUntrustedResultNote } from "../untrusted-output.js";
 import { registerTrackedTool } from "../usage-tracking.js";
 import {
   asArray,
@@ -29,8 +30,9 @@ export function registerLookupTools(server: McpServer, client: DimensionsClient)
     "get_by_doi",
     {
       title: "Get publication by DOI",
-      description:
+      description: withUntrustedResultNote(
         "Retrieve a publication by its Digital Object Identifier (DOI). Returns full publication details including abstract, citations, and authors.",
+      ),
       inputSchema: z.object({
         doi: z.string().describe("The DOI to look up (e.g., '10.1038/nature12373')"),
         fields: z
@@ -85,8 +87,9 @@ export function registerLookupTools(server: McpServer, client: DimensionsClient)
     "get_by_pmid",
     {
       title: "Get publication by PubMed ID",
-      description:
+      description: withUntrustedResultNote(
         "Retrieve a publication by its PubMed ID (PMID). Returns full publication details from Dimensions.",
+      ),
       inputSchema: z.object({
         pmid: z.string().describe("The PubMed ID to look up (e.g., '23846567')"),
         fields: z
@@ -141,8 +144,9 @@ export function registerLookupTools(server: McpServer, client: DimensionsClient)
     "get_by_id",
     {
       title: "Get record by Dimensions ID",
-      description:
+      description: withUntrustedResultNote(
         "Retrieve any entity by its Dimensions ID. Supports publications, grants, patents, clinical trials, datasets, policy documents, researchers, organizations, reports, source titles, funder groups, and research org groups.",
+      ),
       inputSchema: z.object({
         entityType: EntitySchema.describe("The type of entity to look up"),
         id: z.string().describe("The Dimensions ID to look up"),

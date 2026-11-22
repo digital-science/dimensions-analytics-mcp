@@ -20,6 +20,7 @@ import {
 import { mergeIdentityFields } from "../identity-fields.js";
 import { withFieldAliases } from "../middleware/field-aliases.js";
 import { attachProfileUrls } from "../profile-urls.js";
+import { withUntrustedResultNote } from "../untrusted-output.js";
 import { registerTrackedTool } from "../usage-tracking.js";
 import {
   formatErrorResult,
@@ -100,11 +101,12 @@ export function registerSimilarDocumentsTool(server: McpServer, client: Dimensio
     "similar_documents",
     {
       title: "Find similar documents",
-      description:
+      description: withUntrustedResultNote(
         "Find publications or grants with similar research topics based on abstract/description text. " +
-        "Uses Dimensions concept extraction and weighted concepts search (not vector embeddings). " +
-        "Prefer this over execute_dsl for similarity. For a known record: get_by_id / get_by_doi first, " +
-        "then pass its abstract/description as text. Supported entityType: publications, grants only.",
+          "Uses Dimensions concept extraction and weighted concepts search (not vector embeddings). " +
+          "Prefer this over execute_dsl for similarity. For a known record: get_by_id / get_by_doi first, " +
+          "then pass its abstract/description as text. Supported entityType: publications, grants only.",
+      ),
       inputSchema: z.object({
         entityType: z
           .enum(SIMILAR_DOCUMENTS_ENTITY_TYPES)

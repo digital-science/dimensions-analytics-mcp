@@ -11,6 +11,7 @@ import {
   validateExecuteDslPolicy,
 } from "../../dsl/index.js";
 import type { SchemaStore } from "../schema/index.js";
+import { withUntrustedResultNote } from "../untrusted-output.js";
 import { registerTrackedTool } from "../usage-tracking.js";
 import { formatErrorResult, formatToolResult } from "../utils.js";
 
@@ -31,7 +32,8 @@ export function registerQueryTools(
     "execute_dsl",
     {
       title: "Run DSL query",
-      description: `Execute a raw Dimensions DSL query. Read dimensions://schema/policy and dimensions://examples first. Official docs: https://docs.dimensions.ai/dsl/
+      description:
+        withUntrustedResultNote(`Execute a raw Dimensions DSL query. Read dimensions://schema/policy and dimensions://examples first. Official docs: https://docs.dimensions.ai/dsl/
 
 Prefer search_* tools for keyword search with yearFrom/yearTo and sortBy — they build valid DSL automatically.
 Use fetch_search_pages for multi-page entity retrieval; facets cannot be paginated (max 1000 buckets).
@@ -46,7 +48,7 @@ Examples:
 - search publications return publications facet journal limit 20
 - return funders aggregate funding_usd
 
-Structured entity types: ${sources}`,
+Structured entity types: ${sources}`),
       inputSchema: z.object({
         dsl: z.string().describe("Complete DSL query string to execute"),
         confirmLargeFetch: z

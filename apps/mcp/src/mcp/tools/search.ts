@@ -20,6 +20,7 @@ import {
 import { mergeIdentityFields } from "../identity-fields.js";
 import { withFieldAliases } from "../middleware/field-aliases.js";
 import { attachProfileUrls } from "../profile-urls.js";
+import { withUntrustedResultNote } from "../untrusted-output.js";
 import { registerTrackedTool } from "../usage-tracking.js";
 import {
   formatErrorResult,
@@ -105,7 +106,7 @@ export function registerSearchTools(
       toolName,
       {
         title: meta.title,
-        description: meta.description,
+        description: withUntrustedResultNote(meta.description),
         inputSchema: z.object({
           ...SHARED_SEARCH_INPUT,
           ...meta.extraInputSchema,

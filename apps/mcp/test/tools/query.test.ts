@@ -84,6 +84,24 @@ describe("query tools", () => {
       expect(data.policyNotice).toBeDefined();
     });
 
+    it("strips invisible characters from both result channels", async () => {
+      client.rawQuery.mockResolvedValue({
+        publications: [{ id: "pub.1", title: "Zero\u200Bwidth\u202Eoverride" }],
+        _stats: { total_count: 1 },
+      });
+
+      const result = await callTool(handlers, "execute_dsl", {
+        dsl: 'search publications for "test" return publications limit 1',
+      });
+
+      expect(result.content[0].text).not.toContain("\u200B");
+      expect(result.content[0].text).not.toContain("\u202E");
+      const structured = JSON.stringify(result.structuredContent);
+      expect(structured).not.toContain("\u200B");
+      expect(structured).not.toContain("\u202E");
+      expect(result.content[0].text).toContain("Zerowidthoverride");
+    });
+
     it("handles errors gracefully", async () => {
       client.rawQuery.mockRejectedValueOnce(new Error("Query syntax error"));
 
